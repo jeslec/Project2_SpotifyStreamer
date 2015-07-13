@@ -8,7 +8,7 @@
     <!-- Artist search related messages -->
 
     <!-- Displayed when the artist result list is empty (no search has been done) -->
-    <string name="fragment_search_result_empty_list">Begin a search by typing the first letter of the artist\'s name&#8230;</string>
+    <string name="fragment_search_result_empty_list">Tap the search icon to find your favorite artists&#8230;</string>
 
     <!-- Toast message when a artist search yields no result -->
     <string name="no_artist_found">No artist found, please try again</string>
@@ -27,5 +27,9 @@
 
     <!-- Temporary message that says which track is now playing -->
     <string name="track_playing">Playing: %1$s From: %2$s</string>
+
+    <!-- Empty top tracks list message (when an artist has no top tracks) -->
+    <string name="fragment_top_tracks_empty_list">This artist has no top tracks, please go back to
+        the previous screen and select another artist&#8230;</string>
 
 </resources>

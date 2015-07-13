@@ -2,7 +2,8 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment">
+                tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment"
+                android:background="#7f7f7f">
 
     <!-- To change the divider color, we also need to set the divider height, see this link:
     http://stackoverflow.com/questions/2372415/how-to-change-color-of-android-listview-separator-line#2372661
@@ -23,7 +24,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/fragment_search_result_empty_list"
-        android:textColor="#ff0000"
+        android:textColor="#ffffff"
         android:textSize="22sp"/>
 
 </RelativeLayout>
