@@ -1,7 +1,6 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +12,7 @@ import android.widget.ListView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistAsyncTask;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -120,7 +119,7 @@ public class SearchResultFragment extends ListFragment {
 
     public void updateSearchResult(String query){
 
-        new SearchArtistAsyncTask(mSearchResultAdapter).execute(query + "*");
+        new SearchArtistTask(mSearchResultAdapter).execute(query + "*");
 
        /* // Commands have been issued
         if (!mSpotifyCommands.isEmpty()) {

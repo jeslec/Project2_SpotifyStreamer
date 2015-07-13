@@ -22,14 +22,14 @@ import kaaes.spotify.webapi.android.models.Image;
  * Created by Jessy on 2015-07-13.
  */
 
-public class SearchArtistAsyncTask extends AsyncTask<String, Void, ArtistsPager> {
+public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
     private final String TAG = getClass().getSimpleName();
     //private ProgressDialog mProgressDialog;
     private String mSearchTerm;
     SearchResultAdapter mAdapter;
 
-    public SearchArtistAsyncTask(SearchResultAdapter adapter) {
+    public SearchArtistTask(SearchResultAdapter adapter) {
         mAdapter = adapter;
     }
 

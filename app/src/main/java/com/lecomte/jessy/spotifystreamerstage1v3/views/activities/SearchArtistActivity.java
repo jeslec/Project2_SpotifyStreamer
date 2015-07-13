@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
-import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistAsyncTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
 public class SearchArtistActivity extends AppCompatActivity implements
