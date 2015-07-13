@@ -1,4 +1,4 @@
-package com.lecomte.jessy.spotifystreamerstage1v3;
+package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 
 
 import android.app.SearchManager;
@@ -13,6 +13,9 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistAsyncTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
 public class SearchArtistActivity extends AppCompatActivity implements
@@ -77,8 +80,16 @@ public class SearchArtistActivity extends AppCompatActivity implements
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            // Do work using string
-            new SearchArtistAsyncTask().execute(query);
+
+            //new SearchArtistAsyncTask().execute(query + "*");
+            // Get the search results fragment
+            SearchResultFragment searchResultFragment = (SearchResultFragment)
+                    getSupportFragmentManager().findFragmentById(FRAGMENT_CONTAINER_ARRAY[0]);
+
+            if (searchResultFragment != null) {
+                // Send the query so fragment can download results from Spotify and display them
+                searchResultFragment.updateSearchResult(query);
+            }
         }
     }
 

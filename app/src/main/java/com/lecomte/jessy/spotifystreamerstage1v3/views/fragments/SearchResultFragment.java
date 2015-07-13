@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistAsyncTask;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -19,8 +21,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 public class SearchResultFragment extends ListFragment {
 
     private final String TAG = getClass().getSimpleName();
-    /*SearchResultAdapter mSearchResultAdapter;
-    List<ArtistInfo> mArtistInfoList = new ArrayList<ArtistInfo>();
+    SearchResultAdapter mSearchResultAdapter;
+    /*List<ArtistInfo> mArtistInfoList = new ArrayList<ArtistInfo>();
     List<SpotifyCommand> mSpotifyCommands = new LinkedList<SpotifyCommand>();*/
 
     // TODO: Rename parameter arguments, choose names that match
@@ -69,6 +71,11 @@ public class SearchResultFragment extends ListFragment {
         // Set up the adapter to display search results sent to us by search fragment
         /*mSearchResultAdapter = new SearchResultAdapter(getActivity());
         setListAdapter(mSearchResultAdapter);*/
+
+        // TODO: Determine if this should be done here (activity) or in fragment
+        // Set up the adapter to display search results sent to us by search fragment
+        mSearchResultAdapter = new SearchResultAdapter(getActivity());
+        setListAdapter(mSearchResultAdapter);
     }
 
     @Nullable
@@ -111,7 +118,9 @@ public class SearchResultFragment extends ListFragment {
         mListener = null;
     }
 
-    public void updateSearchResult(String searchTerm){
+    public void updateSearchResult(String query){
+
+        new SearchArtistAsyncTask(mSearchResultAdapter).execute(query + "*");
 
        /* // Commands have been issued
         if (!mSpotifyCommands.isEmpty()) {

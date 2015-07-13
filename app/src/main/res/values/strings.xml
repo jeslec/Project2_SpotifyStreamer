@@ -14,7 +14,11 @@
     <!-- Displayed when the artist result list is empty (no search has been done) -->
     <string name="fragment_search_result_empty_list">Begin a search by typing the first letter of the artist\'s name&#8230;</string>
 
-    <!-- Displayed when artist search yields no result -->
+    <!-- Toast message when a artist search yields no result -->
     <string name="no_artist_found">No artist found, please try again</string>
+
+    <!-- Artist popularity displayed for each item in artist results list
+     (must use 2 consecutive % signs in order to see a single % symbol) -->
+    <string name="artist_popularity">[Popularity: %1$s%%]</string>
 
 </resources>

@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name=".App" >
-        <activity android:name=".SearchArtistActivity"
+        <activity android:name=".views.activities.SearchArtistActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTop" >
             <intent-filter>

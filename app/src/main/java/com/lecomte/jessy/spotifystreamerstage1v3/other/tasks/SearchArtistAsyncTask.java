@@ -1,8 +1,10 @@
-package com.lecomte.jessy.spotifystreamerstage1v3;
+package com.lecomte.jessy.spotifystreamerstage1v3.other.tasks;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
@@ -23,11 +25,12 @@ import kaaes.spotify.webapi.android.models.Image;
 public class SearchArtistAsyncTask extends AsyncTask<String, Void, ArtistsPager> {
 
     private final String TAG = getClass().getSimpleName();
-    private ProgressDialog mProgressDialog;
+    //private ProgressDialog mProgressDialog;
     private String mSearchTerm;
+    SearchResultAdapter mAdapter;
 
-    public SearchArtistAsyncTask() {
-
+    public SearchArtistAsyncTask(SearchResultAdapter adapter) {
+        mAdapter = adapter;
     }
 
     @Override
@@ -37,8 +40,8 @@ public class SearchArtistAsyncTask extends AsyncTask<String, Void, ArtistsPager>
 
     @Override
     protected void onPostExecute(ArtistsPager artistsPager) {
-        Utils.log(TAG, "OnPostExecute() - Searched term: " + mSearchTerm +
-                " Artists found count: " + artistsPager.artists.items.size());
+        Utils.log(TAG, "OnPostExecute() - [Searched term: " + mSearchTerm + "]" +
+                " [Artists found count: " + artistsPager.artists.items.size() + "]");
 
         // If there is no search result, we can't display anything
         if (artistsPager.artists.items.isEmpty()) {
@@ -89,9 +92,9 @@ public class SearchArtistAsyncTask extends AsyncTask<String, Void, ArtistsPager>
         //Utils.log(TAG, "FetchArtistsTask.onPostExecute() - Done sorting artists list");
 
         // Send the list of artists to the activity so it can update its fragments
-        /*mAdapter.clear();
+        mAdapter.clear();
         mAdapter.addAll(myArtistInfoList);
-        mAdapter.notifyDataSetChanged();*/
+        mAdapter.notifyDataSetChanged();
 
         Utils.logLoop(TAG, "getFilter() - Sorted Artists[", "]: ", myArtistInfoList);
     }
