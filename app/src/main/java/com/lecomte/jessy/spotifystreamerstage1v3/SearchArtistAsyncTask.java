@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import kaaes.spotify.webapi.android.models.ArtistsPager;
+
 /**
  * Created by Jessy on 2015-07-13.
  */
@@ -28,11 +30,8 @@ public class SearchArtistAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        ArtistsPager artistsPager = Spotify.searchArtists("Beyonce");
+
         return new String("allo");
     }
 }

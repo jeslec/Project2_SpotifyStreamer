@@ -12,16 +12,20 @@ import retrofit.RetrofitError;
  */
 public class Spotify {
 
-    public static void searchArtists(String searchTerm) {
+    public static ArtistsPager searchArtists(String searchTerm) {
+        ArtistsPager artistsPager = new ArtistsPager();
+
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();
 
         //Utils.log(TAG, "FetchArtistsTask.doInBackground() - Getting artist list from Spotify for: " + mSearchTerm);
 
         try {
-            ArtistsPager artistPager = spotify.searchArtists(searchTerm);
+            artistsPager = spotify.searchArtists(searchTerm);
         } catch (RetrofitError e) {
             //Log.e(TAG, "doInBackground() - Error: " + e.getCause());
         }
+
+        return artistsPager;
     }
 }
