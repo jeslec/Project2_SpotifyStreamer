@@ -5,11 +5,7 @@
     <string name="search_hint">Search artists</string>
     <string name="action_search">Search</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
-    <!-- fragment_search_result.xml strings -->
+    <!-- Artist search related messages -->
 
     <!-- Displayed when the artist result list is empty (no search has been done) -->
     <string name="fragment_search_result_empty_list">Begin a search by typing the first letter of the artist\'s name&#8230;</string>
@@ -20,5 +16,16 @@
     <!-- Artist popularity displayed for each item in artist results list
      (must use 2 consecutive % signs in order to see a single % symbol) -->
     <string name="artist_popularity">[Popularity: %1$s%%]</string>
+
+    <!-- Top tracks related messages -->
+
+    <!-- Title of the top tracks activity -->
+    <string name="title_activity_top_tracks">Top Tracks</string>
+
+    <!-- Toast message when there is no top tracks for an artist -->
+    <string name="no_track_found"></string>
+
+    <!-- Temporary message that says which track is now playing -->
+    <string name="track_playing">Playing: %1$s From: %2$s</string>
 
 </resources>

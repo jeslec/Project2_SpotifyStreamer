@@ -1,6 +1,7 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,9 @@ import android.widget.ListView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -91,13 +94,13 @@ public class SearchResultFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
-        /*// Get data associated with the selected item
+        // Get data associated with the selected item
         ArtistInfo artistInfo = (ArtistInfo)getListAdapter().getItem(position);
 
         // Send artist selection to new activity to display artist's top 10 songs
-        Intent tracksIntent = new Intent(getActivity(), TracksActivity.class);
-        tracksIntent.putExtra(TracksActivity.EXTRA_ARTIST_ID, artistInfo.getId());
-        startActivity(tracksIntent);*/
+        Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
+        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artistInfo.getId());
+        startActivity(tracksIntent);
     }
 
     @Override

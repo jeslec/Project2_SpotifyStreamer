@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_vertical"
+              android:background="#000000"
+              android:paddingLeft="10dp"
+              android:paddingBottom="10dp"
+              android:paddingTop="10dp">
+
+    <com.lecomte.jessy.spotifystreamerstage1v3.views.widgets.RoundedImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/TopTracksFragment_ListViewItem_AlbumImage"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TopTracksFragment_ListViewItem_TrackName"
+            android:paddingLeft="12dp"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:textColor="#ffffff"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TopTracksFragment_ListViewItem_AlbumName"
+            android:paddingLeft="12dp"
+            android:textStyle="normal"
+            android:textSize="11sp"
+            android:gravity="center_vertical"
+            android:textColor="#ffffff"/>
+
+    </LinearLayout>
+
+</LinearLayout>
