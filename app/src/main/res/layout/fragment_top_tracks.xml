@@ -12,12 +12,7 @@
 
     <TextView
         android:id="@android:id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/fragment_top_tracks_empty_list"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"/>
+        style="@style/EmptyListViewMessage"
+        android:text="@string/fragment_top_tracks_empty_list"/>
 
 </LinearLayout>
