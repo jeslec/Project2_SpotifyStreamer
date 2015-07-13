@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical" android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="#7f7f7f">
+              android:background="@color/gray_50pct">
 
     <ListView
         android:id="@android:id/list"
@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/fragment_top_tracks_empty_list"
-        android:textColor="#ffffff"
+        android:textColor="@android:color/white"
         android:textSize="22sp"/>
 
 </LinearLayout>
