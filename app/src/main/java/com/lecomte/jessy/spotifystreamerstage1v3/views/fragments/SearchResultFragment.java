@@ -70,10 +70,6 @@ public class SearchResultFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // Set up the adapter to display search results sent to us by search fragment
-        /*mSearchResultAdapter = new SearchResultAdapter(getActivity());
-        setListAdapter(mSearchResultAdapter);*/
-
         // TODO: Determine if this should be done here (activity) or in fragment
         // Set up the adapter to display search results sent to us by search fragment
         mSearchResultAdapter = new SearchResultAdapter(getActivity());
@@ -123,37 +119,6 @@ public class SearchResultFragment extends ListFragment {
     public void updateSearchResult(String query){
 
         new SearchArtistTask(mSearchResultAdapter).execute(query + "*");
-
-       /* // Commands have been issued
-        if (!mSpotifyCommands.isEmpty()) {
-            // Cancel unstarted commands if possible
-            ListIterator<SpotifyCommand> listIterator = mSpotifyCommands.listIterator();
-
-            while (listIterator.hasNext()) {
-                SpotifyCommand command = listIterator.next();
-                // TODO: Should I use true or false?
-                command.getTask().cancel(false);
-                Utils.log(TAG, "updateSearchResult() - Deleted command: " + command.toString());
-                listIterator.remove();
-            }
-
-            Utils.log(TAG, "updateSearchResult() - Command(s) DELETED [size: " + mSpotifyCommands.size() + "]");
-        }
-
-        // Clear  results list if search term was cleared by user
-        if (searchTerm.isEmpty()) {
-            Utils.log(TAG, "updateSearchResult() - Search term empty, result list cleared (no query sent to Spotify)");
-            mSearchResultAdapter.clear();
-            mSearchResultAdapter.notifyDataSetChanged();
-            return;
-        }
-
-        //
-        SpotifyCommand command = new SpotifyCommand(searchTerm, new FetchArtistsTask(getActivity(), mSearchResultAdapter, searchTerm));
-        mSpotifyCommands.add(command);
-        Utils.log(TAG, "updateSearchResult() - Command CREATED: " + command.toString() + " [Size: " + mSpotifyCommands.size() + "]");
-
-        command.execute();*/
     }
 
 

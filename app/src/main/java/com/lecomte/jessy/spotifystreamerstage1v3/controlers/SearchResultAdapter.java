@@ -30,7 +30,7 @@ public class SearchResultAdapter extends ArrayAdapter<ArtistInfo> {
         // If a view was not created already, create it.
         // Once created reuse it at each call to getView()
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.search_result_item, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.fragment_search_result_item, null);
         }
         // Get the data from the selected list item
         ArtistInfo artistInfo = getItem(position);
