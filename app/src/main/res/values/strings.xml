@@ -11,7 +11,10 @@
 
     <!-- fragment_search_result.xml strings -->
 
-    <!-- Displayed when the artist result list is empty -->
+    <!-- Displayed when the artist result list is empty (no search has been done) -->
     <string name="fragment_search_result_empty_list">Begin a search by typing the first letter of the artist\'s name&#8230;</string>
+
+    <!-- Displayed when artist search yields no result -->
+    <string name="no_artist_found">No artist found, please try again</string>
 
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Set to true to see debug messages in Logcat -->
+    <bool name="show_debug_strings">true</bool>
+
+    <!-- Max number of characters for the artist name column in Logcat window (must be > 3) -->
+    <integer name="artist_name_column_width">15</integer>
+
+    <!-- Max number of characters for the track name column in Logcat window (must be > 3) -->
+    <integer name="track_name_column_width">12</integer>
+
+    <!-- Max number of characters for the album name column in Logcat window (must be > 3) -->
+    <integer name="album_name_column_width">14</integer>
+</resources>
