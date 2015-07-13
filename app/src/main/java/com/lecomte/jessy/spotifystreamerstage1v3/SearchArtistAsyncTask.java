@@ -31,7 +31,9 @@ public class SearchArtistAsyncTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        ArtistsPager artistsPager = Spotify.searchArtists("Beyonce");
+        String searchTerm = params[0];
+
+        ArtistsPager artistsPager = Spotify.searchArtists(searchTerm);
 
         return new String("allo");
     }

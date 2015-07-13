@@ -78,7 +78,7 @@ public class SearchArtistActivity extends AppCompatActivity implements
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // Do work using string
-            new SearchArtistAsyncTask().execute("allo");
+            new SearchArtistAsyncTask().execute(query);
         }
     }
 
