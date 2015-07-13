@@ -21,16 +21,12 @@ public class SearchableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_searchable);
 
         handleIntent(getIntent());
-
-        /*// Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //doMySearch(query);
-            new MyAsyncTask(this);
-        }*/
     }
 
+    // Got idea of how to manage first-time creation of activity vs re-calling same activity that's
+    // currently displayed. This happens when a search is performed in the SearchableActivity
+    // http://stackoverflow.com/questions/5094222/android-return-search-query-to-current-activity#7170471
+    // Flag android:launchMode="singleTop" must be specified for the searchable activity in manifest
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
@@ -41,111 +37,9 @@ public class SearchableActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // Do work using string
-            new MyAsyncTask(this).execute("allo");
+            new SearchArtistAsyncTask().execute("allo");
         }
     }
-
-    private class MyAsyncTask extends AsyncTask<String, String, String> {
-
-        private ProgressDialog mProgressDialog;
-        private Activity mCallingActivity;
-
-        public MyAsyncTask(Activity activity) {
-            mCallingActivity = activity;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            // Note: must use the calling activity and not just a context obtained from
-            // getRes.getContext or else it crashes!
-            // http://stackoverflow.com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable-to-add-window#2639515
-            // TODO: Replace this by a custom and better-looking dialog!
-            mProgressDialog = new ProgressDialog(mCallingActivity);
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setTitle("Querying Spotify Server");
-            mProgressDialog.setMessage("Please wait...");
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            mProgressDialog.dismiss();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return new String("allo");
-        }
-    }
-
-    /*private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-
-        private String resp;
-
-        @Override
-        protected String doInBackground(String... params) {
-            publishProgress("Sleeping..."); // Calls onProgressUpdate()
-            try {
-                // Do your long operations here and return the result
-                int time = Integer.parseInt(params[0]);
-                // Sleeping for given time period
-                Thread.sleep(time);
-                resp = "Slept for " + time + " milliseconds";
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                resp = e.getMessage();
-            } catch (Exception e) {
-                e.printStackTrace();
-                resp = e.getMessage();
-            }
-            return resp;
-        }
-
-        *//*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-         *//*
-        @Override
-        protected void onPostExecute(String result) {
-            // execution of result of Long time consuming operation
-            finalResult.setText(result);
-        }
-
-        *//*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onPreExecute()
-         *//*
-        @Override
-        protected void onPreExecute() {
-            // Things to be done before execution of long running operation. For
-            // example showing ProgessDialog
-        }
-
-        *//*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
-         *//*
-        @Override
-        protected void onProgressUpdate(String... text) {
-            finalResult.setText(text[0]);
-            // Things to be done while execution of long running operation is in
-            // progress. For example updating ProgessDialog
-        }
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
