@@ -23,7 +23,7 @@
     <string name="title_activity_top_tracks">Top Tracks</string>
 
     <!-- Toast message when there is no top tracks for an artist -->
-    <string name="no_track_found"></string>
+    <string name="no_track_found">Sorry, no top tracks found for this artist</string>
 
     <!-- Temporary message that says which track is now playing -->
     <string name="track_playing">Playing: %1$s From: %2$s</string>
