@@ -14,4 +14,13 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="CustomListView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:choiceMode">singleChoice</item>
+        <item name="android:divider">@color/gray_50pct</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:headerDividersEnabled">false</item>
+    </style>
+
 </resources>
