@@ -1,8 +1,9 @@
 package com.lecomte.jessy.spotifystreamerstage1v3;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 

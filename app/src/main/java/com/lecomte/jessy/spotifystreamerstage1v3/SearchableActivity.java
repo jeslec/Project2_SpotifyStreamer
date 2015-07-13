@@ -4,13 +4,32 @@ package com.lecomte.jessy.spotifystreamerstage1v3;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class SearchableActivity extends AppCompatActivity {
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
+
+public class SearchableActivity extends AppCompatActivity implements
+        SearchResultFragment.OnFragmentInteractionListener{
+
+    /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
+
+    // 1- This is R.layout.<file name of the layout hosting the fragment>
+    private static final int ACTIVITY_LAYOUT = R.layout.activity_searchable;
+
+    // 2- This is R.id.<name of fragment container> from the activity file (set in step 1)
+    private static final int[] FRAGMENT_CONTAINER_ARRAY = {
+            R.id.search_result_fragment_container};
+
+    // 3- Name of fragment file (<package_name>.<class name without .java>
+    private static final String[] CLASS_NAME_ARRAY = {
+            "com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +37,31 @@ public class SearchableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_searchable);
 
         handleIntent(getIntent());
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        for (int i=0; i<FRAGMENT_CONTAINER_ARRAY.length; i++) {
+
+            Fragment fragment = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[i]);
+
+            if (fragment == null) {
+
+                try {
+                    Class<?> fragmentClass = Class.forName(CLASS_NAME_ARRAY[i]);
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                fm.beginTransaction()
+                        .add(FRAGMENT_CONTAINER_ARRAY[i], fragment)
+                        .commit();
+            }
+        }
     }
 
     // Got idea of how to manage first-time creation of activity vs re-calling same activity that's
@@ -66,5 +110,10 @@ public class SearchableActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

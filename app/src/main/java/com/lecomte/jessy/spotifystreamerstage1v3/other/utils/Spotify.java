@@ -1,4 +1,4 @@
-package com.lecomte.jessy.spotifystreamerstage1v3;
+package com.lecomte.jessy.spotifystreamerstage1v3.other.utils;
 
 import android.util.Log;
 
