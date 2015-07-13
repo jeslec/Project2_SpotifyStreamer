@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.FetchTopTracksTask;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
@@ -54,7 +54,7 @@ public class TopTracksFragment extends ListFragment {
         if (!mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
             // TODO: Check if artist Id is null or empty before querying Spotify server
-            new FetchTopTracksTask(mTopTracksAdapter).execute(mArtistId);
+            new GetTopTracksTask(mTopTracksAdapter).execute(mArtistId);
             mPreviousArtistId = mArtistId;
         }
 

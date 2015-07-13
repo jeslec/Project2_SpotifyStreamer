@@ -6,6 +6,7 @@ import android.util.Log;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 
 import java.util.ArrayList;
@@ -29,12 +30,12 @@ import retrofit.RetrofitError;
  * @param param2 Parameter 2.
  * @return .
  */
-public class FetchTopTracksTask extends AsyncTask<String, Void, Tracks> {
+public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
     private final String TAG = getClass().getSimpleName();
     private TopTracksAdapter mAdapter;
 
-    public FetchTopTracksTask(TopTracksAdapter adapter) {
+    public GetTopTracksTask(TopTracksAdapter adapter) {
         mAdapter = adapter;
     }
 
@@ -42,19 +43,14 @@ public class FetchTopTracksTask extends AsyncTask<String, Void, Tracks> {
     protected Tracks doInBackground(String... artistIdList) {
         Tracks tracks = new Tracks();
         String artistId = artistIdList[0];
-        SpotifyApi api = new SpotifyApi();
-        SpotifyService spotify = api.getService();
-
         Map queryOptions = new HashMap();
+
         // TODO: Put region code (US, CA, etc.) in a Settings view
         queryOptions.put("country", new String("US"));
         Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId);
 
-        try {
-            tracks = spotify.getArtistTopTrack(artistId, queryOptions);
-        } catch (RetrofitError e) {
-            Log.e(TAG, "doInBackground() - Error: " + e.getCause());
-        }
+        tracks = Spotify.getArtistTopTrack(artistId, queryOptions);
+
         return tracks;
     }
 
