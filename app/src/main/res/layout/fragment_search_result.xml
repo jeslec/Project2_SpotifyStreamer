@@ -14,4 +14,14 @@
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"/>
 
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/fragment_search_result_empty_list"
+        android:textColor="#ff0000"
+        android:textSize="22sp"/>
+
 </RelativeLayout>
