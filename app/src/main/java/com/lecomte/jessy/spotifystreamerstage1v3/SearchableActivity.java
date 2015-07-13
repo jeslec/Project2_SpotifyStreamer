@@ -1,6 +1,8 @@
 package com.lecomte.jessy.spotifystreamerstage1v3;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,16 +20,62 @@ public class SearchableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable);
 
-        // Get the intent, verify the action and get the query
+        handleIntent(getIntent());
+
+        /*// Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //doMySearch(query);
-            new MyAsyncTask();
+            new MyAsyncTask(this);
+        }*/
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            // Do work using string
+            new MyAsyncTask(this).execute("allo");
         }
     }
 
     private class MyAsyncTask extends AsyncTask<String, String, String> {
+
+        private ProgressDialog mProgressDialog;
+        private Activity mCallingActivity;
+
+        public MyAsyncTask(Activity activity) {
+            mCallingActivity = activity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // Note: must use the calling activity and not just a context obtained from
+            // getRes.getContext or else it crashes!
+            // http://stackoverflow.com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable-to-add-window#2639515
+            // TODO: Replace this by a custom and better-looking dialog!
+            mProgressDialog = new ProgressDialog(mCallingActivity);
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setTitle("Querying Spotify Server");
+            mProgressDialog.setMessage("Please wait...");
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mProgressDialog.dismiss();
+        }
 
         @Override
         protected String doInBackground(String... params) {
