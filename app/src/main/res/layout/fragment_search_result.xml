@@ -1,9 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment"
-                android:background="@color/gray_50pct">
+                style="@style/CustomFrameLayout">
 
     <!-- To change the divider color, we also need to set the divider height, see this link:
     http://stackoverflow.com/questions/2372415/how-to-change-color-of-android-listview-separator-line#2372661
@@ -18,10 +16,3 @@
         android:text="@string/fragment_search_result_empty_list"/>
 
 </RelativeLayout>
-
-    <!--android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:choiceMode="singleChoice"
-    android:divider="@color/gray_50pct"
-    android:dividerHeight="1dp"
-    android:headerDividersEnabled="false"-->
