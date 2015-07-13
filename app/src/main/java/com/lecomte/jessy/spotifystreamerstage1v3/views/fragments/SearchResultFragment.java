@@ -77,7 +77,7 @@ public class SearchResultFragment extends ListFragment {
                              Bundle savedInstanceState) {
 
         // TODO: Change name of layout to R.layout.fragment_search_result
-        View v = inflater.inflate(R.layout.fragment_searchable, container, false);
+        View v = inflater.inflate(R.layout.fragment_search_result, container, false);
 
         return v;
     }

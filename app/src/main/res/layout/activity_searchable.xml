@@ -6,13 +6,3 @@
              android:layout_height="match_parent"
              >
 </FrameLayout>
-
-
-<!--
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/fragment"
-          android:name="com.lecomte.jessy.spotifystreamerstage1v3.SearchableActivityFragment"
-          tools:layout="@layout/fragment_searchable"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"/>-->
