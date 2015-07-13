@@ -15,13 +15,13 @@ import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
-public class SearchableActivity extends AppCompatActivity implements
+public class SearchArtistActivity extends AppCompatActivity implements
         SearchResultFragment.OnFragmentInteractionListener{
 
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
     // 1- This is R.layout.<file name of the layout hosting the fragment>
-    private static final int ACTIVITY_LAYOUT = R.layout.activity_searchable;
+    private static final int ACTIVITY_LAYOUT = R.layout.activity_search_artist;
 
     // 2- This is R.id.<name of fragment container> from the activity file (set in step 1)
     private static final int[] FRAGMENT_CONTAINER_ARRAY = {
@@ -34,7 +34,7 @@ public class SearchableActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_searchable);
+        setContentView(R.layout.activity_search_artist);
 
         handleIntent(getIntent());
 
