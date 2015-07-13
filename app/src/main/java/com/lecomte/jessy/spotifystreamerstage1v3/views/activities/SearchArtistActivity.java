@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFra
 
 public class SearchArtistActivity extends AppCompatActivity implements
         SearchResultFragment.OnFragmentInteractionListener{
+
+    private String mPreviousQuery;
 
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
@@ -36,6 +39,11 @@ public class SearchArtistActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_artist);
+
+        // Restore last query string
+        if (savedInstanceState != null) {
+            mPreviousQuery = savedInstanceState.getString("PreviousQueryString");
+        }
 
         handleIntent(getIntent());
 
@@ -79,6 +87,11 @@ public class SearchArtistActivity extends AppCompatActivity implements
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
+            // Don't query server if we already have the results
+            if (query.equals(mPreviousQuery)) {
+                return;
+            }
+
             //new SearchArtistAsyncTask().execute(query + "*");
             // Get the search results fragment
             SearchResultFragment searchResultFragment = (SearchResultFragment)
@@ -87,6 +100,7 @@ public class SearchArtistActivity extends AppCompatActivity implements
             if (searchResultFragment != null) {
                 // Send the query so fragment can download results from Spotify and display them
                 searchResultFragment.updateSearchResult(query);
+                mPreviousQuery = query;
             }
         }
     }
@@ -125,4 +139,20 @@ public class SearchArtistActivity extends AppCompatActivity implements
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save last query string
+        outState.putString("PreviousQueryString", mPreviousQuery);
+    }
+
+    /*@Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore last query string
+        mPreviousQuery = savedInstanceState.getString("PreviousQueryString");
+    }*/
 }

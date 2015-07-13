@@ -4,11 +4,17 @@
                 android:layout_height="match_parent"
                 tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment">
 
+    <!-- To change the divider color, we also need to set the divider height, see this link:
+    http://stackoverflow.com/questions/2372415/how-to-change-color-of-android-listview-separator-line#2372661
+    There is a debate over using 1px or 1dp as the divider height, I've opted for 1dp -->
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:choiceMode="singleChoice"/>
+        android:choiceMode="singleChoice"
+        android:divider="#7f7f7f"
+        android:dividerHeight="1dp"
+        android:headerDividersEnabled="false"/>
 
     <TextView
         android:id="@android:id/empty"

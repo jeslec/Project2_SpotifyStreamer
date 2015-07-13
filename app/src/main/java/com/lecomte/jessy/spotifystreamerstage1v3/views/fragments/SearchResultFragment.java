@@ -1,7 +1,9 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +18,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
+
+import java.util.List;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -83,6 +87,16 @@ public class SearchResultFragment extends ListFragment {
 
         // TODO: Change name of layout to R.layout.fragment_search_result
         View v = inflater.inflate(R.layout.fragment_search_result, container, false);
+
+        // TODO: Try to add the header separator and match its color with the rest of separators
+        //ListView resultsList = (ListView)v.findViewById(android.R.id.list);
+        //resultsList.addFooterView(new View(getActivity()), null, true);
+
+       /* View headerSeparator = new View(getActivity());
+        headerSeparator.setBackgroundColor(Color.YELLOW);
+        headerSeparator.setAlpha(1.0f);
+        resultsList.addHeaderView(headerSeparator, null, true);*/
+        //resultsList.addHeaderView(new View(getActivity()), null, true);
 
         return v;
     }
