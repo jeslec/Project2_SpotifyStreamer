@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
@@ -132,7 +133,7 @@ public class SearchResultFragment extends ListFragment {
 
     public void updateSearchResult(String query){
 
-        new SearchArtistTask(mSearchResultAdapter).execute(query + "*");
+        new SearchArtistTask(mSearchResultAdapter, this).execute(query + "*");
     }
 
 
@@ -150,6 +151,29 @@ public class SearchResultFragment extends ListFragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+    public void showProgressBar() {
+
+        /*TextView resultView = (TextView)getActivity().findViewById(R.id.textUrlContent);
+        resultView.setVisibility(View.GONE);*/
+
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.SearchResultFragment_ProgressBar);
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(true);
+
+    }
+
+    public void hideProgressBar() {
+
+        /*TextView resultView = (TextView)getActivity().findViewById(R.id.textUrlContent);
+        resultView.setVisibility(View.VISIBLE);*/
+
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.SearchResultFragment_ProgressBar);
+        progress.setVisibility(View.GONE);
+    }
+
 }
 
 

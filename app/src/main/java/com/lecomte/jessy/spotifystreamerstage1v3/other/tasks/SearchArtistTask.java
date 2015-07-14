@@ -2,12 +2,16 @@ package com.lecomte.jessy.spotifystreamerstage1v3.other.tasks;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,18 +32,35 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
     //private ProgressDialog mProgressDialog;
     private String mSearchTerm;
     SearchResultAdapter mAdapter;
+    private ProgressDialog mProgressDialog;
+    private SearchResultFragment mFragment;
 
-    public SearchArtistTask(SearchResultAdapter adapter) {
+    public SearchArtistTask(SearchResultAdapter adapter, SearchResultFragment fragment) {
+
         mAdapter = adapter;
+        mFragment = fragment;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        mFragment.showProgressBar();
+
     }
 
     @Override
     protected void onPostExecute(ArtistsPager artistsPager) {
+
+        super.onPostExecute(artistsPager);
+
+        // The activity can be null if it is thrown out by Android while task is running!
+        if (mFragment!=null && mFragment.getActivity()!=null) {
+            //mFragment.populateResult(result);
+            mFragment.hideProgressBar();
+            mFragment = null;
+        }
+
+
         Utils.log(TAG, "OnPostExecute() - [Searched term: " + mSearchTerm + "]" +
                 " [Artists found count: " + artistsPager.artists.items.size() + "]");
 
