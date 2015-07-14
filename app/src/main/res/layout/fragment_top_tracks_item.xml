@@ -22,11 +22,11 @@
 
         <TextView
             android:id="@+id/TopTracksFragment_ListViewItem_TrackName"
-            style="@style/ListItemTextViewHeading1"/>
+            style="@style/ListItemTextView.Heading1"/>
 
         <TextView
             android:id="@+id/TopTracksFragment_ListViewItem_AlbumName"
-            style="@style/ListItemTextViewHeading2"/>
+            style="@style/ListItemTextView.Heading2"/>
 
     </LinearLayout>
 

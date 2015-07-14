@@ -29,24 +29,22 @@
         <item name="android:background">@color/gray_50pct</item>
     </style>
 
-    <style name="ListItemTextViewHeading1">
+    <style name="ListItemTextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">12dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">20sp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="ListItemTextViewHeading2">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">12dp</item>
+    <style name="ListItemTextView.Heading1">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="ListItemTextView.Heading2">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">11sp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

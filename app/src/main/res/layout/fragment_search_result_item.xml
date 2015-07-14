@@ -23,11 +23,11 @@
 
         <TextView
             android:id="@+id/SearchResultFragment_ListViewItem_ArtistName"
-            style="@style/ListItemTextViewHeading1"/>
+            style="@style/ListItemTextView.Heading1"/>
 
         <TextView
             android:id="@+id/SearchResultFragment_ListViewItem_ArtistPopularity"
-            style="@style/ListItemTextViewHeading2"/>
+            style="@style/ListItemTextView.Heading2"/>
 
     </LinearLayout>
 
