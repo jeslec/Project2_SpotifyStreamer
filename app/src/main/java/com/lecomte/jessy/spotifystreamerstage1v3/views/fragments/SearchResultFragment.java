@@ -18,6 +18,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 import java.util.List;
@@ -83,11 +85,7 @@ public class SearchResultFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // TODO: Change name of layout to R.layout.fragment_search_result
-        View v = inflater.inflate(R.layout.fragment_search_result, container, false);
-
-        return v;
+        return inflater.inflate(R.layout.fragment_search_result, container, false);
     }
 
     @Override

@@ -17,6 +17,9 @@
      (must use 2 consecutive % signs in order to see a single % symbol) -->
     <string name="artist_popularity">[Popularity: %1$s%%]</string>
 
+    <!-- Toast message when Internet is disabled -->
+    <string name="no_internet">No internet connection, search disabled</string>
+
     <!-- Top tracks related messages -->
 
     <!-- Title of the top tracks activity -->

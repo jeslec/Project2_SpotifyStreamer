@@ -1,5 +1,10 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.utils;
 
+import android.content.Context;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -36,10 +41,41 @@ public class Utils {
 
     public static void logLoop(String tag, String preIndex, String postIndex, List<?> list) {
         if (App.getRes().getBoolean(R.bool.show_debug_strings)) {
-            for (int i = 0; i < list.size(); i++) {
+            int listSize = list.size();
+            for (int i = 0; i < listSize; i++) {
                 Log.d(tag, preIndex + String.format("%1$02d", i) +
                         postIndex + list.get(i).toString());
             }
         }
     }
+
+    // Check if app has access to Internet either using Wifi or Mobile
+    // Returns:
+    //  -true: has access to Internet (wifi or mobile)
+    //  -false: does not have access to Internet
+    public static boolean isInternetAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) App.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    /*// Check if app has access to Internet either using Wifi or Mobile
+    // Returns:
+    //  -true: has access to Internet (wifi or mobile)
+    //  -false: does not have access to Internet
+    public static boolean isInternetAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) App.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        int networkType = networkInfo.getType();
+
+        if (networkInfo != null && (networkType == ConnectivityManager.TYPE_WIFI) ||
+                (networkType == connectivityManager.TYPE_MOBILE)) {
+            return true;
+        }
+
+        return false;
+    }*/
 }

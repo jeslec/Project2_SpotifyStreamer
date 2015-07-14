@@ -1,6 +1,5 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.tasks;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
-import kaaes.spotify.webapi.android.models.Image;
 
 /**
  * Created by Jessy on 2015-07-13.
@@ -26,14 +24,11 @@ import kaaes.spotify.webapi.android.models.Image;
 public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
     private final String TAG = getClass().getSimpleName();
-    //private ProgressDialog mProgressDialog;
     private String mSearchTerm;
     SearchResultAdapter mAdapter;
-    private ProgressDialog mProgressDialog;
     private SearchResultFragment mSearchResultFragment;
 
     public SearchArtistTask(SearchResultAdapter adapter, SearchResultFragment fragment) {
-
         mAdapter = adapter;
         mSearchResultFragment = fragment;
     }
@@ -42,12 +37,10 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
     protected void onPreExecute() {
         super.onPreExecute();
         mSearchResultFragment.showProgressBar();
-
     }
 
     @Override
     protected void onPostExecute(ArtistsPager artistsPager) {
-
         super.onPostExecute(artistsPager);
 
         // The activity can be null if it is thrown out by Android while task is running!
@@ -56,6 +49,12 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
             mSearchResultFragment = null;
         }
 
+        // Code review fix: this happens when Internet connection if OFF: no artists are returned
+        if (artistsPager.artists == null) {
+            //mAdapter.clear();
+            //mAdapter.notifyDataSetChanged();
+            return;
+        }
 
         Utils.log(TAG, "OnPostExecute() - [Searched term: " + mSearchTerm + "]" +
                 " [Artists found count: " + artistsPager.artists.items.size() + "]");
@@ -71,24 +70,17 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
         for (int i=0; i<artistsPager.artists.items.size(); i++) {
             Artist artist = artistsPager.artists.items.get(i);
-            String imageUrl = new String("");
+            String imageUrl = "";
 
-            // If images are present, extract the Url and dimensions of the smallest one
-            // TODO: Optimize this part - Cut down on number of variables, etc.
+            // If images are present, extract the Url of the smallest one (last image in list)
             if (artist.images != null && !artist.images.isEmpty()) {
-                int imageCount = artist.images.size();
-                int lastImageIndex = imageCount - 1;
-                Image image = artist.images.get(lastImageIndex);
-                imageUrl = image.url;
-                int width = image.width;
-                int height = image.height;
+                imageUrl = artist.images.get(artist.images.size() - 1).url;
             }
 
             myArtistInfoList.add(new ArtistInfo(artist.id, artist.name, artist.popularity, imageUrl));
         }
 
-        // Sort artists suggestions from most popular to least popular
-        // In suggestions dropdown, most popular artists will appear at top
+        // Sort artists from most popular (displayed at top of list) to least popular (bottom)
         //http://stackoverflow.com/questions/9109890/android-java-how-to-sort-a-list-of-objects-by-a-certain-value-within-the-object#13821611
         Collections.sort(myArtistInfoList, new Comparator<ArtistInfo>() {
             @Override
@@ -114,12 +106,9 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
     @Override
     protected ArtistsPager doInBackground(String... params) {
-
+        ArtistsPager artistsPager = new ArtistsPager();
         mSearchTerm = params[0];
-
-        ArtistsPager artistsPager = Spotify.searchArtists(mSearchTerm);
-
-        return artistsPager;
+        return Spotify.searchArtists(mSearchTerm);
     }
 }
 

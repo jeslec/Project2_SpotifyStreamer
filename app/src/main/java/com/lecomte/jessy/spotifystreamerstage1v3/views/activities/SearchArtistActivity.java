@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
 public class SearchArtistActivity extends AppCompatActivity implements
@@ -91,15 +93,19 @@ public class SearchArtistActivity extends AppCompatActivity implements
                 return;
             }
 
-            //new SearchArtistAsyncTask().execute(query + "*");
             // Get the search results fragment
             SearchResultFragment searchResultFragment = (SearchResultFragment)
                     getSupportFragmentManager().findFragmentById(FRAGMENT_CONTAINER_ARRAY[0]);
 
             if (searchResultFragment != null) {
                 // Send the query so fragment can download results from Spotify and display them
-                searchResultFragment.updateSearchResult(query);
-                mPreviousQuery = query;
+                if (Utils.isInternetAvailable()) {
+                    searchResultFragment.updateSearchResult(query + "*");
+                    mPreviousQuery = query;
+                }
+                else {
+                    Utils.showToast(R.string.no_internet);
+                }
             }
         }
     }
@@ -146,12 +152,4 @@ public class SearchArtistActivity extends AppCompatActivity implements
         // Save last query string
         outState.putString("PreviousQueryString", mPreviousQuery);
     }
-
-    /*@Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        // Restore last query string
-        mPreviousQuery = savedInstanceState.getString("PreviousQueryString");
-    }*/
 }
