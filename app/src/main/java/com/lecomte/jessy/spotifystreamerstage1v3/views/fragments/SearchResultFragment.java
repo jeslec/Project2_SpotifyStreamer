@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
@@ -90,6 +91,11 @@ public class SearchResultFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+
+        if (!Utils.isInternetAvailable()) {
+            Utils.showToast(R.string.no_internet_no_tracks);
+            return;
+        }
 
         // Get data associated with the selected item
         ArtistInfo artistInfo = (ArtistInfo)getListAdapter().getItem(position);

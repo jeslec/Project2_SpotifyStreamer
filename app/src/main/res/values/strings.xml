@@ -18,7 +18,7 @@
     <string name="artist_popularity">[Popularity: %1$s%%]</string>
 
     <!-- Toast message when Internet is disabled -->
-    <string name="no_internet">No internet connection, search disabled</string>
+    <string name="no_internet_no_search">No internet connection, search disabled</string>
 
     <!-- Top tracks related messages -->
 
@@ -34,5 +34,8 @@
     <!-- Empty top tracks list message (when an artist has no top tracks) -->
     <string name="fragment_top_tracks_empty_list">This artist has no top tracks, please go back to
         the previous screen and select another artist&#8230;</string>
+
+    <!-- Toast message when Internet is disabled -->
+    <string name="no_internet_no_tracks">No internet connection, can\'t get tracks</string>
 
 </resources>

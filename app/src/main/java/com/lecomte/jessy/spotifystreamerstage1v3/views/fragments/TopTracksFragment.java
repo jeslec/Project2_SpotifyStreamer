@@ -61,9 +61,13 @@ public class TopTracksFragment extends ListFragment {
 
         if (!mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
-            // TODO: Check if artist Id is null or empty before querying Spotify server
-            new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
-            mPreviousArtistId = mArtistId;
+            if (Utils.isInternetAvailable()) {
+                new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
+                mPreviousArtistId = mArtistId;
+            }
+            else {
+                Utils.showToast(R.string.no_internet_no_tracks);
+            }
         }
     }
 

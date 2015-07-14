@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
 
@@ -104,7 +103,7 @@ public class SearchArtistActivity extends AppCompatActivity implements
                     mPreviousQuery = query;
                 }
                 else {
-                    Utils.showToast(R.string.no_internet);
+                    Utils.showToast(R.string.no_internet_no_search);
                 }
             }
         }
