@@ -82,8 +82,6 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
                 imageUrl = image.url;
                 int width = image.width;
                 int height = image.height;
-
-                //Utils.log(TAG, String.format("Artist[%2d]: %3d x %3d", i, width, height));
             }
 
             myArtistInfoList.add(new ArtistInfo(artist.id, artist.name, artist.popularity, imageUrl));
@@ -105,8 +103,6 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
                 return 0;
             }
         });
-
-        //Utils.log(TAG, "FetchArtistsTask.onPostExecute() - Done sorting artists list");
 
         // Send the list of artists to the activity so it can update its fragments
         mAdapter.clear();

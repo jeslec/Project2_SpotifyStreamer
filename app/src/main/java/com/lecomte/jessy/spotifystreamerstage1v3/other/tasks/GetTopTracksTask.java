@@ -99,8 +99,6 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
                 int width = albumImage.width;
                 int height = albumImage.height;
 
-                //Utils.log(TAG, String.format("Track[%2d]: %3d x %3d", i, width, height));
-
                 myTrackList.add(new TrackInfo(track.id, track.name, track.album.name,
                         albumImageUrl, track.popularity));
             }
