@@ -29,8 +29,6 @@ public class SearchResultFragment extends ListFragment {
 
     private final String TAG = getClass().getSimpleName();
     SearchResultAdapter mSearchResultAdapter;
-    /*List<ArtistInfo> mArtistInfoList = new ArrayList<ArtistInfo>();
-    List<SpotifyCommand> mSpotifyCommands = new LinkedList<SpotifyCommand>();*/
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,16 +87,6 @@ public class SearchResultFragment extends ListFragment {
         // TODO: Change name of layout to R.layout.fragment_search_result
         View v = inflater.inflate(R.layout.fragment_search_result, container, false);
 
-        // TODO: Try to add the header separator and match its color with the rest of separators
-        //ListView resultsList = (ListView)v.findViewById(android.R.id.list);
-        //resultsList.addFooterView(new View(getActivity()), null, true);
-
-       /* View headerSeparator = new View(getActivity());
-        headerSeparator.setBackgroundColor(Color.YELLOW);
-        headerSeparator.setAlpha(1.0f);
-        resultsList.addHeaderView(headerSeparator, null, true);*/
-        //resultsList.addHeaderView(new View(getActivity()), null, true);
-
         return v;
     }
 
@@ -153,22 +141,13 @@ public class SearchResultFragment extends ListFragment {
     }
 
     public void showProgressBar() {
-
-        /*TextView resultView = (TextView)getActivity().findViewById(R.id.textUrlContent);
-        resultView.setVisibility(View.GONE);*/
-
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.SearchResultFragment_ProgressBar);
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
-
     }
 
     public void hideProgressBar() {
-
-        /*TextView resultView = (TextView)getActivity().findViewById(R.id.textUrlContent);
-        resultView.setVisibility(View.VISIBLE);*/
-
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.SearchResultFragment_ProgressBar);
         progress.setVisibility(View.GONE);

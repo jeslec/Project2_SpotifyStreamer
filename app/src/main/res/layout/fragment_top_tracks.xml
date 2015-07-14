@@ -11,4 +11,12 @@
         style="@style/EmptyListViewMessage"
         android:text="@string/fragment_top_tracks_empty_list"/>
 
+    <ProgressBar
+        android:id="@+id/TopTracksFragment_ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
 </RelativeLayout>

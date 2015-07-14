@@ -8,6 +8,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,9 +35,18 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
     private final String TAG = getClass().getSimpleName();
     private TopTracksAdapter mAdapter;
+    private TopTracksFragment mTopTracksFragment;
 
-    public GetTopTracksTask(TopTracksAdapter adapter) {
+    public GetTopTracksTask(TopTracksAdapter adapter, TopTracksFragment fragment) {
+
         mAdapter = adapter;
+        mTopTracksFragment = fragment;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mTopTracksFragment.showProgressBar();
     }
 
     @Override
@@ -57,6 +67,14 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
     @Override
     protected void onPostExecute(Tracks top10Tracks) {
 
+        super.onPostExecute(top10Tracks);
+
+        // The activity can be null if it is thrown out by Android while task is running!
+        if (mTopTracksFragment != null && mTopTracksFragment.getActivity() != null) {
+            mTopTracksFragment.hideProgressBar();
+            mTopTracksFragment = null;
+        }
+        
         Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - Tracks returned from Spotify: " +
                 top10Tracks.tracks.size());
 

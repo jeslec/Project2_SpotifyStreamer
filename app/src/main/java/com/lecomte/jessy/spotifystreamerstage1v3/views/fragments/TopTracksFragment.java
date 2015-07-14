@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
@@ -51,14 +52,26 @@ public class TopTracksFragment extends ListFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
+        /*if (!mArtistId.equals(mPreviousArtistId)) {
+            // Get top tracks of this artist
+            // TODO: Check if artist Id is null or empty before querying Spotify server
+            new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
+            mPreviousArtistId = mArtistId;
+        }*/
+
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if (!mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
             // TODO: Check if artist Id is null or empty before querying Spotify server
-            new GetTopTracksTask(mTopTracksAdapter).execute(mArtistId);
+            new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
             mPreviousArtistId = mArtistId;
         }
-
-        return v;
     }
 
     @Override
@@ -67,6 +80,19 @@ public class TopTracksFragment extends ListFragment {
         String msg = getResources().getString(R.string.track_playing, trackInfo.getTrackName(),
                 trackInfo.getAlbumName());
         Utils.showToast(msg);
+    }
+
+    public void showProgressBar() {
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.TopTracksFragment_ProgressBar);
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(true);
+    }
+
+    public void hideProgressBar() {
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.TopTracksFragment_ProgressBar);
+        progress.setVisibility(View.GONE);
     }
 }
 
