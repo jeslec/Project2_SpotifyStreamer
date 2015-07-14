@@ -52,13 +52,6 @@ public class TopTracksFragment extends ListFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
-        /*if (!mArtistId.equals(mPreviousArtistId)) {
-            // Get top tracks of this artist
-            // TODO: Check if artist Id is null or empty before querying Spotify server
-            new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
-            mPreviousArtistId = mArtistId;
-        }*/
-
         return v;
     }
 
@@ -82,6 +75,9 @@ public class TopTracksFragment extends ListFragment {
         Utils.showToast(msg);
     }
 
+    // Making the ProgressBar work...
+    // Creating 2 methods in fragment and passing fragment to AsyncTask idea was obtained here:
+    //http://www.mobiledeveloperguide.com/android/using-asynctask-and-fragments.html
     public void showProgressBar() {
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.TopTracksFragment_ProgressBar);
