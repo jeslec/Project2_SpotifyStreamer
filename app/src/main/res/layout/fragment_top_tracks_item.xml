@@ -21,24 +21,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/TopTracksFragment_ListViewItem_TrackName"
-            android:paddingLeft="12dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:gravity="center_vertical"
-            android:textColor="@android:color/white"/>
+            style="@style/ListItemTextViewHeading1"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/TopTracksFragment_ListViewItem_AlbumName"
-            android:paddingLeft="12dp"
-            android:textStyle="normal"
-            android:textSize="11sp"
-            android:gravity="center_vertical"
-            android:textColor="@android:color/white"/>
+            style="@style/ListItemTextViewHeading2"/>
 
     </LinearLayout>
 
