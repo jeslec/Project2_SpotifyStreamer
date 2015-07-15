@@ -68,6 +68,7 @@ public class TopTracksFragment extends ListFragment {
         ActionBar actionBar = mListener.getTheActionBar();
         actionBar.setSubtitle(mArtistName);
 
+        // Use action bar arrow as navigation button
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         return v;
