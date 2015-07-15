@@ -4,5 +4,6 @@
 
     <!-- Action bar -->
     <color name="action_bar_background">#ff0000</color>
-    <color name="action_bar_text">#00ff00</color>
+    <color name="action_bar_title">#00ff00</color>
+    <color name="action_bar_subtitle">#0000ff</color>
 </resources>
