@@ -71,7 +71,6 @@ public class SearchResultFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Determine if this should be done here (activity) or in fragment
         // Set up the adapter to display search results sent to us by search fragment
         mSearchResultAdapter = new SearchResultAdapter(getActivity());
         setListAdapter(mSearchResultAdapter);
@@ -134,7 +133,6 @@ public class SearchResultFragment extends ListFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 
