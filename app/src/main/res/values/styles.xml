@@ -1,30 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+
         <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
     </style>
 
-    <!--<style name="MyActionBar" parent="android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        ...
-        <item name="android:subtitleTextStyle">@style/MyActionBar.TitleTextStyle</item>
-        &lt;!&ndash; Support library compatibility &ndash;&gt;
-        <item name="subtitleTextStyle">@style/MyActionBar.TitleTextStyle</item>
-    </style>-->
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+           parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/action_bar_background</item>
 
-    <!-- ActionBar title text -->
-    <!--<style name="styleActionBarTitleText"
-           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/actionbar_title_text</item>
-        &lt;!&ndash; The textColor property is backward compatible with the Support Library &ndash;&gt;
-    </style>-->
-
-    <!-- ActionBar subtitle text -->
-    <!--<style name="styleActionBarSubTitleText"
-           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">#ff0000</item>
-        &lt;!&ndash; The textColor property is backward compatible with the Support Library &ndash;&gt;
-    </style>-->
+        <!-- Support library compatibility -->
+        <item name="background">@color/action_bar_background</item>
+    </style>
     
     <style name="EmptyListViewMessage">
         <item name="android:layout_width">match_parent</item>
