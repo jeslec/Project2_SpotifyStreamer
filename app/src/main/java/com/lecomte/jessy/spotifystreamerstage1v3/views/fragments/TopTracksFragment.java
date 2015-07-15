@@ -1,8 +1,11 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +29,10 @@ public class TopTracksFragment extends ListFragment {
     private final String TAG = getClass().getSimpleName();
     private ArrayList<TrackInfo> mTopTracks;
     private String mArtistId;
+    private String mArtistName;
     private String mPreviousArtistId;
     private TopTracksAdapter mTopTracksAdapter;
+    private OnFragmentInteractionListener mListener;
 
     public TopTracksFragment() {
 
@@ -39,7 +44,9 @@ public class TopTracksFragment extends ListFragment {
         setRetainInstance(true);
 
         mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
-        Utils.log(TAG, "TracksFragment.onCreate() - Received from SearchFragment, artistId: " + mArtistId);
+        mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
+        Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
+                + mArtistId + "] " + "[artistName: " + mArtistName + "]");
 
         // Set up the adapter to display the top tracks for an artist
         mTopTracksAdapter = new TopTracksAdapter(getActivity());
@@ -51,6 +58,9 @@ public class TopTracksFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_top_tracks, container, false);
+
+        // Put artist name under the action bar title
+        mListener.getTheActionBar().setSubtitle(mArtistName);
 
         return v;
     }
@@ -93,6 +103,37 @@ public class TopTracksFragment extends ListFragment {
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.TopTracksFragment_ProgressBar);
         progress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        public ActionBar getTheActionBar();
     }
 }
 

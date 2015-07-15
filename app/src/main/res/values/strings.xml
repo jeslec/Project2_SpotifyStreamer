@@ -38,4 +38,7 @@
     <!-- Toast message when Internet is disabled -->
     <string name="no_internet_no_tracks">No internet connection, can\'t get tracks</string>
 
+    <!-- Artist name for which the tracks are being show in top tracks view -->
+    <string name="top_tracks_action_bar_subtitle">%1$s</string>
+
 </resources>

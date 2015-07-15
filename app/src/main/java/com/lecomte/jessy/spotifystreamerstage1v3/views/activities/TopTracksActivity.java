@@ -3,15 +3,24 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
-public class TopTracksActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ARTIST_ID = "com.lecomte.jessy.spotifystreamerstage1v3.ArtistId";
+public class TopTracksActivity extends AppCompatActivity implements
+        TopTracksFragment.OnFragmentInteractionListener {
+
+    public static final String EXTRA_ARTIST_ID =
+            "com.lecomte.jessy.spotifystreamerstage1v3.ArtistId";
+    public static final String EXTRA_ARTIST_NAME =
+            "com.lecomte.jessy.spotifystreamerstage1v3.ArtistName";
+
+    private ActionBar mActionBar;
 
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
@@ -28,7 +37,12 @@ public class TopTracksActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TEST: trying to get an action bar!!!
+        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+
+        mActionBar = getSupportActionBar();
+
         setContentView(ACTIVITY_LAYOUT);
 
         FragmentManager fm = getSupportFragmentManager();
@@ -60,7 +74,7 @@ public class TopTracksActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
+        getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
         return true;
     }
 
@@ -77,6 +91,11 @@ public class TopTracksActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ActionBar getTheActionBar() {
+        return mActionBar;
     }
 }
 

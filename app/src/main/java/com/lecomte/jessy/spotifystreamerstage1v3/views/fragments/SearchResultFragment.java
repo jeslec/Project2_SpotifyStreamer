@@ -63,6 +63,7 @@ public class SearchResultFragment extends ListFragment {
     }
 
     public SearchResultFragment() {
+
     }
 
     @Override
@@ -103,6 +104,7 @@ public class SearchResultFragment extends ListFragment {
         // Send artist selection to new activity to display artist's top 10 songs
         Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
         tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artistInfo.getId());
+        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artistInfo.getName());
         startActivity(tracksIntent);
     }
 
@@ -125,7 +127,7 @@ public class SearchResultFragment extends ListFragment {
 
     public void updateSearchResult(String query){
 
-        new SearchArtistTask(mSearchResultAdapter, this).execute(query + "*");
+        new SearchArtistTask(mSearchResultAdapter, this).execute(query);
     }
 
 
