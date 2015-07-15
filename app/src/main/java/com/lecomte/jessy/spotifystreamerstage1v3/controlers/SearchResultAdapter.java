@@ -45,10 +45,8 @@ public class SearchResultAdapter extends ArrayAdapter<ArtistInfo> {
         TextView popularityTextView = (TextView)convertView
                 .findViewById(R.id.SearchResultFragment_ListViewItem_ArtistPopularity);
 
-        String popularity = App.getRes().getString(R.string.artist_popularity,
-                artistInfo.getPopularity());
-        // TODO: Find how to add % directly in strings.xml file
-        popularityTextView.setText(popularity);
+        popularityTextView.setText(App.getRes().getString(R.string.artist_popularity,
+                artistInfo.getPopularity()));
 
         // Artist image
         ImageView artistImageView = (ImageView)convertView

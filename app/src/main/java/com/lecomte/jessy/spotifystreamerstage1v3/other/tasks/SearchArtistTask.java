@@ -51,8 +51,6 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
         // Code review fix: this happens when Internet connection if OFF: no artists are returned
         if (artistsPager.artists == null) {
-            //mAdapter.clear();
-            //mAdapter.notifyDataSetChanged();
             return;
         }
 

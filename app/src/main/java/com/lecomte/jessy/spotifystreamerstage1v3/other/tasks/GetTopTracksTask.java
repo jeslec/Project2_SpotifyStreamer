@@ -32,13 +32,11 @@ import retrofit.RetrofitError;
  * @return .
  */
 public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
-
     private final String TAG = getClass().getSimpleName();
     private TopTracksAdapter mAdapter;
     private TopTracksFragment mTopTracksFragment;
 
     public GetTopTracksTask(TopTracksAdapter adapter, TopTracksFragment fragment) {
-
         mAdapter = adapter;
         mTopTracksFragment = fragment;
     }
@@ -92,13 +90,7 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
             // If images are present, extract the Url and dimensions of the smallest one
             if (track.album.images != null && !track.album.images.isEmpty()) {
-                int imageCount = track.album.images.size();
-                int lastImageIndex = imageCount - 1;
-                Image albumImage = track.album.images.get(lastImageIndex);
-                String albumImageUrl = albumImage.url;
-                int width = albumImage.width;
-                int height = albumImage.height;
-
+                String albumImageUrl = track.album.images.get(track.album.images.size() - 1).url;
                 myTrackList.add(new TrackInfo(track.id, track.name, track.album.name,
                         albumImageUrl, track.popularity));
             }
