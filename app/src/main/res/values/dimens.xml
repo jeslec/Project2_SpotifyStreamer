@@ -6,4 +6,27 @@
     <!-- Offset settings used by all toasts -->
     <dimen name="toast_offset_x">0dp</dimen>
     <dimen name="toast_offset_y">0dp</dimen>
+
+    <!-- Size of the action bar title -->
+    <dimen name="action_bar_title_size">22sp</dimen>/>
+
+    <!-- Size of the action bar subtitle -->
+    <dimen name="action_bar_subtitle_size">16sp</dimen>/>
+
+    <!-- Size of the list view text message when list is empty -->
+    <dimen name="empty_listview_textsize">22sp</dimen>
+
+    <!-- Padding on the left side of list view items -->
+    <dimen name="listview_item_padding_left">12dp</dimen>
+
+    <!-- Size of the title of each list item -->
+    <dimen name="listview_item_title_textsize">20sp</dimen>
+
+    <!-- Size of the subtitle of each list item -->
+    <dimen name="listview_item_subtitle_textsize">13sp</dimen>
+
+    <!-- Padding for the horizontal layout of each listview item -->
+    <dimen name="listview_item_layout_padding_left">10dp</dimen>
+    <dimen name="listview_item_layout_padding_bottom">10dp</dimen>
+    <dimen name="listview_item_layout_padding_top">10dp</dimen>
 </resources>

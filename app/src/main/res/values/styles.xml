@@ -28,13 +28,14 @@
     <!-- ActionBar title text -->
     <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/action_bar_title</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/action_bar_title_size</item>
+        <item name="android:textStyle">bold</item>
         <!-- The textColor property is backward compatible with the Support Library -->
     </style>
 
     <style name="MyActionBarSubTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/action_bar_subtitle</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/action_bar_subtitle_size</item>
     </style>
     
     <style name="EmptyListViewMessage">
@@ -43,7 +44,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center_horizontal|top</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">@dimen/empty_listview_textsize</item>
         <item name="android:layout_marginTop">50dp</item>
     </style>
 
@@ -65,19 +66,19 @@
     <style name="ListItemTextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingLeft">@dimen/listview_item_padding_left</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="ListItemTextView.Heading1">
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/listview_item_title_textsize</item>
     </style>
 
     <style name="ListItemTextView.Heading2">
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">@dimen/listview_item_subtitle_textsize</item>
     </style>
 
     <style name="ListItemHorizontalLinearLayout">
@@ -86,9 +87,9 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">@android:color/black</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingLeft">@dimen/listview_item_layout_padding_left</item>
+        <item name="android:paddingBottom">@dimen/listview_item_layout_padding_bottom</item>
+        <item name="android:paddingTop">@dimen/listview_item_layout_padding_top</item>
     </style>
     
 </resources>

@@ -1,0 +1,8 @@
+<resources>
+
+    <!-- Size of the action bar title: smaller than for portrait since action bar less high -->
+    <dimen name="action_bar_title_size">18sp</dimen>/>
+
+    <!-- Size of the action bar subtitle: smaller than for portrait since action bar less high -->
+    <dimen name="action_bar_subtitle_size">12sp</dimen>/>
+</resources>
