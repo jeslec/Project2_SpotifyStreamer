@@ -4,6 +4,27 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
+
+    <!--<style name="MyActionBar" parent="android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        ...
+        <item name="android:subtitleTextStyle">@style/MyActionBar.TitleTextStyle</item>
+        &lt;!&ndash; Support library compatibility &ndash;&gt;
+        <item name="subtitleTextStyle">@style/MyActionBar.TitleTextStyle</item>
+    </style>-->
+
+    <!-- ActionBar title text -->
+    <!--<style name="styleActionBarTitleText"
+           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/actionbar_title_text</item>
+        &lt;!&ndash; The textColor property is backward compatible with the Support Library &ndash;&gt;
+    </style>-->
+
+    <!-- ActionBar subtitle text -->
+    <!--<style name="styleActionBarSubTitleText"
+           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">#ff0000</item>
+        &lt;!&ndash; The textColor property is backward compatible with the Support Library &ndash;&gt;
+    </style>-->
     
     <style name="EmptyListViewMessage">
         <item name="android:layout_width">match_parent</item>

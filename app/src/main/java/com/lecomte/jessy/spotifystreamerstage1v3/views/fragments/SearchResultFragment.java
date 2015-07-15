@@ -1,9 +1,7 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,13 +15,9 @@ import android.widget.ProgressBar;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
-
-import java.util.List;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -126,10 +120,8 @@ public class SearchResultFragment extends ListFragment {
     }
 
     public void updateSearchResult(String query){
-
         new SearchArtistTask(mSearchResultAdapter, this).execute(query);
     }
-
 
     /**
      * This interface must be implemented by activities that contain this

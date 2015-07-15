@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -43,6 +45,9 @@ public class TopTracksFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        // Required to get action bar back button to do something useful (go back to prev view)
+        setHasOptionsMenu(true);
+
         mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
         mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
         Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
@@ -60,7 +65,10 @@ public class TopTracksFragment extends ListFragment {
         View v = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
         // Put artist name under the action bar title
-        mListener.getTheActionBar().setSubtitle(mArtistName);
+        ActionBar actionBar = mListener.getTheActionBar();
+        actionBar.setSubtitle(mArtistName);
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         return v;
     }
@@ -134,6 +142,23 @@ public class TopTracksFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         public ActionBar getTheActionBar();
+    }
+
+    // Based on book Big Nerd Ranch Android: p.274-275
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // The left-pointing arrow located to the left of the action bar title
+            case android.R.id.home:
+                // This activity's parent must be specified in meta-data section of manifest
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    // Go back to the previous (parent) view
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 

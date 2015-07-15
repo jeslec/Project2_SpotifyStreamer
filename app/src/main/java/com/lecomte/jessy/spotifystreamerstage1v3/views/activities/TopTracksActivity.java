@@ -37,10 +37,9 @@ public class TopTracksActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TEST: trying to get an action bar!!!
-        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
+        // The top tracks fragment will use this to set the action bar subtitle
         mActionBar = getSupportActionBar();
 
         setContentView(ACTIVITY_LAYOUT);
@@ -71,7 +70,7 @@ public class TopTracksActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
@@ -91,7 +90,7 @@ public class TopTracksActivity extends AppCompatActivity implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public ActionBar getTheActionBar() {

@@ -29,7 +29,9 @@
         </activity>
         <activity
             android:name=".views.activities.TopTracksActivity"
-            android:label="@string/title_activity_top_tracks" >
+            android:label="@string/title_activity_top_tracks">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value=".views.activities.SearchArtistActivity"/>
         </activity>
     </application>
 
