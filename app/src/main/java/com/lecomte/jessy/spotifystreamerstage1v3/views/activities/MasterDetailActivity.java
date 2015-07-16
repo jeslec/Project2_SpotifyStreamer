@@ -8,12 +8,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
@@ -151,8 +153,30 @@ public class MasterDetailActivity extends AppCompatActivity implements
         return mActionBar;
     }
 
-    public void onArtistSelected(String artistId) {
+    public void onArtistSelected(ArtistInfo artist) {
+
         // Get details view fragment (in our case this is TopTracks)
+        if (findViewById(R.id.detail_fragment_container) == null) {
+            // Send artist selection to new activity to display artist's top 10 songs
+            Intent tracksIntent = new Intent(this, TopTracksActivity.class);
+            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
+            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
+            startActivity(tracksIntent);
+        } else {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                Fragment oldTopTracks = fm.findFragmentById(R.id.detail_fragment_container);
+                Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
+                        artist.getName());
+
+                if (oldTopTracks != null) {
+                    ft.remove(oldTopTracks);
+                }
+
+                ft.add(R.id.detail_fragment_container, newTopTracks);
+                ft.commit();
+        }
 
         // Create a new fragment and send it the artistId
 

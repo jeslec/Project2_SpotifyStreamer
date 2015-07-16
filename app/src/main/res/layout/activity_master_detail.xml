@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:showDividers="middle">
 
 <!-- Left side container -->
 <FrameLayout
     android:id="@+id/master_fragment_container"
     android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:layout_weight="0.5"
+    android:layout_weight="1"
     android:background="#ff0000"/>
 
 <!-- Right side container -->
@@ -17,7 +18,7 @@
     android:id="@+id/detail_fragment_container"
     android:layout_width="0dp"
     android:layout_height="match_parent"
-    android:layout_weight="0.5"
+    android:layout_weight="3"
     android:background="#0000ff"/>
 
 </LinearLayout>

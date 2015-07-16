@@ -25,15 +25,16 @@ public class ArtistSearchFragment extends ListFragment {
     private final String TAG = getClass().getSimpleName();
     SearchResultAdapter mSearchResultAdapter;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+   /* // Data required by this fragment upon creation
+    private static final String ARG_ARTIST_ID =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistId";
+    private static final String ARG_ARTIST_NAME =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistName";
+*/
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    /*private String mArtistId;
+    private String mArtistName;
+*/
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -47,10 +48,10 @@ public class ArtistSearchFragment extends ListFragment {
     // TODO: Rename and change types and number of parameters
     public static ArtistSearchFragment newInstance(String param1, String param2) {
         ArtistSearchFragment fragment = new ArtistSearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        /*Bundle args = new Bundle();
+        args.putString(ARG_ARTIST_ID, param1);
+        args.putString(ARG_ARTIST_NAME, param2);
+        fragment.setArguments(args);*/
         return fragment;
     }
 
@@ -64,10 +65,10 @@ public class ArtistSearchFragment extends ListFragment {
 
         setRetainInstance(true);
 
-        if (getArguments() != null) {
+        /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        }*/
 
         // Set up the adapter to display search results sent to us by search fragment
         mSearchResultAdapter = new SearchResultAdapter(getActivity());
@@ -91,6 +92,8 @@ public class ArtistSearchFragment extends ListFragment {
 
         // Get data associated with the selected item
         ArtistInfo artistInfo = (ArtistInfo)getListAdapter().getItem(position);
+
+        mListener.onArtistSelected(artistInfo);
 
         // Send artist selection to new activity to display artist's top 10 songs
        /* Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
@@ -133,7 +136,7 @@ public class ArtistSearchFragment extends ListFragment {
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
 
-        public void onArtistSelected(String artistId);
+        public void onArtistSelected(ArtistInfo artist);
     }
 
     public void showProgressBar() {

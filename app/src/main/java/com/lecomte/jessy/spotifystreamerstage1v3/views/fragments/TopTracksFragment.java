@@ -36,8 +36,32 @@ public class TopTracksFragment extends ListFragment {
     private TopTracksAdapter mTopTracksAdapter;
     private OnFragmentInteractionListener mListener;
 
+    // Data required by this fragment upon creation
+    private static final String ARG_ARTIST_ID =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistId";
+    private static final String ARG_ARTIST_NAME =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistName";
+
     public TopTracksFragment() {
 
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment SearchFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ArtistSearchFragment newInstance(String artistId, String artistName) {
+        ArtistSearchFragment fragment = new ArtistSearchFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ARTIST_ID, artistId);
+        args.putString(ARG_ARTIST_NAME, artistName);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -47,6 +71,12 @@ public class TopTracksFragment extends ListFragment {
 
         // Required to get action bar back button to do something useful (go back to prev view)
         setHasOptionsMenu(true);
+
+        // Get params sent to this fragment upon creation, namely the artist id and name
+         if (getArguments() != null) {
+            mArtistId = getArguments().getString(ARG_ARTIST_ID);
+            mArtistName = getArguments().getString(ARG_ARTIST_NAME);
+        }
 
         mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
         mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
