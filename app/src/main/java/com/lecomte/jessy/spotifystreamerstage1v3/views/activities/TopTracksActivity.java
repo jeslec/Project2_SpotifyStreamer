@@ -27,7 +27,7 @@ public class TopTracksActivity extends AppCompatActivity implements
 
     // 2- This is R.id.<name of fragment container> from the activity file (set in step 1)
     private static final int[] FRAGMENT_CONTAINER_ARRAY = {
-            R.id.detail_fragment_container};
+            R.id.toptracks_fragment_container};
 
     // 3- Name of fragment file (<package_name>.<class name without .java>
     private static final String[] CLASS_NAME_ARRAY = {

@@ -60,23 +60,22 @@ public class MainActivity extends AppCompatActivity implements
         handleIntent(getIntent());
 
         // This fragment must be present in all layouts
-        AddFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
+        addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
 
         if (App.isTwoPaneLayout()) {
             Utils.showToast("2-pane layout");
 
             // This fragment is present only in 2-pan layouts
-            AddFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
+            addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
         }
     }
 
-    private void AddFragmentToLayout(int fragmentContainerId, String className) {
+    private void addFragmentToLayout(int fragmentContainerId, String className) {
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(fragmentContainerId);
 
         if (fragment == null) {
-
             try {
                 Class<?> fragmentClass = Class.forName(className);
                 fragment = (Fragment) fragmentClass.newInstance();
@@ -164,18 +163,16 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onArtistSelected(ArtistInfo artist) {
 
+
         // Get details view fragment (in our case this is TopTracks)
-        if (findViewById(R.id.detail_fragment_container) == null) {
-            // Send artist selection to new activity to display artist's top 10 songs
-            Intent tracksIntent = new Intent(this, TopTracksActivity.class);
-            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
-            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
-            startActivity(tracksIntent);
-        } else {
+        //if (findViewById(R.id.toptracks_fragment_container) == null) {
+
+        // 2-pane layout
+        if (App.isTwoPaneLayout()) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
-            Fragment oldTopTracks = fm.findFragmentById(R.id.detail_fragment_container);
+            Fragment oldTopTracks = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[1]);
             Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
                     artist.getName());
 
@@ -183,8 +180,35 @@ public class MainActivity extends AppCompatActivity implements
                 ft.remove(oldTopTracks);
             }
 
-            ft.add(R.id.detail_fragment_container, newTopTracks);
+            ft.add(FRAGMENT_CONTAINER_ARRAY[1], newTopTracks);
             ft.commit();
+        }
+
+        // 1-pane layout
+        else {
+
+            if (findViewById(FRAGMENT_CONTAINER_ARRAY[1]) == null) {
+
+                // Send artist selection to new activity to display artist's top 10 songs
+                Intent tracksIntent = new Intent(this, TopTracksActivity.class);
+                tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
+                tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
+                startActivity(tracksIntent);
+            } else {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                Fragment oldTopTracks = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[1]);
+                Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
+                        artist.getName());
+
+                if (oldTopTracks != null) {
+                    ft.remove(oldTopTracks);
+                }
+
+                ft.add(FRAGMENT_CONTAINER_ARRAY[1], newTopTracks);
+                ft.commit();
+            }
         }
 
         // Create a new fragment and send it the artistId

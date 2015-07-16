@@ -55,8 +55,8 @@ public class TopTracksFragment extends ListFragment {
      * @return A new instance of fragment SearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArtistSearchFragment newInstance(String artistId, String artistName) {
-        ArtistSearchFragment fragment = new ArtistSearchFragment();
+    public static TopTracksFragment newInstance(String artistId, String artistName) {
+        TopTracksFragment fragment = new TopTracksFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ARTIST_ID, artistId);
         args.putString(ARG_ARTIST_NAME, artistName);
@@ -78,10 +78,12 @@ public class TopTracksFragment extends ListFragment {
             mArtistName = getArguments().getString(ARG_ARTIST_NAME);
         }
 
-        mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
-        mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
-        Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
-                + mArtistId + "] " + "[artistName: " + mArtistName + "]");
+        else {
+             mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
+             mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
+             Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
+                     + mArtistId + "] " + "[artistName: " + mArtistName + "]");
+         }
 
         // Set up the adapter to display the top tracks for an artist
         mTopTracksAdapter = new TopTracksAdapter(getActivity());
