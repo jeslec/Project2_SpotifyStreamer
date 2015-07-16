@@ -15,6 +15,7 @@ import android.content.res.Resources;
 public class App extends Application {
 
     private static Context mContext;
+    private static boolean mIsTwoPaneLayout;
 
     // Get the resources anywhere in my app
     public static Resources getRes() {
@@ -26,6 +27,21 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+
+        // Determine if the main activity has 1-pane or 2-pane layout
+        boolean twoPanes = false;
+
+        try {
+            twoPanes = getRes().getBoolean(R.bool.has_two_panes);
+        } catch (Resources.NotFoundException e) {
+            // An exception means there is no value in file so it's a 1-pane layout
+        }
+
+        mIsTwoPaneLayout = twoPanes;
+    }
+
+    public static boolean isTwoPaneLayout() {
+        return mIsTwoPaneLayout;
     }
 }
 

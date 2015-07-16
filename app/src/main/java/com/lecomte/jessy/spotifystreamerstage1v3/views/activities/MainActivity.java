@@ -14,15 +14,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
-public class MasterDetailActivity extends AppCompatActivity implements
+public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
-        TopTracksFragment.OnFragmentInteractionListener{
+        TopTracksFragment.OnFragmentInteractionListener {
 
     private String mPreviousQuery;
     private ActionBar mActionBar;
@@ -30,12 +31,12 @@ public class MasterDetailActivity extends AppCompatActivity implements
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
     // 1- This is R.layout.<file name of the layout hosting the fragment>
-    private static final int ACTIVITY_LAYOUT = R.layout.activity_master_detail;
+    private static final int ACTIVITY_LAYOUT = R.layout.activity_main;
 
     // 2- This is R.id.<name of fragment container> from the activity file (set in step 1)
     private static final int[] FRAGMENT_CONTAINER_ARRAY = {
-            R.id.master_fragment_container,
-            R.id.detail_fragment_container};
+            R.id.main_fragment_container1,
+            R.id.main_fragment_container2};
 
     // 3- Name of fragment file (<package_name>.<class name without .java>
     private static final String[] CLASS_NAME_ARRAY = {
@@ -49,7 +50,7 @@ public class MasterDetailActivity extends AppCompatActivity implements
         // Fragments will use this to modify (color, textsize, etc.) the action bar
         mActionBar = getSupportActionBar();
 
-        setContentView(R.layout.activity_master_detail);
+        setContentView(ACTIVITY_LAYOUT);
 
         // Restore last query string
         if (savedInstanceState != null) {
@@ -58,29 +59,38 @@ public class MasterDetailActivity extends AppCompatActivity implements
 
         handleIntent(getIntent());
 
+        // This fragment must be present in all layouts
+        AddFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
+
+        if (App.isTwoPaneLayout()) {
+            Utils.showToast("2-pane layout");
+
+            // This fragment is present only in 2-pan layouts
+            AddFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
+        }
+    }
+
+    private void AddFragmentToLayout(int fragmentContainerId, String className) {
+
         FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(fragmentContainerId);
 
-        for (int i=0; i<FRAGMENT_CONTAINER_ARRAY.length; i++) {
+        if (fragment == null) {
 
-            Fragment fragment = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[i]);
-
-            if (fragment == null) {
-
-                try {
-                    Class<?> fragmentClass = Class.forName(CLASS_NAME_ARRAY[i]);
-                    fragment = (Fragment) fragmentClass.newInstance();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                fm.beginTransaction()
-                        .add(FRAGMENT_CONTAINER_ARRAY[i], fragment)
-                        .commit();
+            try {
+                Class<?> fragmentClass = Class.forName(className);
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
+
+            fm.beginTransaction()
+                    .add(fragmentContainerId, fragment)
+                    .commit();
         }
     }
 
@@ -112,8 +122,7 @@ public class MasterDetailActivity extends AppCompatActivity implements
                 if (Utils.isInternetAvailable()) {
                     artistSearchFragment.updateSearchResult(query + "*");
                     mPreviousQuery = query;
-                }
-                else {
+                } else {
                     Utils.showToast(R.string.no_internet_no_search);
                 }
             }
@@ -163,19 +172,19 @@ public class MasterDetailActivity extends AppCompatActivity implements
             tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
             startActivity(tracksIntent);
         } else {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
 
-                Fragment oldTopTracks = fm.findFragmentById(R.id.detail_fragment_container);
-                Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
-                        artist.getName());
+            Fragment oldTopTracks = fm.findFragmentById(R.id.detail_fragment_container);
+            Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
+                    artist.getName());
 
-                if (oldTopTracks != null) {
-                    ft.remove(oldTopTracks);
-                }
+            if (oldTopTracks != null) {
+                ft.remove(oldTopTracks);
+            }
 
-                ft.add(R.id.detail_fragment_container, newTopTracks);
-                ft.commit();
+            ft.add(R.id.detail_fragment_container, newTopTracks);
+            ft.commit();
         }
 
         // Create a new fragment and send it the artistId
