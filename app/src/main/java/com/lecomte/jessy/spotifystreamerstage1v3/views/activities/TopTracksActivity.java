@@ -5,8 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
@@ -29,7 +27,7 @@ public class TopTracksActivity extends AppCompatActivity implements
 
     // 2- This is R.id.<name of fragment container> from the activity file (set in step 1)
     private static final int[] FRAGMENT_CONTAINER_ARRAY = {
-            R.id.top_tracks_fragment_container };
+            R.id.detail_fragment_container};
 
     // 3- Name of fragment file (<package_name>.<class name without .java>
     private static final String[] CLASS_NAME_ARRAY = {

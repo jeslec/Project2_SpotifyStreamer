@@ -7,7 +7,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Spotify;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,17 +26,17 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
     private final String TAG = getClass().getSimpleName();
     private String mSearchTerm;
     SearchResultAdapter mAdapter;
-    private SearchResultFragment mSearchResultFragment;
+    private ArtistSearchFragment mArtistSearchFragment;
 
-    public SearchArtistTask(SearchResultAdapter adapter, SearchResultFragment fragment) {
+    public SearchArtistTask(SearchResultAdapter adapter, ArtistSearchFragment fragment) {
         mAdapter = adapter;
-        mSearchResultFragment = fragment;
+        mArtistSearchFragment = fragment;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mSearchResultFragment.showProgressBar();
+        mArtistSearchFragment.showProgressBar();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
         super.onPostExecute(artistsPager);
 
         // The activity can be null if it is thrown out by Android while task is running!
-        if (mSearchResultFragment != null && mSearchResultFragment.getActivity() != null) {
-            mSearchResultFragment.hideProgressBar();
-            mSearchResultFragment = null;
+        if (mArtistSearchFragment != null && mArtistSearchFragment.getActivity() != null) {
+            mArtistSearchFragment.hideProgressBar();
+            mArtistSearchFragment = null;
         }
 
         // Code review fix: this happens when Internet connection if OFF: no artists are returned

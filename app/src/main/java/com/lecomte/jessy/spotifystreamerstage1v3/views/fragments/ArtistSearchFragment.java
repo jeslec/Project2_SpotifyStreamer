@@ -1,7 +1,6 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,12 +16,11 @@ import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 /**
  * Created by Jessy on 2015-06-23.
  */
-public class SearchResultFragment extends ListFragment {
+public class ArtistSearchFragment extends ListFragment {
 
     private final String TAG = getClass().getSimpleName();
     SearchResultAdapter mSearchResultAdapter;
@@ -47,8 +45,8 @@ public class SearchResultFragment extends ListFragment {
      * @return A new instance of fragment SearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SearchResultFragment newInstance(String param1, String param2) {
-        SearchResultFragment fragment = new SearchResultFragment();
+    public static ArtistSearchFragment newInstance(String param1, String param2) {
+        ArtistSearchFragment fragment = new ArtistSearchFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -56,7 +54,7 @@ public class SearchResultFragment extends ListFragment {
         return fragment;
     }
 
-    public SearchResultFragment() {
+    public ArtistSearchFragment() {
 
     }
 
@@ -95,10 +93,10 @@ public class SearchResultFragment extends ListFragment {
         ArtistInfo artistInfo = (ArtistInfo)getListAdapter().getItem(position);
 
         // Send artist selection to new activity to display artist's top 10 songs
-        Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
+       /* Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
         tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artistInfo.getId());
         tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artistInfo.getName());
-        startActivity(tracksIntent);
+        startActivity(tracksIntent);*/
     }
 
     @Override
@@ -108,7 +106,7 @@ public class SearchResultFragment extends ListFragment {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement " + TAG + ".OnFragmentInteractionListener");
         }
     }
 
@@ -134,6 +132,8 @@ public class SearchResultFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
+
+        public void onArtistSelected(String artistId);
     }
 
     public void showProgressBar() {

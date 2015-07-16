@@ -78,7 +78,7 @@ public class TopTracksFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (!mArtistId.equals(mPreviousArtistId)) {
+        if (mArtistId != null && !mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
             if (Utils.isInternetAvailable()) {
                 new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
@@ -121,7 +121,7 @@ public class TopTracksFragment extends ListFragment {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement " + TAG + ".OnFragmentInteractionListener");
         }
     }
 

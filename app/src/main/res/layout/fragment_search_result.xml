@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.SearchResultFragment"
+                tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment"
                 style="@style/CustomFrameLayout">
 
     <!-- To change the divider color, we also need to set the divider height, see this link:
