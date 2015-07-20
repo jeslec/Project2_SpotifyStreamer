@@ -15,11 +15,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
  */
 public class NowPlayingFragment extends DialogFragment{
 
-    /*public static final String EXTRA_DATE =
-            "com.bignerdranch.android.criminalintent.date";*/
-
-    /*private Date mDate;*/
-
     // This is  how we send data to the fragment
     public static NowPlayingFragment newInstance() {
         Bundle args = new Bundle();

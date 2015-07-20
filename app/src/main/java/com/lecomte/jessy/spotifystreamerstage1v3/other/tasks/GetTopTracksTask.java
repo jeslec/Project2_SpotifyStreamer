@@ -85,9 +85,18 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
             // If images are present, extract the Url and dimensions of the smallest one
             if (track.album.images != null && !track.album.images.isEmpty()) {
-                String albumImageUrl = track.album.images.get(track.album.images.size() - 1).url;
-                myTrackList.add(new TrackInfo(track.name, track.album.name, albumImageUrl,
-                        track.popularity, track.id, track.preview_url, track.duration_ms));
+                String bigImageUrl = "";
+                String smallImageUrl = track.album.images.get(track.album.images.size() - 1).url;
+
+                // Get the biggest image available
+                // TODO: Optimize to get the image closest in size to imageView where we intend to display this image
+                if (track.album.images.size() >= 2) {
+                    bigImageUrl = track.album.images.get(0).url;
+                }
+
+                myTrackList.add(new TrackInfo(track.name, track.album.name, smallImageUrl,
+                        bigImageUrl, track.popularity, track.id, track.preview_url,
+                        track.duration_ms));
             }
         }
 

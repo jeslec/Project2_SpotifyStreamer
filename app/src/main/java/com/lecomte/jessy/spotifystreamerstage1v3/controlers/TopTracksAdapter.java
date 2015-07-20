@@ -42,12 +42,12 @@ public class TopTracksAdapter extends ArrayAdapter<TrackInfo> {
         trackNameTextView.setText(trackInfo.getTrackName());
         albumNameTextView.setText(trackInfo.getAlbumName());
 
-        if (trackInfo.getAlbumImageUrl().isEmpty()) {
+        if (trackInfo.getAlbumSmallImageUrl().isEmpty()) {
             albumImageView.setImageResource(R.drawable.noimage);
         }
 
         else {
-            Picasso.with(mContext).load(trackInfo.getAlbumImageUrl()).into(albumImageView);
+            Picasso.with(mContext).load(trackInfo.getAlbumSmallImageUrl()).into(albumImageView);
         }
 
         return convertView;

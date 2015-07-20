@@ -10,21 +10,23 @@ public class TrackInfo {
     private String mId;
     private String mTrackName;
     private String mAlbumName;
-    private String mAlbumImageUrl;
+    private String mAlbumSmallImageUrl; // displayed in listView item
+    private String mAlbumBigImageUrl; // displayed in NowPlaying dialog
     private Integer mTrackPopularity;
     private String mTrackPreviewUrl;
     private long mTrackDuration; // in milliseconds
 
-    public TrackInfo(String trackName, String albumName, String albumImageUrl,
-                     Integer trackPopularity, String id, String trackPreviewUrl,
-                     long trackDuration) {
+    public TrackInfo(String trackName, String albumName, String albumSmallImageUrl,
+                     String albumBigImageUrl, Integer trackPopularity, String id,
+                     String trackPreviewUrl, long trackDuration) {
         mId = id;
         mTrackName = trackName;
         mAlbumName = albumName;
-        mAlbumImageUrl = albumImageUrl;
+        mAlbumSmallImageUrl = albumSmallImageUrl;
         mTrackPopularity = trackPopularity;
         mTrackPreviewUrl = trackPreviewUrl;
         mTrackDuration = trackDuration;
+        mAlbumBigImageUrl = albumBigImageUrl;
     }
 
     public String getId() {
@@ -39,8 +41,8 @@ public class TrackInfo {
         return mAlbumName;
     }
 
-    public String getAlbumImageUrl() {
-        return mAlbumImageUrl;
+    public String getAlbumSmallImageUrl() {
+        return mAlbumSmallImageUrl;
     }
 
     public Integer getTrackPopularity() {
@@ -53,6 +55,10 @@ public class TrackInfo {
 
     public long getTrackDuration() {
         return mTrackDuration;
+    }
+
+    public String getAlbumBigImageUrl() {
+        return mAlbumBigImageUrl;
     }
 
     @Override
@@ -74,9 +80,16 @@ public class TrackInfo {
             albumName = albumName.substring(0, maxCharsAlbum-3) + "...";
         }
 
+        // Convert track length from milliseconds to minutes:seconds
+        long seconds = mTrackDuration / 1000;
+        long minutes = seconds / 60;
+        long secondsLeft = seconds - (minutes * 60);
+
         return String.format("%2d", getTrackPopularity()) + "% " +
                 String.format("%1$-" + maxCharsTrack + "s", trackName) + " " +
                 String.format("%1$-" + maxCharsAlbum + "s", albumName) + " " +
-                getAlbumImageUrl() + " " + mTrackPreviewUrl + " " + mTrackDuration;
+                getAlbumSmallImageUrl() + " " + getAlbumBigImageUrl() + " " +
+                mTrackPreviewUrl + " " +
+                String.format("%2d:%2d", minutes, secondsLeft);
     }
 }
