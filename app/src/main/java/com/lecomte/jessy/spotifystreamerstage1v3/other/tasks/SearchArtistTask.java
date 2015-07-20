@@ -59,7 +59,7 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
 
         // If there is no search result, we can't display anything
         if (artistsPager.artists.items.isEmpty()) {
-            Utils.showToast(R.string.no_artist_found);
+            Utils.showToast(R.string.ArtistSearch_noArtistFound);
             Utils.log(TAG, "OnPostExecute() - no artist found");
         }
 

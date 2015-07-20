@@ -33,11 +33,11 @@ public class TopTracksAdapter extends ArrayAdapter<TrackInfo> {
 
         // Display the data in the widgets
         TextView trackNameTextView =
-                (TextView)convertView.findViewById(R.id.TopTracksFragment_ListViewItem_TrackName);
+                (TextView)convertView.findViewById(R.id.TopTracks_trackName);
         TextView albumNameTextView =
-                (TextView)convertView.findViewById(R.id.TopTracksFragment_ListViewItem_AlbumName);
+                (TextView)convertView.findViewById(R.id.TopTracks_albumName);
         ImageView albumImageView =
-                (ImageView)convertView.findViewById(R.id.TopTracksFragment_ListViewItem_AlbumImage);
+                (ImageView)convertView.findViewById(R.id.TopTracks_albumImage);
 
         trackNameTextView.setText(trackInfo.getTrackName());
         albumNameTextView.setText(trackInfo.getAlbumName());

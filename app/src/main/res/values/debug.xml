@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Set to true to see debug messages in Logcat -->
-    <bool name="show_debug_strings">false</bool>
+    <bool name="show_debug_strings">true</bool>
 
     <!-- Max number of characters for the artist name column in Logcat window (must be > 3) -->
     <integer name="artist_name_column_width">20</integer>

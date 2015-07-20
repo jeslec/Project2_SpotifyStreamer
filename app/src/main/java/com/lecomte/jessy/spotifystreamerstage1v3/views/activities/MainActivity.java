@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
                     artistSearchFragment.updateSearchResult(query + "*");
                     mPreviousQuery = query;
                 } else {
-                    Utils.showToast(R.string.no_internet_no_search);
+                    Utils.showToast(R.string.ArtistSearch_noInternet);
                 }
             }
         }

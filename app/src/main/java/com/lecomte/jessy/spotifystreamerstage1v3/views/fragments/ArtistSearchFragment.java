@@ -86,7 +86,7 @@ public class ArtistSearchFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         if (!Utils.isInternetAvailable()) {
-            Utils.showToast(R.string.no_internet_no_tracks);
+            Utils.showToast(R.string.TopTracks_noInternet);
             return;
         }
 
@@ -141,14 +141,14 @@ public class ArtistSearchFragment extends ListFragment {
 
     public void showProgressBar() {
         ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.SearchResultFragment_ProgressBar);
+                .findViewById(R.id.SearchResult_progressBar);
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
     }
 
     public void hideProgressBar() {
         ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.SearchResultFragment_ProgressBar);
+                .findViewById(R.id.SearchResult_progressBar);
         progress.setVisibility(View.GONE);
     }
 

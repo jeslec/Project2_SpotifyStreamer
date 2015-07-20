@@ -4,6 +4,7 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  */
 public class TopTracksFragment extends ListFragment {
 
+    private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
     private final String TAG = getClass().getSimpleName();
     private ArrayList<TrackInfo> mTopTracks;
     private String mArtistId;
@@ -117,17 +119,24 @@ public class TopTracksFragment extends ListFragment {
                 mPreviousArtistId = mArtistId;
             }
             else {
-                Utils.showToast(R.string.no_internet_no_tracks);
+                Utils.showToast(R.string.TopTracks_noInternet);
             }
         }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+
         TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
-        String msg = getResources().getString(R.string.track_playing, trackInfo.getTrackName(),
+        String msg = getResources().getString(R.string.TopTracks_trackPlaying, trackInfo.getTrackName(),
                 trackInfo.getAlbumName());
         Utils.showToast(msg);
+
+        // Show the media player
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        // TODO: Pass info of track to play to MediaPlayer
+        NowPlayingFragment dialog = NowPlayingFragment.newInstance();
+        dialog.show(fm, DIALOG_MEDIA_PLAYER);
     }
 
     // Making the ProgressBar work...
@@ -135,14 +144,14 @@ public class TopTracksFragment extends ListFragment {
     //http://www.mobiledeveloperguide.com/android/using-asynctask-and-fragments.html
     public void showProgressBar() {
         ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.TopTracksFragment_ProgressBar);
+                .findViewById(R.id.TopTracks_progressBar);
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
     }
 
     public void hideProgressBar() {
         ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.TopTracksFragment_ProgressBar);
+                .findViewById(R.id.TopTracks_progressBar);
         progress.setVisibility(View.GONE);
     }
 

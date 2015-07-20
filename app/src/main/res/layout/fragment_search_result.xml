@@ -13,10 +13,10 @@
     <TextView
         android:id="@android:id/empty"
         style="@style/EmptyListViewMessage"
-        android:text="@string/fragment_search_result_empty_list"/>
+        android:text="@string/ArtistSearch_emptyList"/>
 
     <ProgressBar
-        android:id="@+id/SearchResultFragment_ProgressBar"
+        android:id="@+id/SearchResult_progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@android:style/Widget.ProgressBar"

@@ -6,7 +6,7 @@
     <com.lecomte.jessy.spotifystreamerstage1v3.views.widgets.RoundedImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:id="@+id/SearchResultFragment_ListViewItem_ArtistImage"/>
+        android:id="@+id/SearchResult_listViewItem_artistImage"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -15,11 +15,11 @@
         android:background="@android:color/black">
 
         <TextView
-            android:id="@+id/SearchResultFragment_ListViewItem_ArtistName"
+            android:id="@+id/SearchResult_listViewItem_artistName"
             style="@style/ListItemTextView.Heading1"/>
 
         <TextView
-            android:id="@+id/SearchResultFragment_ListViewItem_ArtistPopularity"
+            android:id="@+id/SearchResult_listViewItem_artistPopularity"
             style="@style/ListItemTextView.Heading2"/>
 
     </LinearLayout>

@@ -1,7 +1,6 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
@@ -17,12 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
-import retrofit.RetrofitError;
 
 /**
  * Search Spotify's server for a list of artists based on the provided artist's name
@@ -78,7 +73,7 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
         // No tracks found for this artist
         if (top10Tracks.tracks.isEmpty()) {
-            Utils.showToast(R.string.no_track_found);
+            Utils.showToast(R.string.TopTracks_noTrackFound);
             Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - no tracks found");
         }
 
@@ -91,8 +86,8 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
             // If images are present, extract the Url and dimensions of the smallest one
             if (track.album.images != null && !track.album.images.isEmpty()) {
                 String albumImageUrl = track.album.images.get(track.album.images.size() - 1).url;
-                myTrackList.add(new TrackInfo(track.id, track.name, track.album.name,
-                        albumImageUrl, track.popularity));
+                myTrackList.add(new TrackInfo(track.name, track.album.name, albumImageUrl,
+                        track.popularity, track.id, track.preview_url, track.duration_ms));
             }
         }
 

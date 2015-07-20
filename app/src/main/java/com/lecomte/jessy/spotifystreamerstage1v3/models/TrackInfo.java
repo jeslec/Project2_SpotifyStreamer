@@ -12,14 +12,19 @@ public class TrackInfo {
     private String mAlbumName;
     private String mAlbumImageUrl;
     private Integer mTrackPopularity;
+    private String mTrackPreviewUrl;
+    private long mTrackDuration; // in milliseconds
 
-    public TrackInfo(String id, String trackName, String albumName, String albumImageUrl,
-                     Integer trackPopularity) {
+    public TrackInfo(String trackName, String albumName, String albumImageUrl,
+                     Integer trackPopularity, String id, String trackPreviewUrl,
+                     long trackDuration) {
         mId = id;
         mTrackName = trackName;
         mAlbumName = albumName;
         mAlbumImageUrl = albumImageUrl;
         mTrackPopularity = trackPopularity;
+        mTrackPreviewUrl = trackPreviewUrl;
+        mTrackDuration = trackDuration;
     }
 
     public String getId() {
@@ -40,6 +45,14 @@ public class TrackInfo {
 
     public Integer getTrackPopularity() {
         return mTrackPopularity;
+    }
+
+    public String getTrackPreviewUrl() {
+        return mTrackPreviewUrl;
+    }
+
+    public long getTrackDuration() {
+        return mTrackDuration;
     }
 
     @Override
@@ -64,6 +77,6 @@ public class TrackInfo {
         return String.format("%2d", getTrackPopularity()) + "% " +
                 String.format("%1$-" + maxCharsTrack + "s", trackName) + " " +
                 String.format("%1$-" + maxCharsAlbum + "s", albumName) + " " +
-                getAlbumImageUrl();
+                getAlbumImageUrl() + " " + mTrackPreviewUrl + " " + mTrackDuration;
     }
 }

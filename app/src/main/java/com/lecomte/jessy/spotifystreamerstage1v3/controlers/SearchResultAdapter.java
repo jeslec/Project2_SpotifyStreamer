@@ -37,20 +37,20 @@ public class SearchResultAdapter extends ArrayAdapter<ArtistInfo> {
 
         // Artist name
         TextView artistTextView = (TextView)convertView
-                .findViewById(R.id.SearchResultFragment_ListViewItem_ArtistName);
+                .findViewById(R.id.SearchResult_listViewItem_artistName);
 
         artistTextView.setText(artistInfo.getName());
 
         // Artist popularity
         TextView popularityTextView = (TextView)convertView
-                .findViewById(R.id.SearchResultFragment_ListViewItem_ArtistPopularity);
+                .findViewById(R.id.SearchResult_listViewItem_artistPopularity);
 
-        popularityTextView.setText(App.getRes().getString(R.string.artist_popularity,
+        popularityTextView.setText(App.getRes().getString(R.string.ArtistSearch_artistPopularity,
                 artistInfo.getPopularity()));
 
         // Artist image
         ImageView artistImageView = (ImageView)convertView
-                .findViewById(R.id.SearchResultFragment_ListViewItem_ArtistImage);
+                .findViewById(R.id.SearchResult_listViewItem_artistImage);
 
         if (artistInfo.getImageUrl().isEmpty()) {
             artistImageView.setImageResource(R.drawable.noimage);
