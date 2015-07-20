@@ -9,16 +9,21 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 
 /**
  * Created by Jessy on 2015-07-20.
  */
 public class NowPlayingFragment extends DialogFragment{
 
+    static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
+    static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";
+
     // This is  how we send data to the fragment
-    public static NowPlayingFragment newInstance() {
+    public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
         Bundle args = new Bundle();
-        //args.putSerializable(EXTRA_DATE, date);
+        args.putParcelable(EXTRA_TRACK_INFO, trackInfo);
+        args.putString(EXTRA_ARTIST_NAME, artistName);
 
         NowPlayingFragment fragment = new NowPlayingFragment();
         fragment.setArguments(args);
@@ -37,9 +42,12 @@ public class NowPlayingFragment extends DialogFragment{
         TextView trackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
         TextView albumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
 
-        artistTextView.setText(R.string.NowPlaying_artistName);
-        trackTextView.setText(R.string.NowPlaying_trackName);
-        albumTextView.setText(R.string.NowPlaying_albumName);
+        TrackInfo trackInfo = (TrackInfo)getArguments().getParcelable(EXTRA_TRACK_INFO);
+        String artistName = (String)getArguments().getSerializable(EXTRA_ARTIST_NAME);
+
+        artistTextView.setText(artistName);
+        trackTextView.setText(trackInfo.getTrackName());
+        albumTextView.setText(trackInfo.getAlbumName());
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)

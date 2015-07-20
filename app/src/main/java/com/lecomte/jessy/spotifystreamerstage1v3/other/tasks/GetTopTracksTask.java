@@ -94,6 +94,8 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
                     bigImageUrl = track.album.images.get(0).url;
                 }
 
+                String artistName = track.artists.get(0).name;
+
                 myTrackList.add(new TrackInfo(track.name, track.album.name, smallImageUrl,
                         bigImageUrl, track.popularity, track.id, track.preview_url,
                         track.duration_ms));

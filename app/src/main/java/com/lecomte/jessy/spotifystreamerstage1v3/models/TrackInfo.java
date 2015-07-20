@@ -1,12 +1,17 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 
 /**
  * Created by Jessy on 2015-06-30.
+ *
+ * Made this class parcelable using the following online tool: http://www.parcelabler.com/
  */
-public class TrackInfo {
+public class TrackInfo implements Parcelable {
     private String mId;
     private String mTrackName;
     private String mAlbumName;
@@ -92,4 +97,50 @@ public class TrackInfo {
                 mTrackPreviewUrl + " " +
                 String.format("%2d:%2d", minutes, secondsLeft);
     }
+
+    protected TrackInfo(Parcel in) {
+        mId = in.readString();
+        mTrackName = in.readString();
+        mAlbumName = in.readString();
+        mAlbumSmallImageUrl = in.readString();
+        mAlbumBigImageUrl = in.readString();
+        mTrackPopularity = in.readByte() == 0x00 ? null : in.readInt();
+        mTrackPreviewUrl = in.readString();
+        mTrackDuration = in.readLong();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mId);
+        dest.writeString(mTrackName);
+        dest.writeString(mAlbumName);
+        dest.writeString(mAlbumSmallImageUrl);
+        dest.writeString(mAlbumBigImageUrl);
+        if (mTrackPopularity == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(mTrackPopularity);
+        }
+        dest.writeString(mTrackPreviewUrl);
+        dest.writeLong(mTrackDuration);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<TrackInfo> CREATOR = new Parcelable.Creator<TrackInfo>() {
+        @Override
+        public TrackInfo createFromParcel(Parcel in) {
+            return new TrackInfo(in);
+        }
+
+        @Override
+        public TrackInfo[] newArray(int size) {
+            return new TrackInfo[size];
+        }
+    };
 }

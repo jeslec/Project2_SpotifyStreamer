@@ -135,7 +135,7 @@ public class TopTracksFragment extends ListFragment {
         // Show the media player
         FragmentManager fm = getActivity().getSupportFragmentManager();
         // TODO: Pass info of track to play to MediaPlayer
-        NowPlayingFragment dialog = NowPlayingFragment.newInstance();
+        NowPlayingFragment dialog = NowPlayingFragment.newInstance(trackInfo, mArtistName);
         dialog.show(fm, DIALOG_MEDIA_PLAYER);
     }
 
