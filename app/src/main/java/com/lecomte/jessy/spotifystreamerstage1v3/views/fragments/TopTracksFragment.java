@@ -135,25 +135,14 @@ public class TopTracksFragment extends ListFragment {
                 trackInfo.getAlbumName());
         Utils.showToast(msg);
 
-        // Show the media player
-        /*FragmentManager fm = getActivity().getSupportFragmentManager();
-        // TODO: Pass info of track to play to MediaPlayer
-        NowPlayingFragment dialog = NowPlayingFragment.newInstance(trackInfo, mArtistName);
-        dialog.show(fm, DIALOG_MEDIA_PLAYER);*/
-        //mListener.onTrackSelected(trackInfo, mArtistName);
-
+        // Inform the MainActivity we went to display the NowPlaying view
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
         intent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
         intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
         startActivity(intent);
-
-
-       /* Intent tracksIntent = new Intent(this, TopTracksActivity.class);
-        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
-        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
-        startActivity(tracksIntent);*/
     }
+
 
     // Making the ProgressBar work...
     // Creating 2 methods in fragment and passing fragment to AsyncTask idea was obtained here:
