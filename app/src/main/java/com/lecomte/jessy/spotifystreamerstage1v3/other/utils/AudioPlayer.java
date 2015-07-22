@@ -15,26 +15,20 @@ public class AudioPlayer {
     private MediaPlayer mPlayer;
 
     public AudioPlayer() {
-        mPlayer = new MediaPlayer();
-        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        initializePlayer();
     }
 
-    public void play(String audioFileUrl) {
+    private void initializePlayer() {
+        mPlayer = new MediaPlayer();
+        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        // Stop the currently playing song so we can start playing the new song
-        /*if (mPlayer.isPlaying()) {
-            Utils.log(TAG, R.string.AudioPlayer_debug_anotherSongIsPlaying);
-            stop();
-        }*/
-
-       /* mPlayer.stop();*/
-
-        try {
-            mPlayer.setDataSource(audioFileUrl);
-            mPlayer.prepareAsync(); // might take long! (for buffering, etc)
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            @Override
+                                            public void onCompletion(MediaPlayer mp) {
+                                                stop();
+                                            }
+                                        }
+        );
 
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -42,13 +36,19 @@ public class AudioPlayer {
                 mp.start();
             }
         });
+    }
 
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                stop();
-            }
-        });
+    public void play(String audioFileUrl) {
+
+        stop();
+        initializePlayer();
+
+        try {
+            mPlayer.setDataSource(audioFileUrl);
+            mPlayer.prepareAsync(); // might take long! (for buffering, etc)
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void stop() {
