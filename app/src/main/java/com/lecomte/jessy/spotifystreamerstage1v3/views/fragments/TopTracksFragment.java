@@ -2,9 +2,11 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -15,11 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 import java.util.ArrayList;
@@ -29,7 +33,6 @@ import java.util.ArrayList;
  */
 public class TopTracksFragment extends ListFragment {
 
-    private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
     private final String TAG = getClass().getSimpleName();
     private ArrayList<TrackInfo> mTopTracks;
     private String mArtistId;
@@ -40,9 +43,9 @@ public class TopTracksFragment extends ListFragment {
 
     // Data required by this fragment upon creation
     private static final String ARG_ARTIST_ID =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistId";
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistId";
     private static final String ARG_ARTIST_NAME =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistName";
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistName";
 
     public TopTracksFragment() {
 
@@ -133,10 +136,23 @@ public class TopTracksFragment extends ListFragment {
         Utils.showToast(msg);
 
         // Show the media player
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        /*FragmentManager fm = getActivity().getSupportFragmentManager();
         // TODO: Pass info of track to play to MediaPlayer
         NowPlayingFragment dialog = NowPlayingFragment.newInstance(trackInfo, mArtistName);
-        dialog.show(fm, DIALOG_MEDIA_PLAYER);
+        dialog.show(fm, DIALOG_MEDIA_PLAYER);*/
+        //mListener.onTrackSelected(trackInfo, mArtistName);
+
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+        intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
+        startActivity(intent);
+
+
+       /* Intent tracksIntent = new Intent(this, TopTracksActivity.class);
+        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
+        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
+        startActivity(tracksIntent);*/
     }
 
     // Making the ProgressBar work...

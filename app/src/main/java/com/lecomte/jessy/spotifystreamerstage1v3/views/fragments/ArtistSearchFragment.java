@@ -90,16 +90,9 @@ public class ArtistSearchFragment extends ListFragment {
             return;
         }
 
-        // Get data associated with the selected item
+        // Send the selected artist to the activity so it can take the appropriate action
         ArtistInfo artistInfo = (ArtistInfo)getListAdapter().getItem(position);
-
         mListener.onArtistSelected(artistInfo);
-
-        // Send artist selection to new activity to display artist's top 10 songs
-       /* Intent tracksIntent = new Intent(getActivity(), TopTracksActivity.class);
-        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artistInfo.getId());
-        tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artistInfo.getName());
-        startActivity(tracksIntent);*/
     }
 
     @Override

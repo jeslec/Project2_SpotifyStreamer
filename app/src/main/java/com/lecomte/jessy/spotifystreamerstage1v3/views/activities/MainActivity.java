@@ -17,8 +17,10 @@ import android.view.Menu;
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
 public class MainActivity extends AppCompatActivity implements
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private String mPreviousQuery;
     private ActionBar mActionBar;
+    private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
 
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
@@ -126,6 +129,29 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
+
+        // Add NowPlaying activity/fragment loading code here
+        if (intent.getAction().equals(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER)) {
+
+            // Get intent extras
+            String artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
+            TrackInfo track = intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
+
+            // Large layout: load NowPlaying fragment and show as a dialog
+            if (App.isTwoPaneLayout()) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
+                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+            }
+
+            // 1-pane layout: start an activity containing the NowPlaying fragment
+            else {
+                Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
+                nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artistName);
+                nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, track);
+                startActivity(nowPlayingIntent);
+            }
+        }
     }
 
     @Override
@@ -163,18 +189,16 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onArtistSelected(ArtistInfo artist) {
 
+        // Load TopTracks fragment in layout if it's a 2-pane layout or
+        // start an activity that contains the TopTracks fragment if it's a single-pane layout
 
-        // Get details view fragment (in our case this is TopTracks)
-        //if (findViewById(R.id.toptracks_fragment_container) == null) {
-
-        // 2-pane layout
+        // 2-pane layout: load TopTracks fragment in the layout's right pane
         if (App.isTwoPaneLayout()) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
             Fragment oldTopTracks = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[1]);
-            Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
-                    artist.getName());
+            Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(), artist.getName());
 
             if (oldTopTracks != null) {
                 ft.remove(oldTopTracks);
@@ -184,35 +208,53 @@ public class MainActivity extends AppCompatActivity implements
             ft.commit();
         }
 
-        // 1-pane layout
+        // 1-pane layout: start an activity containing the TopTracks fragment
         else {
+            Intent tracksIntent = new Intent(this, TopTracksActivity.class);
+            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
+            tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
+            startActivity(tracksIntent);
+        }
+    }
 
-            if (findViewById(FRAGMENT_CONTAINER_ARRAY[1]) == null) {
+    // Load NowPlaying fragment in layout if it's a 2-pane layout or
+    // start an activity that contains the NowPlaying fragment if it's a single-pane layout
+    /*public void onTrackSelected(TrackInfo track, String artistName) {
 
-                // Send artist selection to new activity to display artist's top 10 songs
-                Intent tracksIntent = new Intent(this, TopTracksActivity.class);
-                tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
-                tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
-                startActivity(tracksIntent);
-            } else {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-
-                Fragment oldTopTracks = fm.findFragmentById(FRAGMENT_CONTAINER_ARRAY[1]);
-                Fragment newTopTracks = TopTracksFragment.newInstance(artist.getId(),
-                        artist.getName());
-
-                if (oldTopTracks != null) {
-                    ft.remove(oldTopTracks);
-                }
-
-                ft.add(FRAGMENT_CONTAINER_ARRAY[1], newTopTracks);
-                ft.commit();
-            }
+        // Large layout: load NowPlaying fragment and show as a dialog
+        if (App.isTwoPaneLayout()) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            //NowPlayingFragment newFragment = new NowPlayingFragment();
+            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
+            //newFragment.show(fragmentManager, "NowPlayingFragment");
+            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
         }
 
-        // Create a new fragment and send it the artistId
+        // 1-pane layout: start an activity containing the NowPlaying fragment
+        else {
+            Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
+            *//*nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
+            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());*//*
+            startActivity(nowPlayingIntent);
+        }
+    }*/
 
-        // Add this new fragment to the layout
-    }
+    /*public void showDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CustomDialogFragment newFragment = new CustomDialogFragment();
+
+        if (App.isTwoPaneLayout()) {
+            // The device is using a large layout, so show the fragment as a dialog
+            newFragment.show(fragmentManager, "dialog");
+        } else {
+            // The device is smaller, so show the fragment fullscreen
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            // For a little polish, specify a transition animation
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            // To make it fullscreen, use the 'content' root view as the container
+            // for the fragment, which is always the root view for the activity
+            transaction.add(android.R.id.content, newFragment)
+                    .addToBackStack(null).commit();
+        }
+    }*/
 }

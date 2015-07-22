@@ -14,9 +14,15 @@ public class TopTracksActivity extends AppCompatActivity implements
         TopTracksFragment.OnFragmentInteractionListener {
 
     public static final String EXTRA_ARTIST_ID =
-            "com.lecomte.jessy.spotifystreamerstage1v3.ArtistId";
+            "com.lecomte.jessy.spotifystreamerstage1v3.extra.artistId";
     public static final String EXTRA_ARTIST_NAME =
-            "com.lecomte.jessy.spotifystreamerstage1v3.ArtistName";
+            "com.lecomte.jessy.spotifystreamerstage1v3.extra.artistName";
+
+    public static final String EXTRA_TRACK_INFO =
+            "com.lecomte.jessy.spotifystreamerstage1v3.extra.trackInfo";
+
+    public static final String CUSTOM_ACTION_SHOW_PLAYER =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.showPlayer";
 
     private ActionBar mActionBar;
 

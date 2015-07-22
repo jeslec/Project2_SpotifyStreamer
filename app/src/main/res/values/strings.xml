@@ -23,7 +23,7 @@
 
     <!-- NowPlaying view messages -->
 
-    <string name="NowPlaying_dialogTitle">Media Player</string>
+    <string name="NowPlaying_title">Media Player</string>
     <string name="NowPlaying_artistName">Maroon 5</string>
     <string name="NowPlaying_trackName">Sugar</string>
     <string name="NowPlaying_albumName">V</string>
