@@ -54,6 +54,14 @@ public class Utils {
         }
     }
 
+    // I could have used log(tag, msg) but it will run faster (1 less if) by duplicating code
+    public static void log(String tag, int stringId) {
+        if (SHOW_DEBUG) {
+            String msg = App.getRes().getString(stringId);
+            Log.d(tag, msg);
+        }
+    }
+
     public static void logLoop(String tag, String preIndex, String postIndex, List<?> list) {
         if (SHOW_DEBUG) {
             int listSize = list.size();

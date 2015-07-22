@@ -28,4 +28,8 @@
     <string name="NowPlaying_trackName">Sugar</string>
     <string name="NowPlaying_albumName">V</string>
 
+    <!-- AudioPlayer messages -->
+    <string name="AudioPlayer_debug_anotherSongIsPlaying">play() - Another song is playing</string>
+    <string name="AudioPlayer_debug_playerStopped">stop() - Player stopped and audio player destroyed</string>
+
 </resources>

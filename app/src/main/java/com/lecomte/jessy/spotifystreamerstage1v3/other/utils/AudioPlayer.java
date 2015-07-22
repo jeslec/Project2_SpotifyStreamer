@@ -3,12 +3,15 @@ package com.lecomte.jessy.spotifystreamerstage1v3.other.utils;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.R;
+
 import java.io.IOException;
 
 /**
  * Created by Jessy on 2015-07-20.
  */
 public class AudioPlayer {
+    private final String TAG = getClass().getSimpleName();
     private MediaPlayer mPlayer;
 
     public AudioPlayer() {
@@ -17,6 +20,14 @@ public class AudioPlayer {
     }
 
     public void play(String audioFileUrl) {
+
+        // Stop the currently playing song so we can start playing the new song
+        /*if (mPlayer.isPlaying()) {
+            Utils.log(TAG, R.string.AudioPlayer_debug_anotherSongIsPlaying);
+            stop();
+        }*/
+
+       /* mPlayer.stop();*/
 
         try {
             mPlayer.setDataSource(audioFileUrl);
@@ -44,6 +55,7 @@ public class AudioPlayer {
         if (mPlayer != null) {
             mPlayer.release();
             mPlayer = null;
+            Utils.log(TAG, R.string.AudioPlayer_debug_playerStopped);
         }
     }
 }
