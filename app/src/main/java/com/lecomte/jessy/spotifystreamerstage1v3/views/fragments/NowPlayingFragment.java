@@ -26,6 +26,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jessy on 2015-07-20.
  */
@@ -47,8 +49,10 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mElapsedTimeTextView;
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
+    private ArrayList<TrackInfo> mTrackInfoList = new ArrayList<TrackInfo>();
+    private int mTrackIndex = 0;
 
-    // This is  how we send data to the fragment
+    //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_TRACK_INFO, trackInfo);
@@ -67,7 +71,8 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
      of whether it's being displayed as a dialog or an embedded fragment. */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         TrackInfo trackInfo;
         String artistName;
         Intent intent = getActivity().getIntent();
@@ -97,8 +102,11 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
         //
         if (intent != null) {
-            trackInfo = (TrackInfo)intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
-            artistName = (String)intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
+            //trackInfo = (TrackInfo)intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
+            mTrackInfoList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_INFO_LIST);
+            mTrackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            trackInfo = mTrackInfoList.get(mTrackIndex);
+            artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
             mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
 
@@ -144,7 +152,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                     mAudioPlayer.resume();
                     mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
                 }
-
             }
         });
 

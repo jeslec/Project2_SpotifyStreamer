@@ -28,6 +28,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActi
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -134,6 +135,15 @@ public class TopTracksFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
 
+        //***** TEST *********************************************************************
+        int itemsCount = getListAdapter().getCount();
+        ArrayList<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(itemsCount);
+
+        for (int i=0; i<itemsCount; i++) {
+            trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
+        }
+        //**********************************************************************************
+
         // Inform the MainActivity he must load the NowPlaying fragment into his layout
         if (App.isTwoPaneLayout()) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -147,7 +157,10 @@ public class TopTracksFragment extends ListFragment {
         else {
             Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
             nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+            //nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+            nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_INFO_LIST,
+                    trackInfoList);
+            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
             startActivity(nowPlayingIntent);
         }
     }
