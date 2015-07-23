@@ -22,17 +22,6 @@ public class AudioPlayer {
         initializePlayer();
     }
 
-   /* @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement " + TAG + ".OnFragmentInteractionListener");
-        }
-    }*/
-
     private void initializePlayer() {
         mPlayer = new MediaPlayer();
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -106,7 +95,7 @@ public class AudioPlayer {
         return false;
     }
 
-    public void setTrackProgress(int progress) {
+    public void seekTo(int progress) {
         if (mPlayer != null) {
             mPlayer.seekTo(progress);
         }

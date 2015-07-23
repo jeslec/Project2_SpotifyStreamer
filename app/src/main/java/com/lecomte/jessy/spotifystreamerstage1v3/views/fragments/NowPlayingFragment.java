@@ -2,43 +2,29 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.Image;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer.PlayerFragmentCommunication;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.MusicControler;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jessy on 2015-07-20.
@@ -101,6 +87,10 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         mPlayButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
         ImageButton nextTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonNext);
 
+        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        prevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
+        nextTrackButton.setImageResource(android.R.drawable.ic_media_next);
+
         mSeekBar = (SeekBar)v.findViewById(R.id.NowPlaying_seekBar);
 
         // Get artist/track data that was attached to this fragment when it was created
@@ -149,10 +139,10 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                 // Toggle player between 2 actions: play and pause
                 if (mAudioPlayer.isPlaying()) {
                     mAudioPlayer.pause();
-                    mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+                    mPlayButton.setImageResource(android.R.drawable.ic_media_play);
                 } else {
                     mAudioPlayer.resume();
-                    mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+                    mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
                 }
 
             }
@@ -169,9 +159,9 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    mAudioPlayer.pause();
-                    mAudioPlayer.setTrackProgress(progress);
-                    mAudioPlayer.resume();
+                    //mAudioPlayer.pause();
+                    mAudioPlayer.seekTo(progress);
+                    //mAudioPlayer.resume();
                 }
             }
 
@@ -250,13 +240,18 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
     }
 
+    // Stop updating seek bar and text values
+    public void stopSeekBarUpdates() {
+        Log.d(TAG, "stopSeekBarUpdates()");
+        mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
+    }
+
     // This is called when the track is done playing
     public void onTrackCompleted() {
         Log.d(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
 
-        // Stop updating seek bar and text values
-        mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
-        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
+        stopSeekBarUpdates();
 
         // The media player makes call to onCompletion() even if it has not reached the full end
         // of the track. So this in turn calls our onTrackCompleted() and the elapsed time never
@@ -264,5 +259,14 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // My solution: set elapsed time to duration time
         // Is this a hack or a simple solution to an unsolvable issue?
         mElapsedTimeTextView.setText(mTotalTimeTextView.getText());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.d(TAG, "onDestroy()");
+        stopSeekBarUpdates();
+        mAudioPlayer.stop();
     }
 }

@@ -73,20 +73,18 @@
        <ImageButton
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:id="@+id/NowPlaying_buttonPrevious"
-           android:background="@android:drawable/ic_media_previous"/>
+           android:id="@+id/NowPlaying_buttonPrevious"/>
+
+       <!-- The image will be set in code because it has to toggle between (play/pause) -->
+       <ImageButton
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/NowPlaying_buttonPlay"/>
 
        <ImageButton
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:id="@+id/NowPlaying_buttonPlay"
-           android:background="@android:drawable/ic_media_play"/>
-
-       <ImageButton
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/NowPlaying_buttonNext"
-           android:background="@android:drawable/ic_media_next"/>
+           android:id="@+id/NowPlaying_buttonNext"/>
     </LinearLayout>
 
 </LinearLayout>
