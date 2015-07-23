@@ -83,6 +83,29 @@ public class AudioPlayer {
         }
     }
 
+    // This should only be called when player is in "Paused" state
+    public void resume() {
+        if (mPlayer != null) {
+            mPlayer.start();
+        }
+    }
+
+    // After this, player will be in "Paused" state
+    // Only valid actions after are: start() or stop()
+    public void pause() {
+        if (mPlayer != null) {
+            mPlayer.pause();
+        }
+    }
+
+    public boolean isPlaying() {
+        if (mPlayer != null) {
+            return mPlayer.isPlaying();
+        }
+        Log.d(TAG, "isPlaying() - mPlayer is null!");
+        return false;
+    }
+
     public interface PlayerFragmentCommunication {
         public void onReceiveTrackDuration(int duration);
         public void onTrackCompleted();

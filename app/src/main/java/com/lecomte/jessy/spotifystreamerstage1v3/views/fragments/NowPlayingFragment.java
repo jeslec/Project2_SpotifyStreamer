@@ -60,6 +60,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     Runnable mUpdateSeekBarTextRunnable;
     private TextView mElapsedTimeTextView;
     private TextView mTotalTimeTextView;
+    private ImageButton mPlayButton;
 
     // This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -95,8 +96,9 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
         ImageView albumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
 
+        // MediaPlayer controller buttons
         ImageButton prevTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPrevious);
-        ImageButton playButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
+        mPlayButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
         ImageButton nextTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonNext);
 
         mSeekBar = (SeekBar)v.findViewById(R.id.NowPlaying_seekBar);
@@ -141,10 +143,20 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             }
         });
 
-        playButton.setOnClickListener(new View.OnClickListener() {
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast("Play track");
+                Utils.showToast("Pause track");
+
+                // Toggle player between 2 actions: play and pause
+                if (mAudioPlayer.isPlaying()) {
+                    mAudioPlayer.pause();
+                    mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+                } else {
+                    mAudioPlayer.resume();
+                    mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+                }
+
             }
         });
 
@@ -240,7 +252,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     public void onTrackCompleted() {
         Log.d(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
 
-        // Stop updating the seek bar and text values
+        // Stop updating seek bar and text values
         mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
         mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
 
