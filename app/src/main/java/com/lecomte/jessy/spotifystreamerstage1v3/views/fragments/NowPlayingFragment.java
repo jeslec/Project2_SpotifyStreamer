@@ -146,8 +146,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast("Pause track");
-
                 // Toggle player between 2 actions: play and pause
                 if (mAudioPlayer.isPlaying()) {
                     mAudioPlayer.pause();
@@ -167,10 +165,14 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             }
         });
 
-        /*seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                if (fromUser) {
+                    mAudioPlayer.pause();
+                    mAudioPlayer.setTrackProgress(progress);
+                    mAudioPlayer.resume();
+                }
             }
 
             @Override
@@ -182,7 +184,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
-        });*/
+        });
 
         mAudioPlayer.play(mTrackUrl);
 

@@ -106,6 +106,12 @@ public class AudioPlayer {
         return false;
     }
 
+    public void setTrackProgress(int progress) {
+        if (mPlayer != null) {
+            mPlayer.seekTo(progress);
+        }
+    }
+
     public interface PlayerFragmentCommunication {
         public void onReceiveTrackDuration(int duration);
         public void onTrackCompleted();
