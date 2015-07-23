@@ -131,26 +131,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Add NowPlaying activity/fragment loading code here
-        if (intent.getAction().equals(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER)) {
+        else if (App.isTwoPaneLayout() &&
+                intent.getAction().equals(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER)) {
 
             // Get intent extras
             String artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
             TrackInfo track = intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
 
             // Large layout: load NowPlaying fragment and show as a dialog
-            if (App.isTwoPaneLayout()) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
-                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
-            }
-
-            // 1-pane layout: start an activity containing the NowPlaying fragment
-            else {
-                Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
-                nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artistName);
-                nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, track);
-                startActivity(nowPlayingIntent);
-            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
+            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
         }
     }
 

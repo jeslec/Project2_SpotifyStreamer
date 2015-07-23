@@ -24,6 +24,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 import java.util.ArrayList;
@@ -72,9 +73,10 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.log(TAG, "onCreate()");
         setRetainInstance(true);
 
-        // Required to get action bar back button to do something useful (go back to prev view)
+        // Required to get action bar back button to do something useful (go back to previous view)
         setHasOptionsMenu(true);
 
         // Get params sent to this fragment upon creation, namely the artist id and name
@@ -114,6 +116,7 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Utils.log(TAG, "onViewCreated()");
 
         if (mArtistId != null && !mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
@@ -129,20 +132,25 @@ public class TopTracksFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-
         TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
-        String msg = getResources().getString(R.string.TopTracks_trackPlaying, trackInfo.getTrackName(),
-                trackInfo.getAlbumName());
-        Utils.showToast(msg);
 
-        // Inform the MainActivity we went to display the NowPlaying view
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
-        intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
-        startActivity(intent);
+        // Inform the MainActivity he must load the NowPlaying fragment into his layout
+        if (App.isTwoPaneLayout()) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+            intent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+            intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
+            startActivity(intent);
+        }
+
+        // Start the NowPlaying screen as a fullscreen activity
+        else {
+            Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+            startActivity(nowPlayingIntent);
+        }
     }
-
 
     // Making the ProgressBar work...
     // Creating 2 methods in fragment and passing fragment to AsyncTask idea was obtained here:

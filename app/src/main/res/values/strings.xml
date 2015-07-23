@@ -13,7 +13,6 @@
     <!-- TopTracks view messages -->
     <string name="TopTracks_title">Top Tracks</string>
     <string name="TopTracks_noTrackFound">Sorry, no top tracks found for this artist</string>
-    <string name="TopTracks_trackPlaying">Playing: %1$s From: %2$s</string>
     <string name="TopTracks_noInternet">No internet connection, can\'t get tracks</string>
     <string name="TopTracks_actionBarSubtitle">%1$s</string>
     <string name="TopTracks_emptyList">This artist has no top tracks, please go back to

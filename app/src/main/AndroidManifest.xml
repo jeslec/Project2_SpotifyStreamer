@@ -37,8 +37,6 @@
         <activity
             android:name=".views.activities.NowPlayingActivity"
             android:label="@string/NowPlaying_title">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                       android:value=".views.activities.TopTracksActivity"/>
         </activity>
     </application>
 
