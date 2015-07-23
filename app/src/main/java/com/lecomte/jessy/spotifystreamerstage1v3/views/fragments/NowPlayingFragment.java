@@ -49,12 +49,15 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
     static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";
     static final int SEEK_BAR_UPDATE_INTERVAL = 40; // milliseconds
+    static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
 
     private String mTrackUrl = "";
     private AudioPlayer mAudioPlayer = new AudioPlayer(this);
     private SeekBar mSeekBar;
     private Handler mSeekBarHandler = new Handler();
+    private Handler mSeekBarTextHandler = new Handler();
     Runnable mUpdateSeekBarRunnable;
+    Runnable mUpdateSeekBarTextRunnable;
     private TextView mElapsedTimeTextView;
     private TextView mTotalTimeTextView;
 
@@ -152,19 +155,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             }
         });
 
-        /*// TODO: This should be put in a method and that method should be called by the AudioPlayer
-        // when the MediaPlayer enters the OnPrepared state and seekBar's max value has been set
-        // Update the seek bar every second
-        Runnable updateSeekBarRunnable = new Runnable() {
-            @Override public void run() {
-                Log.d(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
-                mSeekBar.setProgress(mAudioPlayer.getCurrentPosition());
-                mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
-            } };
-        // We must call the runnable explicitly once for it to be called automatically after
-        // http://stackoverflow.com/questions/21929529/runnable-not-running-at-all-inside-fragment#21929571
-        mSeekBarHandler.postDelayed(updateSeekBarRunnable, SEEK_BAR_UPDATE_INTERVAL);*/
-
         /*seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -201,21 +191,34 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         return dialog;
     }
 
+    // Start updating the seek bar and the seek bar text values at regular intervals
+    // We use 2 different intervals because the seek bar needs to be updated much more often
+    // (at a perceivable real-time rate >= 25 fps) than the text values which change every second
     @Override
     public void onReceiveTrackDuration(int duration) {
 
-        // Update seek bar progression and text values every second
+        // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                //Log.d(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
-                Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioPlayer.getCurrentPosition());
-
-                mElapsedTimeTextView.setText(getResources()
-                        .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
-                                minSecPair.second));
-
-                mSeekBar.setProgress(mAudioPlayer.getCurrentPosition());
+                if (mAudioPlayer != null) {
+                    mSeekBar.setProgress(mAudioPlayer.getCurrentPosition());
+                }
                 mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
+            }
+        };
+
+        // Update seek bar elapsed time in textView
+        mUpdateSeekBarTextRunnable = new Runnable() {
+            @Override public void run() {
+                //Log.d(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
+                if (mAudioPlayer != null) {
+                    Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioPlayer.getCurrentPosition());
+
+                    mElapsedTimeTextView.setText(getResources()
+                            .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
+                                    minSecPair.second));
+                }
+                mSeekBarTextHandler.postDelayed(this, SEEK_BAR_TEXT_UPDATE_INTERVAL);
             }
         };
 
@@ -229,11 +232,23 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
         // The runnable must be called once explicitly for it to be called automatically after
         // http://stackoverflow.com/questions/21929529/runnable-not-running-at-all-inside-fragment#21929571
-        mSeekBarHandler.postDelayed(mUpdateSeekBarRunnable, SEEK_BAR_UPDATE_INTERVAL);
+        mSeekBarHandler.post(mUpdateSeekBarRunnable);
+        mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
     }
 
+    // This is called when the track is done playing
     public void onTrackCompleted() {
         Log.d(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
+
+        // Stop updating the seek bar and text values
         mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
+
+        // The media player makes call to onCompletion() even if it has not reached the full end
+        // of the track. So this in turn calls our onTrackCompleted() and the elapsed time never
+        // displays the real duration of the track when it has supposedly reached the end
+        // My solution: set elapsed time to duration time
+        // Is this a hack or a simple solution to an unsolvable issue?
+        mElapsedTimeTextView.setText(mTotalTimeTextView.getText());
     }
 }

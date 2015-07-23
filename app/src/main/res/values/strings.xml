@@ -5,14 +5,12 @@
     <string name="action_search">Search</string>
 
     <!-- ArtistSearch view messages -->
-
     <string name="ArtistSearch_emptyList">Tap the search icon to find your favorite artists&#8230;</string>
     <string name="ArtistSearch_noArtistFound">No artist found, please try again</string>
     <string name="ArtistSearch_artistPopularity">[Popularity: %1$s%%]</string>
     <string name="ArtistSearch_noInternet">No internet connection, search disabled</string>
 
     <!-- TopTracks view messages -->
-
     <string name="TopTracks_title">Top Tracks</string>
     <string name="TopTracks_noTrackFound">Sorry, no top tracks found for this artist</string>
     <string name="TopTracks_trackPlaying">Playing: %1$s From: %2$s</string>
@@ -22,7 +20,6 @@
         the previous screen and select another artist&#8230;</string>
 
     <!-- NowPlaying view messages -->
-
     <string name="NowPlaying_title">Media Player</string>
     <string name="NowPlaying_elapsedTime">%1$02d:%2$02d</string>
     <string name="NowPlaying_totalTime">%1$02d:%2$02d</string>
