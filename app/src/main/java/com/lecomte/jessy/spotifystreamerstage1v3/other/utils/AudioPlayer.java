@@ -16,6 +16,7 @@ public class AudioPlayer {
     private final String TAG = getClass().getSimpleName();
     private MediaPlayer mPlayer;
     private PlayerFragmentCommunication mListener;
+    private int mTrackDuration;
 
     public AudioPlayer(NowPlayingFragment fragmentClass) {
         mListener = (PlayerFragmentCommunication) fragmentClass;
@@ -30,7 +31,6 @@ public class AudioPlayer {
                                             @Override
                                             public void onCompletion(MediaPlayer mp) {
                                                 mListener.onTrackCompleted();
-                                                stop();
                                             }
                                         }
         );
@@ -38,9 +38,9 @@ public class AudioPlayer {
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                int duration = mp.getDuration();
-                mListener.onReceiveTrackDuration(duration);
-                Log.d(TAG, "onPrepared() - Track duration: " + duration);
+                mTrackDuration = mp.getDuration();
+                mListener.onReceiveTrackDuration(mTrackDuration);
+                Log.d(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
             }
         });
@@ -75,6 +75,10 @@ public class AudioPlayer {
     // This should only be called when player is in "Paused" state
     public void resume() {
         if (mPlayer != null) {
+
+            // TEST: added 2015/07/23 16h41
+            mListener.onReceiveTrackDuration(mTrackDuration);
+
             mPlayer.start();
         }
     }

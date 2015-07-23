@@ -200,6 +200,8 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     // (at a perceivable real-time rate >= 25 fps) than the text values which change every second
     @Override
     public void onReceiveTrackDuration(int duration) {
+        // Cancel all previous runnables
+        stopSeekBarUpdates();
 
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
@@ -251,14 +253,12 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     public void onTrackCompleted() {
         Log.d(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
 
+        // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
-
-        // The media player makes call to onCompletion() even if it has not reached the full end
-        // of the track. So this in turn calls our onTrackCompleted() and the elapsed time never
-        // displays the real duration of the track when it has supposedly reached the end
-        // My solution: set elapsed time to duration time
-        // Is this a hack or a simple solution to an unsolvable issue?
-        mElapsedTimeTextView.setText(mTotalTimeTextView.getText());
+        mSeekBar.setProgress(0);
+        mAudioPlayer.seekTo(0);
+        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        mElapsedTimeTextView.setText("00:00");
     }
 
     @Override
