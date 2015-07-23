@@ -216,45 +216,4 @@ public class MainActivity extends AppCompatActivity implements
             startActivity(tracksIntent);
         }
     }
-
-    // Load NowPlaying fragment in layout if it's a 2-pane layout or
-    // start an activity that contains the NowPlaying fragment if it's a single-pane layout
-    /*public void onTrackSelected(TrackInfo track, String artistName) {
-
-        // Large layout: load NowPlaying fragment and show as a dialog
-        if (App.isTwoPaneLayout()) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            //NowPlayingFragment newFragment = new NowPlayingFragment();
-            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
-            //newFragment.show(fragmentManager, "NowPlayingFragment");
-            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
-        }
-
-        // 1-pane layout: start an activity containing the NowPlaying fragment
-        else {
-            Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
-            *//*nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
-            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());*//*
-            startActivity(nowPlayingIntent);
-        }
-    }*/
-
-    /*public void showDialog() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        CustomDialogFragment newFragment = new CustomDialogFragment();
-
-        if (App.isTwoPaneLayout()) {
-            // The device is using a large layout, so show the fragment as a dialog
-            newFragment.show(fragmentManager, "dialog");
-        } else {
-            // The device is smaller, so show the fragment fullscreen
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            // For a little polish, specify a transition animation
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            // To make it fullscreen, use the 'content' root view as the container
-            // for the fragment, which is always the root view for the activity
-            transaction.add(android.R.id.content, newFragment)
-                    .addToBackStack(null).commit();
-        }
-    }*/
 }
