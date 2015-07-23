@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jessy on 2015-07-08.
@@ -81,5 +83,14 @@ public class Utils {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    // Converts milliseconds into minutes and seconds
+    // Returns pair:
+    // -First: minutes
+    // -Second: seconds
+    public static Pair<Long, Long> msecToMinSec(int millis) {
+        return new Pair<Long, Long>(TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis));
     }
 }
