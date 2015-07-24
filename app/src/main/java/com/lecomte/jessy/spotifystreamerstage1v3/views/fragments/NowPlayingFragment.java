@@ -22,6 +22,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer.PlayerFragmentCommunication;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.SafeIndex;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
@@ -51,6 +52,10 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private ImageButton mPlayButton;
     private ArrayList<TrackInfo> mTrackInfoList = new ArrayList<TrackInfo>();
     private int mTrackIndex = 0;
+    private SafeIndex mTrackListIndex;
+    private TextView mTrackTextView;
+    private TextView mAlbumTextView;
+    private ImageView mAlbumImageView;
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -62,6 +67,17 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    void displayTrackInfo(TrackInfo track) {
+        mTrackTextView.setText(track.getTrackName());
+        mAlbumTextView.setText(track.getAlbumName());
+
+        if (track.getAlbumBigImageUrl().isEmpty()) {
+            mAlbumImageView.setImageResource(R.drawable.noimage);
+        } else {
+            Picasso.with(getActivity()).load(track.getAlbumBigImageUrl()).into(mAlbumImageView);
+        }
     }
 
     // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
@@ -80,12 +96,12 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
         TextView artistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
-        TextView trackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
-        TextView albumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
+        mTrackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
+        mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
         mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
         mTotalTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_totalTime);
 
-        ImageView albumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
+        mAlbumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
 
         // MediaPlayer controller buttons
         ImageButton prevTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPrevious);
@@ -104,7 +120,9 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         if (intent != null) {
             //trackInfo = (TrackInfo)intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
             mTrackInfoList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_INFO_LIST);
-            mTrackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            //mTrackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            mTrackListIndex = new SafeIndex(intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX,
+                                        0), mTrackInfoList.size() - 1);
             trackInfo = mTrackInfoList.get(mTrackIndex);
             artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
             mTrackUrl = trackInfo.getTrackPreviewUrl();
@@ -123,23 +141,18 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         }
 
         artistTextView.setText(artistName);
-        trackTextView.setText(trackInfo.getTrackName());
-        albumTextView.setText(trackInfo.getAlbumName());
+        displayTrackInfo(trackInfo);
+
+        /*mTrackTextView.setText(trackInfo.getTrackName());
+        mAlbumTextView.setText(trackInfo.getAlbumName());
 
         if (trackInfo.getAlbumBigImageUrl().isEmpty()) {
-            albumImageView.setImageResource(R.drawable.noimage);
+            mAlbumImageView.setImageResource(R.drawable.noimage);
         }
 
         else {
-            Picasso.with(getActivity()).load(trackInfo.getAlbumBigImageUrl()).into(albumImageView);
-        }
-
-        prevTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.showToast("Previous track");
-            }
-        });
+            Picasso.with(getActivity()).load(trackInfo.getAlbumBigImageUrl()).into(mAlbumImageView);
+        }*/
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,10 +168,22 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             }
         });
 
+        prevTrackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.showToast("Previous track index: " + mTrackListIndex.getPrevious());
+
+            }
+        });
+
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast("Next track");
+                Utils.showToast("Next track index: " + mTrackListIndex.getNext());
+                int trackIndex = mTrackListIndex.getNext();
+                String trackUrl = mTrackInfoList.get(trackIndex).getTrackPreviewUrl();
+                mAudioPlayer.play(trackUrl);
+                displayTrackInfo(mTrackInfoList.get(trackIndex));
             }
         });
 
