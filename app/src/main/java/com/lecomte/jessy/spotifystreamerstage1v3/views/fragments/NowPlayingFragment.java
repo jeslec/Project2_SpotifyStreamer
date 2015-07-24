@@ -1,9 +1,13 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer.PlayerFragmentCommunication;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.SafeIndex;
@@ -31,7 +36,8 @@ import java.util.ArrayList;
 /**
  * Created by Jessy on 2015-07-20.
  */
-public class NowPlayingFragment extends DialogFragment implements PlayerFragmentCommunication {
+public class NowPlayingFragment extends DialogFragment implements PlayerFragmentCommunication,
+        ServiceConnection {
 
     private final String TAG = getClass().getSimpleName();
     static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
@@ -55,6 +61,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mAlbumTextView;
     private ImageView mAlbumImageView;
     private int mSeekBarProgress = 0;
+    private AudioPlayerService mAudioPlayerService;
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -302,5 +309,34 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     void resumePlayer() {
         mAudioPlayer.resume();
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        mAudioPlayerService = ((AudioPlayerService.LocalBinder) service).getService();
+        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mAudioPlayerService = null;
+        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mAudioPlayerService != null) {
+            getActivity().unbindService(this);
+            Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
+        boolean bBound = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
+        Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
     }
 }

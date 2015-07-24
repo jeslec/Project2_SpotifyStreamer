@@ -13,6 +13,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <service android:name=".other.AudioPlayerService" />
+
         <activity
             android:name=".views.activities.MainActivity"
             android:label="@string/app_name"
