@@ -171,16 +171,19 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast("Previous track index: " + mTrackListIndex.getPrevious());
-
+                int trackIndex = mTrackListIndex.getPrevious();
+                Utils.showToast("Previous track index: " + trackIndex);
+                String trackUrl = mTrackInfoList.get(trackIndex).getTrackPreviewUrl();
+                mAudioPlayer.play(trackUrl);
+                displayTrackInfo(mTrackInfoList.get(trackIndex));
             }
         });
 
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast("Next track index: " + mTrackListIndex.getNext());
                 int trackIndex = mTrackListIndex.getNext();
+                Utils.showToast("Next track index: " + trackIndex);
                 String trackUrl = mTrackInfoList.get(trackIndex).getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
                 displayTrackInfo(mTrackInfoList.get(trackIndex));
