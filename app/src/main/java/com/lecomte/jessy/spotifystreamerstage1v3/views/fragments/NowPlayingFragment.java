@@ -143,17 +143,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         artistTextView.setText(artistName);
         displayTrackInfo(trackInfo);
 
-        /*mTrackTextView.setText(trackInfo.getTrackName());
-        mAlbumTextView.setText(trackInfo.getAlbumName());
-
-        if (trackInfo.getAlbumBigImageUrl().isEmpty()) {
-            mAlbumImageView.setImageResource(R.drawable.noimage);
-        }
-
-        else {
-            Picasso.with(getActivity()).load(trackInfo.getAlbumBigImageUrl()).into(mAlbumImageView);
-        }*/
-
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,22 +160,27 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int trackIndex = mTrackListIndex.getPrevious();
-                Utils.showToast("Previous track index: " + trackIndex);
-                String trackUrl = mTrackInfoList.get(trackIndex).getTrackPreviewUrl();
+                TrackInfo trackInfo = mTrackInfoList.get(mTrackListIndex.getPrevious());
+                //Utils.showToast("Previous track index: " + trackIndex);
+                String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
-                displayTrackInfo(mTrackInfoList.get(trackIndex));
+                displayTrackInfo(trackInfo);
+                Log.d(TAG, "prevTrackButton.onClickListener() - Track index: " +
+                        mTrackListIndex.get());
             }
         });
 
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int trackIndex = mTrackListIndex.getNext();
-                Utils.showToast("Next track index: " + trackIndex);
-                String trackUrl = mTrackInfoList.get(trackIndex).getTrackPreviewUrl();
+                TrackInfo trackInfo = mTrackInfoList.get(mTrackListIndex.getNext());
+                //int trackIndex = mTrackListIndex.getNext();
+                //Utils.showToast("Next track index: " + trackIndex);
+                String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
-                displayTrackInfo(mTrackInfoList.get(trackIndex));
+                displayTrackInfo(trackInfo);
+                Log.d(TAG, "nextTrackButton.onClickListener() - Track index: " +
+                        mTrackListIndex.get());
             }
         });
 

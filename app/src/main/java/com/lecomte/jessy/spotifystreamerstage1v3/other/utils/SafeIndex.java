@@ -13,6 +13,10 @@ public class SafeIndex {
         mMaxIndex = maxIndex;
     }
 
+    public int get() {
+        return mIndex;
+    }
+
     public int getNext() {
         return (mIndex = mIndex+1 > mMaxIndex? 0 : mIndex+1);
     }
