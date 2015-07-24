@@ -54,6 +54,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mTrackTextView;
     private TextView mAlbumTextView;
     private ImageView mAlbumImageView;
+    private int mSeekBarProgress = 0;
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -89,7 +90,8 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
-        String artistName;
+        String artistName = "";
+        int listIndex = 0;
         Intent intent = getActivity().getIntent();
 
         View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
@@ -118,29 +120,21 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // Fragment was "started" with an intent: this happens in a single-pane layout
         if (intent != null) {
             mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            mTrackListIndex = new SafeIndex(intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX,
-                                        0), mTrackList.size() - 1);
-            trackInfo = mTrackList.get(mTrackListIndex.get());
+            listIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
             artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
-            mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
 
         // Fragment was "started" with newInstance(): this happens in a double-pane layout
         else if (getArguments() != null) {
             final Bundle args = getArguments();
             mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            mTrackListIndex = new SafeIndex(args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0),
-                    mTrackList.size()-1);
-            trackInfo = mTrackList.get(mTrackListIndex.get());
-            //trackInfo = (TrackInfo) getArguments().getParcelable(EXTRA_TRACK_INFO);
+            listIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
             artistName = (String)args.getSerializable(EXTRA_ARTIST_NAME);
-            mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
 
-        else {
-            Utils.log(TAG, "OnCreateView() - No extras and no arguments: something went terribly wrong!");
-            return v;
-        }
+        mTrackListIndex = new SafeIndex(listIndex, mTrackList.size() - 1);
+        trackInfo = mTrackList.get(mTrackListIndex.get());
+        mTrackUrl = trackInfo.getTrackPreviewUrl();
 
         artistTextView.setText(artistName);
         displayTrackInfo(trackInfo);
@@ -150,11 +144,9 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             public void onClick(View v) {
                 // Toggle player between 2 actions: play and pause
                 if (mAudioPlayer.isPlaying()) {
-                    mAudioPlayer.pause();
-                    mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+                    pausePlayer();
                 } else {
-                    mAudioPlayer.resume();
-                    mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+                    resumePlayer();
                 }
             }
         });
@@ -189,20 +181,22 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    //mAudioPlayer.pause();
-                    mAudioPlayer.seekTo(progress);
-                    //mAudioPlayer.resume();
+                    Utils.log(TAG, "seekBar.onProgressChanged()");
+                    mSeekBarProgress = progress;
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                Utils.log(TAG, "seekBar.onStartTrackingTouch()");
+                pausePlayer();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                Utils.log(TAG, "seekBar.onStopTrackingTouch()");
+                mAudioPlayer.seekTo(mSeekBarProgress);
+                resumePlayer();
             }
         });
 
@@ -298,5 +292,15 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         Utils.log(TAG, "onDestroy()");
         stopSeekBarUpdates();
         mAudioPlayer.stop();
+    }
+
+    void pausePlayer() {
+        mAudioPlayer.pause();
+        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+    }
+
+    void resumePlayer() {
+        mAudioPlayer.resume();
+        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 }
