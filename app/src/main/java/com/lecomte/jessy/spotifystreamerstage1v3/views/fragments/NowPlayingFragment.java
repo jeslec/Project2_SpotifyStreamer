@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +49,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mElapsedTimeTextView;
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
-    private ArrayList<TrackInfo> mTrackInfoList = new ArrayList<TrackInfo>();
+    private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
     private SafeIndex mTrackListIndex;
     private TextView mTrackTextView;
     private TextView mAlbumTextView;
@@ -116,22 +115,25 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
         // Get artist/track data that was attached to this fragment when it was created
 
-        //
+        // Fragment was "started" with an intent: this happens in a single-pane layout
         if (intent != null) {
-            //trackInfo = (TrackInfo)intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
-            mTrackInfoList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_INFO_LIST);
-            //mTrackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
             mTrackListIndex = new SafeIndex(intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX,
-                                        0), mTrackInfoList.size() - 1);
-            trackInfo = mTrackInfoList.get(mTrackListIndex.get());
+                                        0), mTrackList.size() - 1);
+            trackInfo = mTrackList.get(mTrackListIndex.get());
             artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
             mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
 
-        //
+        // Fragment was "started" with newInstance(): this happens in a double-pane layout
         else if (getArguments() != null) {
-            trackInfo = (TrackInfo) getArguments().getParcelable(EXTRA_TRACK_INFO);
-            artistName = (String)getArguments().getSerializable(EXTRA_ARTIST_NAME);
+            final Bundle args = getArguments();
+            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
+            mTrackListIndex = new SafeIndex(args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0),
+                    mTrackList.size()-1);
+            trackInfo = mTrackList.get(mTrackListIndex.get());
+            //trackInfo = (TrackInfo) getArguments().getParcelable(EXTRA_TRACK_INFO);
+            artistName = (String)args.getSerializable(EXTRA_ARTIST_NAME);
             mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
 
@@ -160,7 +162,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TrackInfo trackInfo = mTrackInfoList.get(mTrackListIndex.getPrevious());
+                TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getPrevious());
                 //Utils.showToast("Previous track index: " + trackIndex);
                 String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
@@ -173,8 +175,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TrackInfo trackInfo = mTrackInfoList.get(mTrackListIndex.getNext());
-                //int trackIndex = mTrackListIndex.getNext();
+                TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getNext());
                 //Utils.showToast("Next track index: " + trackIndex);
                 String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);

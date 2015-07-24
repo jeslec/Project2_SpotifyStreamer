@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -28,7 +26,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActi
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -135,20 +132,21 @@ public class TopTracksFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
 
-        //***** TEST *********************************************************************
+        // Put all tracks in a list so we can send it to the NowPlaying fragment
         int itemsCount = getListAdapter().getCount();
         ArrayList<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(itemsCount);
 
         for (int i=0; i<itemsCount; i++) {
             trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
         }
-        //**********************************************************************************
 
-        // Inform the MainActivity he must load the NowPlaying fragment into his layout
+        // Tell the MainActivity to load the NowPlaying fragment in his layout
         if (App.isTwoPaneLayout()) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-            intent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
+            intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
+                    trackInfoList);
+            intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
             intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
             startActivity(intent);
         }
@@ -157,8 +155,7 @@ public class TopTracksFragment extends ListFragment {
         else {
             Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
             nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-            //nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INFO, trackInfo);
-            nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_INFO_LIST,
+            nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
                     trackInfoList);
             nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
             startActivity(nowPlayingIntent);
