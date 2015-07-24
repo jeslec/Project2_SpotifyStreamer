@@ -51,7 +51,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
     private ArrayList<TrackInfo> mTrackInfoList = new ArrayList<TrackInfo>();
-    private int mTrackIndex = 0;
     private SafeIndex mTrackListIndex;
     private TextView mTrackTextView;
     private TextView mAlbumTextView;
@@ -89,6 +88,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
         String artistName;
         Intent intent = getActivity().getIntent();
@@ -123,7 +123,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             //mTrackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
             mTrackListIndex = new SafeIndex(intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX,
                                         0), mTrackInfoList.size() - 1);
-            trackInfo = mTrackInfoList.get(mTrackIndex);
+            trackInfo = mTrackInfoList.get(mTrackListIndex.get());
             artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
             mTrackUrl = trackInfo.getTrackPreviewUrl();
         }
@@ -136,7 +136,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         }
 
         else {
-            Log.d(TAG, "OnCreateView() - No extras and no arguments: something went terribly wrong!");
+            Utils.log(TAG, "OnCreateView() - No extras and no arguments: something went terribly wrong!");
             return v;
         }
 
@@ -165,7 +165,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                 String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
                 displayTrackInfo(trackInfo);
-                Log.d(TAG, "prevTrackButton.onClickListener() - Track index: " +
+                Utils.log(TAG, "prevTrackButton.onClickListener() - Track index: " +
                         mTrackListIndex.get());
             }
         });
@@ -179,7 +179,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                 String trackUrl = trackInfo.getTrackPreviewUrl();
                 mAudioPlayer.play(trackUrl);
                 displayTrackInfo(trackInfo);
-                Log.d(TAG, "nextTrackButton.onClickListener() - Track index: " +
+                Utils.log(TAG, "nextTrackButton.onClickListener() - Track index: " +
                         mTrackListIndex.get());
             }
         });
@@ -214,7 +214,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+        Utils.log(TAG, "onCreateDialog()");
         // The only reason you might override this method when using onCreateView() is
         // to modify any dialog characteristics. For example, the dialog includes a
         // title by default, but your custom layout might not need it. So here you can
@@ -245,7 +245,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // Update seek bar elapsed time in textView
         mUpdateSeekBarTextRunnable = new Runnable() {
             @Override public void run() {
-                //Log.d(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
+                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
                 if (mAudioPlayer != null) {
                     Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioPlayer.getCurrentPosition());
 
@@ -273,14 +273,14 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
     // Stop updating seek bar and text values
     public void stopSeekBarUpdates() {
-        Log.d(TAG, "stopSeekBarUpdates()");
+        Utils.log(TAG, "stopSeekBarUpdates()");
         mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
         mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
     }
 
     // This is called when the track is done playing
     public void onTrackCompleted() {
-        Log.d(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
+        Utils.log(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
 
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
@@ -294,7 +294,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     public void onDestroy() {
         super.onDestroy();
 
-        Log.d(TAG, "onDestroy()");
+        Utils.log(TAG, "onDestroy()");
         stopSeekBarUpdates();
         mAudioPlayer.stop();
     }

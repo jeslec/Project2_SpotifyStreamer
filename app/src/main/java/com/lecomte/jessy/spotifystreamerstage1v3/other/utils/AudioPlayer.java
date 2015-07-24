@@ -40,14 +40,14 @@ public class AudioPlayer {
             public void onPrepared(MediaPlayer mp) {
                 mTrackDuration = mp.getDuration();
                 mListener.onReceiveTrackDuration(mTrackDuration);
-                Log.d(TAG, "onPrepared() - Track duration: " + mTrackDuration);
+                Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
             }
         });
     }
 
     public int getCurrentPosition() {
-        //Log.d(TAG, "Track position: " + mPlayer.getCurrentPosition());
+        //Utils.log(TAG, "Track position: " + mPlayer.getCurrentPosition());
         return mPlayer.getCurrentPosition();
     }
 
@@ -95,7 +95,7 @@ public class AudioPlayer {
         if (mPlayer != null) {
             return mPlayer.isPlaying();
         }
-        Log.d(TAG, "isPlaying() - mPlayer is null!");
+        Utils.log(TAG, "isPlaying() - mPlayer is null!");
         return false;
     }
 
