@@ -69,7 +69,11 @@ public class AudioPlayerService extends Service {
 
     @Override
     public void onDestroy() {
+        Utils.log(TAG, "onDestroy() - Calling AudioPlayer.stop()...");
+
+        // TEST: stop playing track and destroy media player when service gets killed
+        mAudioPlayer.stop();
+
         super.onDestroy();
-        Utils.log(TAG, "onDestroy()");
     }
 }

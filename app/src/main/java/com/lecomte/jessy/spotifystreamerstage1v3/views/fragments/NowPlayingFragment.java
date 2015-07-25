@@ -300,7 +300,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         Utils.log(TAG, "onDestroy()");
         stopSeekBarUpdates();
-        mAudioService.getPlayer().stop();
+        //mAudioService.getPlayer().stop(); DON'T STOP PLAYING TRACK when user closes NowPlaying view
     }
 
     void pausePlayer() {
