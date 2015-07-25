@@ -2,8 +2,11 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +50,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
 
     private String mTrackUrl = "";
-    private AudioPlayer mAudioPlayer = new AudioPlayer(this);
     private SeekBar mSeekBar;
     private Handler mSeekBarHandler = new Handler();
     private Handler mSeekBarTextHandler = new Handler();
@@ -61,7 +64,17 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private TextView mAlbumTextView;
     private ImageView mAlbumImageView;
     private int mSeekBarProgress = 0;
-    private AudioPlayerService mAudioPlayerService;
+    private AudioPlayerService mAudioService;
+    private BroadcastReceiver onTrackPrepared = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Utils.log(TAG, "BroadcastReceiver.onReceive()");
+
+            int duration = intent.getIntExtra(AudioPlayerService.EXTRA_TRACK_DURATION, 0);
+            onReceiveTrackDuration(duration);
+        }
+    };
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -150,7 +163,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             @Override
             public void onClick(View v) {
                 // Toggle player between 2 actions: play and pause
-                if (mAudioPlayer.isPlaying()) {
+                if (mAudioService.getPlayer().isPlaying()) {
                     pausePlayer();
                 } else {
                     resumePlayer();
@@ -164,7 +177,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                 TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getPrevious());
                 //Utils.showToast("Previous track index: " + trackIndex);
                 String trackUrl = trackInfo.getTrackPreviewUrl();
-                mAudioPlayer.play(trackUrl);
+                mAudioService.getPlayer().play(trackUrl);
                 displayTrackInfo(trackInfo);
                 Utils.log(TAG, "prevTrackButton.onClickListener() - Track index: " +
                         mTrackListIndex.get());
@@ -177,7 +190,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
                 TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getNext());
                 //Utils.showToast("Next track index: " + trackIndex);
                 String trackUrl = trackInfo.getTrackPreviewUrl();
-                mAudioPlayer.play(trackUrl);
+                mAudioService.getPlayer().play(trackUrl);
                 displayTrackInfo(trackInfo);
                 Utils.log(TAG, "nextTrackButton.onClickListener() - Track index: " +
                         mTrackListIndex.get());
@@ -202,12 +215,12 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Utils.log(TAG, "seekBar.onStopTrackingTouch()");
-                mAudioPlayer.seekTo(mSeekBarProgress);
+                mAudioService.getPlayer().seekTo(mSeekBarProgress);
                 resumePlayer();
             }
         });
 
-        mAudioPlayer.play(mTrackUrl);
+        //mAudioService.getPlayer().play(mTrackUrl);
 
         return v;
     }
@@ -237,8 +250,8 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                if (mAudioPlayer != null) {
-                    mSeekBar.setProgress(mAudioPlayer.getCurrentPosition());
+                if (mAudioService.getPlayer() != null) {
+                    mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
                 }
                 mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
             }
@@ -247,9 +260,9 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // Update seek bar elapsed time in textView
         mUpdateSeekBarTextRunnable = new Runnable() {
             @Override public void run() {
-                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioPlayer.getCurrentPosition());
-                if (mAudioPlayer != null) {
-                    Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioPlayer.getCurrentPosition());
+                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
+                if (mAudioService.getPlayer() != null) {
+                    Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
 
                     mElapsedTimeTextView.setText(getResources()
                             .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
@@ -287,7 +300,7 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
         mSeekBar.setProgress(0);
-        mAudioPlayer.seekTo(0);
+        mAudioService.getPlayer().seekTo(0);
         mPlayButton.setImageResource(android.R.drawable.ic_media_play);
         mElapsedTimeTextView.setText("00:00");
     }
@@ -298,38 +311,45 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
         Utils.log(TAG, "onDestroy()");
         stopSeekBarUpdates();
-        mAudioPlayer.stop();
+        mAudioService.getPlayer().stop();
     }
 
     void pausePlayer() {
-        mAudioPlayer.pause();
+        mAudioService.getPlayer().pause();
         mPlayButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
     void resumePlayer() {
-        mAudioPlayer.resume();
+        mAudioService.getPlayer().resume();
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        mAudioPlayerService = ((AudioPlayerService.LocalBinder) service).getService();
+        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
+
+        //mAudioService.getPlayer().printDummyLineToLogcat();
+        if (mAudioService != null) {
+            mAudioService.getPlayer().play(mTrackUrl);
+        }
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        mAudioPlayerService = null;
+        mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mAudioPlayerService != null) {
+        if (mAudioService != null) {
             getActivity().unbindService(this);
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onTrackPrepared);
     }
 
     @Override
@@ -338,5 +358,8 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         boolean bBound = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
+
+        IntentFilter filter = new IntentFilter(AudioPlayerService.RESPONSE_TRACK_PREPARED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onTrackPrepared, filter);
     }
 }

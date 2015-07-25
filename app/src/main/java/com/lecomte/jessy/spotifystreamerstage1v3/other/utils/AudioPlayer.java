@@ -18,7 +18,7 @@ public class AudioPlayer {
     private PlayerFragmentCommunication mListener;
     private int mTrackDuration;
 
-    public AudioPlayer(NowPlayingFragment fragmentClass) {
+    public AudioPlayer(PlayerFragmentCommunication fragmentClass) {
         mListener = (PlayerFragmentCommunication) fragmentClass;
         initializePlayer();
     }
