@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
         TopTracksFragment.OnFragmentInteractionListener {
 
+    private final String TAG = getClass().getSimpleName();
     private String mPreviousQuery;
     private ActionBar mActionBar;
     private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
@@ -210,5 +211,12 @@ public class MainActivity extends AppCompatActivity implements
             tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
             startActivity(tracksIntent);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
+        Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
+        super.onDestroy();
     }
 }

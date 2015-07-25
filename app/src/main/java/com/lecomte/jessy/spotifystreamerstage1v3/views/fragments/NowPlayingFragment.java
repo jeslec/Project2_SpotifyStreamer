@@ -99,6 +99,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         int listIndex = 0;
         Intent intent = getActivity().getIntent();
 
+        // TEST: start AudioPlayerService
+        getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
+        Utils.log(TAG, "onCreateView() - Audio player service started");
+        //*****************
+
         View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
         TextView artistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
@@ -312,7 +317,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onServiceConnected(ComponentName name, IBinder service) {
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
+
+        // For service-to-client communication
         mAudioService.setCallback(this);
+
         mAudioService.getPlayer().play(mTrackUrl);
     }
 
@@ -336,7 +344,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onResume() {
         super.onResume();
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
-        boolean bBound = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
+        getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
     }
 }

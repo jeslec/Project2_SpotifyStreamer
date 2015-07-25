@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 
 /**
  * Created by Jessy on 2015-07-24.
@@ -46,9 +47,29 @@ public class AudioPlayerService extends Service {
         }
     }
 
+    // Service-to-client communication
+    // Get idea from book: Android Programming - Pushing the Limits, p.125-129
     public void setCallback(AudioPlayer.Callback callback) {
         if (mAudioPlayer != null) {
             mAudioPlayer.setCallback(callback);
         }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Utils.log(TAG, "onStartCommand()");
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Utils.log(TAG, "onCreate()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Utils.log(TAG, "onDestroy()");
     }
 }
