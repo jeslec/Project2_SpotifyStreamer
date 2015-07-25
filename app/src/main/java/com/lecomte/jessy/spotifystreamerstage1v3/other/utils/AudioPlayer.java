@@ -2,10 +2,8 @@ package com.lecomte.jessy.spotifystreamerstage1v3.other.utils;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 
 import java.io.IOException;
 
@@ -15,11 +13,10 @@ import java.io.IOException;
 public class AudioPlayer {
     private final String TAG = getClass().getSimpleName();
     private MediaPlayer mPlayer;
-    private PlayerFragmentCommunication mListener;
     private int mTrackDuration;
+    private Callback mCallback;
 
-    public AudioPlayer(PlayerFragmentCommunication fragmentClass) {
-        mListener = (PlayerFragmentCommunication) fragmentClass;
+    public AudioPlayer() {
         initializePlayer();
     }
 
@@ -30,7 +27,7 @@ public class AudioPlayer {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                             @Override
                                             public void onCompletion(MediaPlayer mp) {
-                                                mListener.onTrackCompleted();
+                                                mCallback.onTrackCompleted();
                                             }
                                         }
         );
@@ -39,7 +36,9 @@ public class AudioPlayer {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mTrackDuration = mp.getDuration();
-                mListener.onReceiveTrackDuration(mTrackDuration);
+                if (mCallback != null) {
+                    mCallback.onReceiveTrackDuration(mTrackDuration);
+                }
                 Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
             }
@@ -77,7 +76,9 @@ public class AudioPlayer {
         if (mPlayer != null) {
 
             // TEST: added 2015/07/23 16h41
-            mListener.onReceiveTrackDuration(mTrackDuration);
+            if (mCallback != null) {
+                mCallback.onReceiveTrackDuration(mTrackDuration);
+            }
 
             mPlayer.start();
         }
@@ -105,8 +106,12 @@ public class AudioPlayer {
         }
     }
 
-    public interface PlayerFragmentCommunication {
-        public void onReceiveTrackDuration(int duration);
-        public void onTrackCompleted();
+    public interface Callback {
+        void onTrackCompleted();
+        void onReceiveTrackDuration(int duration);
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 }

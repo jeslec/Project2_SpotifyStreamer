@@ -2,11 +2,8 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +25,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer.PlayerFragmentCommunication;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.SafeIndex;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
@@ -40,8 +35,8 @@ import java.util.ArrayList;
 /**
  * Created by Jessy on 2015-07-20.
  */
-public class NowPlayingFragment extends DialogFragment implements PlayerFragmentCommunication,
-        ServiceConnection {
+public class NowPlayingFragment extends DialogFragment implements ServiceConnection,
+        AudioPlayer.Callback {
 
     private final String TAG = getClass().getSimpleName();
     static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
@@ -65,16 +60,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     private ImageView mAlbumImageView;
     private int mSeekBarProgress = 0;
     private AudioPlayerService mAudioService;
-    private BroadcastReceiver onTrackPrepared = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Utils.log(TAG, "BroadcastReceiver.onReceive()");
-
-            int duration = intent.getIntExtra(AudioPlayerService.EXTRA_TRACK_DURATION, 0);
-            onReceiveTrackDuration(duration);
-        }
-    };
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo, String artistName) {
@@ -242,7 +227,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
     // Start updating the seek bar and the seek bar text values at regular intervals
     // We use 2 different intervals because the seek bar needs to be updated much more often
     // (at a perceivable real-time rate >= 25 fps) than the text values which change every second
-    @Override
     public void onReceiveTrackDuration(int duration) {
         // Cancel all previous runnables
         stopSeekBarUpdates();
@@ -326,17 +310,15 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
-
-        //mAudioService.getPlayer().printDummyLineToLogcat();
-        if (mAudioService != null) {
-            mAudioService.getPlayer().play(mTrackUrl);
-        }
+        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
+        mAudioService.setCallback(this);
+        mAudioService.getPlayer().play(mTrackUrl);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
+        mAudioService.setCallback(null);
         mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
@@ -348,8 +330,6 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
             getActivity().unbindService(this);
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
-
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onTrackPrepared);
     }
 
     @Override
@@ -358,8 +338,5 @@ public class NowPlayingFragment extends DialogFragment implements PlayerFragment
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         boolean bBound = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
-
-        IntentFilter filter = new IntentFilter(AudioPlayerService.RESPONSE_TRACK_PREPARED);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onTrackPrepared, filter);
     }
 }
