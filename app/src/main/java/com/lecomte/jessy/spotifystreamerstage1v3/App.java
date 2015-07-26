@@ -66,7 +66,10 @@ public class App extends Application {
                             .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
                     startService(intent);
                 } else {
-
+                    Intent intent = new Intent()
+                            .setClass(getContext(), AudioPlayerService.class)
+                            .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
+                    startService(intent);
                 }
             }
         };
