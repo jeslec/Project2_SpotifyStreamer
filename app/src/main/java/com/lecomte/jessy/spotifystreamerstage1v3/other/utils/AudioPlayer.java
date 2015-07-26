@@ -32,7 +32,9 @@ public class AudioPlayer {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                             @Override
                                             public void onCompletion(MediaPlayer mp) {
-                                                mCallback.onTrackCompleted();
+                                                if (mCallback != null) {
+                                                    mCallback.onTrackCompleted();
+                                                }
                                             }
                                         }
         );

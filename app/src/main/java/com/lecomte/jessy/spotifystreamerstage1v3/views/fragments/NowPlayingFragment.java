@@ -292,29 +292,23 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
+        // For service-to-client communication
+        mAudioService.setCallback(this);
+
         // This is done when we are playing a track for the first time or
         // the user selected another artist so we need to send new playlist to service
         if (mAudioService.getPlayer().isPlaylistEmpty() ||
                 !mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
-
-            // For service-to-client communication
-            mAudioService.setCallback(this);
-
             // Send playlist to service and send also the index of the track to play
             mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
-            mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
-            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-
-            // We will only set service as foreground when this view has been shown at least once
-            // TODO: find a better way, perhaps check if size of playlist in service is > 0
-            App.setNowPlayingViewCreated();
         }
 
-        else {
-            mAudioService.setCallback(this);
-            mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
-            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-        }
+        mAudioService.getPlayer().play(mPlayListIndex);
+        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+
+        // We will only set service as foreground when this view has been shown at least once
+        // TODO: Is there a better way?
+        App.setNowPlayingViewCreated();
     }
 
     @Override
