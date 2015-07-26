@@ -13,6 +13,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
  */
 public class TrackInfo implements Parcelable {
     private String mId;
+    private String mArtistName;
     private String mTrackName;
     private String mAlbumName;
     private String mAlbumSmallImageUrl; // displayed in listView item
@@ -21,10 +22,11 @@ public class TrackInfo implements Parcelable {
     private String mTrackPreviewUrl;
     private long mTrackDuration; // in milliseconds
 
-    public TrackInfo(String trackName, String albumName, String albumSmallImageUrl,
+    public TrackInfo(String artistName, String trackName, String albumName, String albumSmallImageUrl,
                      String albumBigImageUrl, Integer trackPopularity, String id,
                      String trackPreviewUrl, long trackDuration) {
         mId = id;
+        mArtistName = artistName;
         mTrackName = trackName;
         mAlbumName = albumName;
         mAlbumSmallImageUrl = albumSmallImageUrl;
@@ -66,14 +68,24 @@ public class TrackInfo implements Parcelable {
         return mAlbumBigImageUrl;
     }
 
+    public String getArtistName() {
+        return mArtistName;
+    }
+
     @Override
     public String toString() {
+        String artistName = getArtistName();
         String trackName = getTrackName();
         String albumName = getAlbumName();
 
         // From debug.xml, max characters for the track name & album name columns in Logcat
         final int maxCharsTrack = App.getRes().getInteger(R.integer.track_name_column_width);
         final int maxCharsAlbum = App.getRes().getInteger(R.integer.album_name_column_width);
+
+        // Limit string length, truncate and append "..." if size exceeds max length
+        if (getTrackName().length() > maxCharsTrack) {
+            artistName = trackName.substring(0, maxCharsTrack-3) + "...";
+        }
 
         // Limit string length, truncate and append "..." if size exceeds max length
         if (getTrackName().length() > maxCharsTrack) {
@@ -91,6 +103,7 @@ public class TrackInfo implements Parcelable {
         long secondsLeft = seconds - (minutes * 60);
 
         return String.format("%2d", getTrackPopularity()) + "% " +
+                String.format("%1$-" + maxCharsTrack + "s", artistName) + " " +
                 String.format("%1$-" + maxCharsTrack + "s", trackName) + " " +
                 String.format("%1$-" + maxCharsAlbum + "s", albumName) + " " +
                 getAlbumSmallImageUrl() + " " + getAlbumBigImageUrl() + " " +
@@ -99,6 +112,7 @@ public class TrackInfo implements Parcelable {
     }
 
     protected TrackInfo(Parcel in) {
+        mArtistName = in.readString();
         mId = in.readString();
         mTrackName = in.readString();
         mAlbumName = in.readString();
@@ -116,6 +130,7 @@ public class TrackInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mArtistName);
         dest.writeString(mId);
         dest.writeString(mTrackName);
         dest.writeString(mAlbumName);

@@ -21,12 +21,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.SafeIndex;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
@@ -55,8 +53,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
     private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
-    //private SafeIndex mTrackListIndex;
     private int mPlayListIndex = 0;
+    private TextView mArtistTextView;
     private TextView mTrackTextView;
     private TextView mAlbumTextView;
     private ImageView mAlbumImageView;
@@ -76,6 +74,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     void displayTrackInfo(TrackInfo track) {
+        mArtistTextView.setText(track.getArtistName());
         mTrackTextView.setText(track.getTrackName());
         mAlbumTextView.setText(track.getAlbumName());
 
@@ -97,14 +96,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
-        String artistName = "";
         Intent intent = getActivity().getIntent();
 
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
 
         View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
-        TextView artistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
+        mArtistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
         mTrackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
         mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
         mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
@@ -129,7 +127,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (intent != null) {
             mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
             mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
-            artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
+            //artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
         }
 
         // Fragment was "started" with newInstance(): this happens in a double-pane layout
@@ -137,7 +135,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             final Bundle args = getArguments();
             mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
             mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
-            artistName = (String)args.getSerializable(EXTRA_ARTIST_NAME);
+            //artistName = (String)args.getSerializable(EXTRA_ARTIST_NAME);
         }
 
         //mTrackListIndex = new SafeIndex(listIndex, mTrackList.size() - 1);

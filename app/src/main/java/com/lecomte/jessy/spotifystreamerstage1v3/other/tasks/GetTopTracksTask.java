@@ -59,7 +59,6 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
     @Override
     protected void onPostExecute(Tracks top10Tracks) {
-
         super.onPostExecute(top10Tracks);
 
         // The activity can be null if it is thrown out by Android while task is running!
@@ -94,9 +93,9 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
                     bigImageUrl = track.album.images.get(0).url;
                 }
 
-                myTrackList.add(new TrackInfo(track.name, track.album.name, smallImageUrl,
-                        bigImageUrl, track.popularity, track.id, track.preview_url,
-                        track.duration_ms));
+                myTrackList.add(new TrackInfo(track.artists.get(0).name, track.name,
+                        track.album.name, smallImageUrl, bigImageUrl, track.popularity, track.id,
+                        track.preview_url, track.duration_ms));
             }
         }
 
