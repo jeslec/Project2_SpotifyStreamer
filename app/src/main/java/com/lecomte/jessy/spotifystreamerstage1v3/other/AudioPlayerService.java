@@ -8,9 +8,12 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jessy on 2015-07-24.

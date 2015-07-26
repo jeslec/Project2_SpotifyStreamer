@@ -316,13 +316,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // For service-to-client communication
         mAudioService.setCallback(this);
-        
+
         // TODO: implement this
-        /*mAudioService.setPlaylist(mTrackList); // Send top tracks list to service
-        mAudioService.play(mTrackListIndex);*/ // Tell service to play track by sending it the index in tracks list
+        mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
+        mAudioService.getPlayer().play(mTrackListIndex.get()); // Tell service to play track by sending it the index in tracks list
 
         // TODO: Remove this line: play track by specifying the track index, not the Url
-        mAudioService.getPlayer().play(mTrackUrl);
+        //mAudioService.getPlayer().play(mTrackUrl);
     }
 
     @Override

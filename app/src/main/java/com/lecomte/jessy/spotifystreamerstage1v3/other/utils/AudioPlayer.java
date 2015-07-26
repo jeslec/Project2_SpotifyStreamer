@@ -4,8 +4,10 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Jessy on 2015-07-20.
@@ -15,6 +17,7 @@ public class AudioPlayer {
     private MediaPlayer mPlayer;
     private int mTrackDuration;
     private Callback mCallback;
+    private ArrayList<TrackInfo> mPlaylist = new ArrayList<TrackInfo>();
 
     public AudioPlayer() {
         initializePlayer();
@@ -113,5 +116,14 @@ public class AudioPlayer {
 
     public void setCallback(Callback callback) {
         mCallback = callback;
+    }
+
+    public void setPlaylist(ArrayList<TrackInfo> trackList) {
+        mPlaylist = trackList;
+    }
+
+    public void play(int trackIndex) {
+        TrackInfo track = mPlaylist.get(trackIndex);
+        play(track.getTrackPreviewUrl());
     }
 }
