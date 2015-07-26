@@ -100,10 +100,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         int listIndex = 0;
         Intent intent = getActivity().getIntent();
 
-        // TEST: start AudioPlayerService
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
-        Utils.log(TAG, "onCreateView() - Audio player service started");
-        //*****************
 
         View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
 
@@ -319,7 +316,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // For service-to-client communication
         mAudioService.setCallback(this);
+        
+        // TODO: implement this
+        /*mAudioService.setPlaylist(mTrackList); // Send top tracks list to service
+        mAudioService.play(mTrackListIndex);*/ // Tell service to play track by sending it the index in tracks list
 
+        // TODO: Remove this line: play track by specifying the track index, not the Url
         mAudioService.getPlayer().play(mTrackUrl);
     }
 

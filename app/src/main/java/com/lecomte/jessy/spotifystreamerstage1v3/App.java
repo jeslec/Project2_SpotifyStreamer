@@ -60,15 +60,16 @@ public class App extends Application {
 
                 Utils.log(TAG, "ForegroundServiceRunnable - App in foreground: " + mIsInForeground);
 
-                if (!mIsInForeground) {
+                // TODO: Optimize this
+                if (mIsInForeground) {
                     Intent intent = new Intent()
                             .setClass(getContext(), AudioPlayerService.class)
-                            .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
+                            .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
                     startService(intent);
                 } else {
                     Intent intent = new Intent()
                             .setClass(getContext(), AudioPlayerService.class)
-                            .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
+                            .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
                     startService(intent);
                 }
             }

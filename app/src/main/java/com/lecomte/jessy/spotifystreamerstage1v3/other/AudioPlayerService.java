@@ -83,6 +83,9 @@ public class AudioPlayerService extends Service {
 
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
 
+            // TEST: Get currently playing track info (or last played)
+            //mAudioPlayer.getTrackInfo();
+
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(android.R.drawable.ic_menu_agenda)
@@ -90,7 +93,6 @@ public class AudioPlayerService extends Service {
                             .setContentText("Hello World!");
 
             startForeground(NOTIFICATION_ID_FOREGROUND_SERVICE, mBuilder.build());
-
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
