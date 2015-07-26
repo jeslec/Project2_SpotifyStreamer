@@ -151,7 +151,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAudioService.getPlayer().playNext();
+                mAudioService.getPlayer().playPrevious();
                 displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
             }
         });
@@ -159,7 +159,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAudioService.getPlayer().playPrevious();
+                mAudioService.getPlayer().playNext();
                 displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
             }
         });
@@ -292,7 +292,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
-        if (mAudioService.getPlayer().isPlaylistEmpty()) {
+        // This is done only when we are playing a track for the first time
+        //if (mAudioService.getPlayer().isPlaylistEmpty()) {
             // For service-to-client communication
             mAudioService.setCallback(this);
 
@@ -304,7 +305,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             // We will only set service as foreground when this view has been shown at least once
             // TODO: find a better way, perhaps check if size of playlist in service is > 0
             App.setNowPlayingViewCreated();
-        }
+        //}
     }
 
     @Override
