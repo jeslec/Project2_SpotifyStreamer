@@ -63,7 +63,7 @@ public class AudioPlayerService extends Service {
         }
     }
 
-    // Service-to-client communication
+    // Used for service-to-client communication
     // Get idea from book: Android Programming - Pushing the Limits, p.125-129
     public void setCallback(AudioPlayer.Callback callback) {
         if (mAudioPlayer != null) {

@@ -55,7 +55,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
     private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
-    private SafeIndex mTrackListIndex;
+    //private SafeIndex mTrackListIndex;
+    private int mPlayListIndex = 0;
     private TextView mTrackTextView;
     private TextView mAlbumTextView;
     private ImageView mAlbumImageView;
@@ -97,7 +98,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
         String artistName = "";
-        int listIndex = 0;
         Intent intent = getActivity().getIntent();
 
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
@@ -128,7 +128,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Fragment was "started" with an intent: this happens in a single-pane layout
         if (intent != null) {
             mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            listIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
             artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
         }
 
@@ -136,16 +136,16 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         else if (getArguments() != null) {
             final Bundle args = getArguments();
             mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            listIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
             artistName = (String)args.getSerializable(EXTRA_ARTIST_NAME);
         }
 
-        mTrackListIndex = new SafeIndex(listIndex, mTrackList.size() - 1);
-        trackInfo = mTrackList.get(mTrackListIndex.get());
-        mTrackUrl = trackInfo.getTrackPreviewUrl();
+        //mTrackListIndex = new SafeIndex(listIndex, mTrackList.size() - 1);
+        //trackInfo = mTrackList.get(listIndex);
+        //mTrackUrl = trackInfo.getTrackPreviewUrl();
 
-        artistTextView.setText(artistName);
-        displayTrackInfo(trackInfo);
+        /*artistTextView.setText(artistName);
+        displayTrackInfo(mTrackList.get(listIndex));*/
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,26 +162,26 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getPrevious());
+                //TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getPrevious());
                 //Utils.showToast("Previous track index: " + trackIndex);
-                String trackUrl = trackInfo.getTrackPreviewUrl();
-                mAudioService.getPlayer().play(trackUrl);
-                displayTrackInfo(trackInfo);
-                Utils.log(TAG, "prevTrackButton.onClickListener() - Track index: " +
-                        mTrackListIndex.get());
+                //String trackUrl = trackInfo.getTrackPreviewUrl();
+                mAudioService.getPlayer().playNext();
+                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+                /*Utils.log(TAG, "prevTrackButton.onClickListener() - Track index: " +
+                        mTrackListIndex.get());*/
             }
         });
 
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getNext());
+                //TrackInfo trackInfo = mTrackList.get(mTrackListIndex.getNext());
                 //Utils.showToast("Next track index: " + trackIndex);
-                String trackUrl = trackInfo.getTrackPreviewUrl();
-                mAudioService.getPlayer().play(trackUrl);
-                displayTrackInfo(trackInfo);
-                Utils.log(TAG, "nextTrackButton.onClickListener() - Track index: " +
-                        mTrackListIndex.get());
+                //String trackUrl = trackInfo.getTrackPreviewUrl();
+                mAudioService.getPlayer().playPrevious();
+                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+                /*Utils.log(TAG, "nextTrackButton.onClickListener() - Track index: " +
+                        mTrackListIndex.get());*/
             }
         });
 
@@ -317,16 +317,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // For service-to-client communication
         mAudioService.setCallback(this);
 
-        // TODO: implement this
+        // Send playlist to service and send also the index of the track to play
         mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
-        mAudioService.getPlayer().play(mTrackListIndex.get()); // Tell service to play track by sending it the index in tracks list
-
-        // TODO: Remove this line: play track by specifying the track index, not the Url
-        //mAudioService.getPlayer().play(mTrackUrl);
+        mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
+        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
+        // Make sure service cannot send us anything once we are disconnected
         mAudioService.setCallback(null);
         mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");

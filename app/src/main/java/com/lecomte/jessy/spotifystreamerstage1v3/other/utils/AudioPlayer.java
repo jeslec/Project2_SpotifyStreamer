@@ -18,6 +18,8 @@ public class AudioPlayer {
     private int mTrackDuration;
     private Callback mCallback;
     private ArrayList<TrackInfo> mPlaylist = new ArrayList<TrackInfo>();
+    private SafeIndex mPlaylistIndex;
+    private TrackInfo mTrack;
 
     public AudioPlayer() {
         initializePlayer();
@@ -53,7 +55,7 @@ public class AudioPlayer {
         return mPlayer.getCurrentPosition();
     }
 
-    public void play(String audioFileUrl) {
+    private void play(String audioFileUrl) {
 
         stop();
         initializePlayer();
@@ -122,8 +124,45 @@ public class AudioPlayer {
         mPlaylist = trackList;
     }
 
+    // Before calling play(), setPlaylist must have been called
+    // Note: play() must be called before any call to playNext()/playPrevious is made
+    // because the playList index is initialized in play() and the index is used by these 2 methods
     public void play(int trackIndex) {
-        TrackInfo track = mPlaylist.get(trackIndex);
+        if (mPlaylist.isEmpty()) {
+            Utils.log(TAG, "play(): playlist is empty! - Call setPlaylist() before play()");
+        }
+        mPlaylistIndex = new SafeIndex(trackIndex, mPlaylist.size() - 1);
+        TrackInfo track = mPlaylist.get(mPlaylistIndex.get());
         play(track.getTrackPreviewUrl());
+    }
+
+    // Playlist index initialized in play()
+    // A call to play() must have been made before calling playNext()
+    public void playNext() {
+        if (mPlaylistIndex == null) {
+            Utils.log(TAG, "playNext(): playlist index not been initialized! - Call play()");
+            return;
+        }
+        mTrack = mPlaylist.get(mPlaylistIndex.getNext());
+        play(mTrack.getTrackPreviewUrl());
+    }
+
+    // Playlist index initialized in play()
+    // A call to play() must have been made before calling playPrevious()
+    public void playPrevious() {
+        if (mPlaylistIndex == null) {
+            Utils.log(TAG, "playPrevious(): playlist index not initialized! - Call play()");
+            return;
+        }
+        mTrack = mPlaylist.get(mPlaylistIndex.getPrevious());
+        play(mTrack.getTrackPreviewUrl());
+    }
+
+    public TrackInfo getTrackInfo() {
+        if (mPlaylistIndex == null) {
+            Utils.log(TAG, "getTrackInfo(): playlist index not initialized! - Call play()");
+            return null;
+        }
+        return mPlaylist.get(mPlaylistIndex.get());
     }
 }
