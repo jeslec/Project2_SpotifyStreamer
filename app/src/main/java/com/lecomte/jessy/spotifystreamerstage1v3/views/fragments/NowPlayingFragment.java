@@ -214,7 +214,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                if (mAudioService.getPlayer() != null) {
+                if (mAudioService != null && mAudioService.getPlayer() != null) {
                     mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
                 }
                 mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
@@ -225,7 +225,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mUpdateSeekBarTextRunnable = new Runnable() {
             @Override public void run() {
                 //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
-                if (mAudioService.getPlayer() != null) {
+                if (mAudioService != null && mAudioService.getPlayer() != null) {
                     Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
 
                     mElapsedTimeTextView.setText(getResources()
@@ -292,8 +292,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
-        // This is done only when we are playing a track for the first time
-        //if (mAudioService.getPlayer().isPlaylistEmpty()) {
+        // This is done when we are playing a track for the first time or
+        // the user selected another artist so we need to send new playlist to service
+        if (mAudioService.getPlayer().isPlaylistEmpty() ||
+                !mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
+
             // For service-to-client communication
             mAudioService.setCallback(this);
 
@@ -305,7 +308,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             // We will only set service as foreground when this view has been shown at least once
             // TODO: find a better way, perhaps check if size of playlist in service is > 0
             App.setNowPlayingViewCreated();
-        //}
+        }
+
+        else {
+            mAudioService.setCallback(this);
+            mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
+            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+        }
     }
 
     @Override
@@ -321,6 +330,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         super.onPause();
         if (mAudioService != null) {
             getActivity().unbindService(this);
+
+            //--- TEST: 2015-07-26, added 14h54
+            // Make sure service cannot send us anything once we are disconnected
+            mAudioService.setCallback(null);
+            mAudioService = null;
+            //---------------------------
+
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
     }

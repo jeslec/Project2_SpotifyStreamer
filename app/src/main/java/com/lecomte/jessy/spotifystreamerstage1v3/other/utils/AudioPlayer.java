@@ -111,6 +111,15 @@ public class AudioPlayer {
         }
     }
 
+    // For now, we use the name of the artist of the first track in the playlist as an Id
+    public String getPlaylistId() {
+        if (mPlaylist == null || mPlaylist.isEmpty()) {
+            Utils.log(TAG, "getArtist() - Playlist is null or empty!");
+            return "";
+        }
+        return mPlaylist.get(0).getArtistName();
+    }
+
     public interface Callback {
         void onTrackCompleted();
         void onReceiveTrackDuration(int duration);
