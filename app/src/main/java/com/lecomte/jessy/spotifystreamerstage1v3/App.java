@@ -8,12 +8,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Window;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jessy on 2015-07-08.
@@ -31,6 +27,7 @@ public class App extends Application {
     private static Runnable mForegroundServiceRunnable;
     private static final int UPDATE_FOREGROUND_SERVICE_INTERVAL = 300; // milliseconds
     private static boolean mIsInForeground = true;
+    private static boolean mNowPlayingViewCreated = false;
 
     // Get the resources anywhere in my app
     public static Resources getRes() {
@@ -58,7 +55,7 @@ public class App extends Application {
         mForegroundServiceRunnable = new Runnable() {
             @Override public void run() {
 
-                Utils.log(TAG, "ForegroundServiceRunnable - App in foreground: " + mIsInForeground);
+                //Utils.log(TAG, "ForegroundServiceRunnable - App in foreground: " + mIsInForeground);
 
                 // TODO: Optimize this
                 if (mIsInForeground) {
@@ -86,6 +83,10 @@ public class App extends Application {
                 UPDATE_FOREGROUND_SERVICE_INTERVAL);
     }
 
+    public static void setNowPlayingViewCreated() {
+        mNowPlayingViewCreated = true;
+    }
+
     // http://baroqueworksdev.blogspot.ca/2012/12/how-to-use-activitylifecyclecallbacks.html
     private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
 
@@ -101,16 +102,20 @@ public class App extends Application {
 
         @Override
         public void onActivityResumed(Activity activity) {
-            Utils.log(TAG, "onActivityResumed() - Activity: " + activity);
+            //Utils.log(TAG, "onActivityResumed() - Activity: " + activity);
             mIsInForeground = true;
-            setupRunnable();
+            if (mNowPlayingViewCreated) {
+                setupRunnable();
+            }
         }
 
         @Override
         public void onActivityPaused(Activity activity) {
-            Utils.log(TAG, "onActivityPaused() - Activity: " + activity);
+            //Utils.log(TAG, "onActivityPaused() - Activity: " + activity);
             mIsInForeground = false;
-            setupRunnable();
+            if (mNowPlayingViewCreated) {
+                setupRunnable();
+            }
         }
 
         @Override

@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
@@ -94,6 +95,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
+
         Intent intent = getActivity().getIntent();
 
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
@@ -287,15 +289,22 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
+
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
-        // For service-to-client communication
-        mAudioService.setCallback(this);
+        if (mAudioService.getPlayer().isPlaylistEmpty()) {
+            // For service-to-client communication
+            mAudioService.setCallback(this);
 
-        // Send playlist to service and send also the index of the track to play
-        mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
-        mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
-        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+            // Send playlist to service and send also the index of the track to play
+            mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
+            mAudioService.getPlayer().play(mPlayListIndex); // Tell service to play track by sending it the index in tracks list
+            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+
+            // We will only set service as foreground when this view has been shown at least once
+            // TODO: find a better way, perhaps check if size of playlist in service is > 0
+            App.setNowPlayingViewCreated();
+        }
     }
 
     @Override

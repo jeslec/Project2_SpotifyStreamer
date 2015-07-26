@@ -12,6 +12,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 
 import java.util.ArrayList;
 
@@ -33,10 +34,12 @@ public class AudioPlayerService extends Service {
     public static final String ACTION_START_FOREGROUND =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.START_FOREGROUND";
     public static final String ACTION_STOP_FOREGROUND =
-            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.STOP_FOREGROUND";;
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.STOP_FOREGROUND";
+
+    private static final String ACTION_PLAY_NEXT_TRACK =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.PLAY_NEXT_TRACK";
 
     private static final int NOTIFICATION_ID_FOREGROUND_SERVICE = 1000;
-
 
 
     //private AudioPlayer mAudioPlayer = new AudioPlayer(this);
@@ -86,20 +89,36 @@ public class AudioPlayerService extends Service {
 
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
 
-            // TEST: Get currently playing track info (or last played)
-            //mAudioPlayer.getTrackInfo();
+            // Get currently playing track info (or last played)
+            TrackInfo track = mAudioPlayer.getTrackInfo();
+
+            Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
+            //notificationIntent.setAction(ACTION.MAIN_ACTION);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+            // Next track button intent
+            Intent nextIntent = new Intent(this, AudioPlayerService.class);
+            nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
+            PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
-                            .setSmallIcon(android.R.drawable.ic_menu_agenda)
-                            .setContentTitle("My notification")
-                            .setContentText("Hello World!");
+                            .setContentIntent(pendingIntent)
+                            .setSmallIcon(R.drawable.ic_audio_player)
+                            .setContentTitle(track.getTrackName())
+                            .setContentText(track.getArtistName());
+                            //.addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent);
 
             startForeground(NOTIFICATION_ID_FOREGROUND_SERVICE, mBuilder.build());
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
             stopForeground(true);
+        }
+
+        else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
+            mAudioPlayer.playNext();
         }
 
         return returnCode;

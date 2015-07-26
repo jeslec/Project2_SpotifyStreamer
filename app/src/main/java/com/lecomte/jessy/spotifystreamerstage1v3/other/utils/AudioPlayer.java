@@ -124,6 +124,13 @@ public class AudioPlayer {
         mPlaylist = trackList;
     }
 
+    public boolean isPlaylistEmpty() {
+        if (mPlaylist == null || mPlaylist.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     // Before calling play(), setPlaylist must have been called
     // Note: play() must be called before any call to playNext()/playPrevious is made
     // because the playList index is initialized in play() and the index is used by these 2 methods
@@ -140,7 +147,7 @@ public class AudioPlayer {
     // A call to play() must have been made before calling playNext()
     public void playNext() {
         if (mPlaylistIndex == null) {
-            Utils.log(TAG, "playNext(): playlist index not been initialized! - Call play()");
+            Utils.log(TAG, "playNext(): playlist index not initialized! - Call play()");
             return;
         }
         mTrack = mPlaylist.get(mPlaylistIndex.getNext());
