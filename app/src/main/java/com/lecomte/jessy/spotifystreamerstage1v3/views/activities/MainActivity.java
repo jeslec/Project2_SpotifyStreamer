@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Add NowPlaying activity/fragment loading code here
+        // TODO: fix this - It will not work as it is right now!!! Must pass TrackInfo list!
         else if (App.isTwoPaneLayout() &&
                 intent.getAction().equals(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER)) {
 
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements
 
             // Large layout: load NowPlaying fragment and show as a dialog
             FragmentManager fragmentManager = getSupportFragmentManager();
-            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track, artistName);
+            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track);
             newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
         }
     }

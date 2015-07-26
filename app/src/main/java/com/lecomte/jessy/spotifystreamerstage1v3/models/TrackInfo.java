@@ -108,7 +108,7 @@ public class TrackInfo implements Parcelable {
                 String.format("%1$-" + maxCharsAlbum + "s", albumName) + " " +
                 getAlbumSmallImageUrl() + " " + getAlbumBigImageUrl() + " " +
                 mTrackPreviewUrl + " " +
-                String.format("%2d:%2d", minutes, secondsLeft);
+                String.format("%02d:%02d", minutes, secondsLeft);
     }
 
     protected TrackInfo(Parcel in) {
