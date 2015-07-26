@@ -225,6 +225,20 @@ public class TopTracksFragment extends ListFragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    /*@Override
+    public void onPause() {
+        super.onPause();
+
+        App.setIsVisible(false, TAG);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        App.setIsVisible(true, TAG);
+    }*/
 }
 
 

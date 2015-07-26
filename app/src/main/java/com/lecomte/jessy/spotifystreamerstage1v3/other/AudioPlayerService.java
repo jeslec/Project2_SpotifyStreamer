@@ -23,6 +23,9 @@ public class AudioPlayerService extends Service {
     public static final String EXTRA_TRACK_DURATION =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.extra.TRACK_DURATION";
 
+    public static final String ACTION_START_FOREGROUND =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.START_FOREGROUND";
+
     //private AudioPlayer mAudioPlayer = new AudioPlayer(this);
     private LocalBinder mLocalBinder = new LocalBinder();
     private AudioPlayer mAudioPlayer = new AudioPlayer();
@@ -58,7 +61,14 @@ public class AudioPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Utils.log(TAG, "onStartCommand()");
-        return super.onStartCommand(intent, flags, startId);
+        //return super.onStartCommand(intent, flags, startId);
+        if (intent != null && intent.getAction() != null) {
+            if (intent.getAction().equals(ACTION_START_FOREGROUND)) {
+                Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
+            }
+        }
+
+        return START_STICKY;
     }
 
     @Override

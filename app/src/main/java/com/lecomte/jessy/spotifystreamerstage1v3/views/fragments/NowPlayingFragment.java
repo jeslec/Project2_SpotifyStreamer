@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
@@ -48,8 +49,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private SeekBar mSeekBar;
     private Handler mSeekBarHandler = new Handler();
     private Handler mSeekBarTextHandler = new Handler();
-    Runnable mUpdateSeekBarRunnable;
-    Runnable mUpdateSeekBarTextRunnable;
+    private Runnable mUpdateSeekBarRunnable;
+    private Runnable mUpdateSeekBarTextRunnable;
     private TextView mElapsedTimeTextView;
     private TextView mTotalTimeTextView;
     private ImageButton mPlayButton;
@@ -210,8 +211,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             }
         });
 
-        //mAudioService.getPlayer().play(mTrackUrl);
-
         return v;
     }
 
@@ -337,6 +336,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (mAudioService != null) {
             getActivity().unbindService(this);
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
+
+            //App.setIsVisible(false, TAG);
         }
     }
 
@@ -346,5 +347,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
+
+        //App.setIsVisible(true, TAG);
     }
 }

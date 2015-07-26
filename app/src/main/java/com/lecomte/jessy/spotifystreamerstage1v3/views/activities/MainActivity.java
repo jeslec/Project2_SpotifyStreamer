@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
+        Utils.log(TAG, "onNewIntent()");
     }
 
     private void handleIntent(Intent intent) {
@@ -218,5 +220,25 @@ public class MainActivity extends AppCompatActivity implements
         boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
         Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
         super.onDestroy();
+    }
+
+   /* @Override
+    public void onPause() {
+        super.onPause();
+
+        App.setIsVisible(false, TAG);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        App.setIsVisible(true, TAG);
+    }*/
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        Utils.log(TAG, "onCreate()");
     }
 }

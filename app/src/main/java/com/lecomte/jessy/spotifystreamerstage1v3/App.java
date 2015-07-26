@@ -1,9 +1,19 @@
 package com.lecomte.jessy.spotifystreamerstage1v3;
 
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Window;
+
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jessy on 2015-07-08.
@@ -14,8 +24,13 @@ import android.content.res.Resources;
  */
 public class App extends Application {
 
+    private static final String TAG = "App";
     private static Context mContext;
     private static boolean mIsTwoPaneLayout;
+    private static Handler mForegroundServiceHandler = new Handler();
+    private static Runnable mForegroundServiceRunnable;
+    private static final int UPDATE_FOREGROUND_SERVICE_INTERVAL = 300; // milliseconds
+    private static boolean mIsInForeground = true;
 
     // Get the resources anywhere in my app
     public static Resources getRes() {
@@ -26,6 +41,7 @@ public class App extends Application {
 
     public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(new MyActivityLifecycleCallbacks());
         mContext = getApplicationContext();
 
         // Determine if the main activity has 1-pane or 2-pane layout
@@ -38,10 +54,75 @@ public class App extends Application {
         }
 
         mIsTwoPaneLayout = twoPanes;
+
+        mForegroundServiceRunnable = new Runnable() {
+            @Override public void run() {
+
+                Utils.log(TAG, "ForegroundServiceRunnable - App in foreground: " + mIsInForeground);
+
+                if (!mIsInForeground) {
+                    Intent intent = new Intent()
+                            .setClass(getContext(), AudioPlayerService.class)
+                            .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
+                    startService(intent);
+                } else {
+
+                }
+            }
+        };
     }
 
     public static boolean isTwoPaneLayout() {
         return mIsTwoPaneLayout;
+    }
+
+    private static void setupRunnable() {
+        mForegroundServiceHandler.removeCallbacks(mForegroundServiceRunnable);
+        mForegroundServiceHandler.postDelayed(mForegroundServiceRunnable,
+                UPDATE_FOREGROUND_SERVICE_INTERVAL);
+    }
+
+    // http://baroqueworksdev.blogspot.ca/2012/12/how-to-use-activitylifecyclecallbacks.html
+    private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            //Utils.log(TAG, "onActivityCreated() - Activity: " + activity);
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+            //Utils.log(TAG, "onActivityStarted() - Activity: " + activity);
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            Utils.log(TAG, "onActivityResumed() - Activity: " + activity);
+            mIsInForeground = true;
+            setupRunnable();
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+            Utils.log(TAG, "onActivityPaused() - Activity: " + activity);
+            mIsInForeground = false;
+            setupRunnable();
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            //Utils.log(TAG, "onActivityStopped() - Activity: " + activity);
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+
+        }
     }
 }
 
