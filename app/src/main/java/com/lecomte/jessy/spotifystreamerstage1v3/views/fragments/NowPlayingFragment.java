@@ -61,6 +61,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private ImageView mAlbumImageView;
     private int mSeekBarProgress = 0;
     private AudioPlayerService mAudioService;
+    private boolean mIsNewPlayList = false;
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo) {
@@ -95,6 +96,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
+
+        // TEST: this will tell us if we need to stop the player and reload the playlist
+        // Added: 2015-07-26, 17h30
+        mIsNewPlayList = true;
+        //------------------
 
         Intent intent = getActivity().getIntent();
 
@@ -295,20 +301,47 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // For service-to-client communication
         mAudioService.setCallback(this);
 
-        // This is done when we are playing a track for the first time or
-        // the user selected another artist so we need to send new playlist to service
-        if (mAudioService.getPlayer().isPlaylistEmpty() ||
-                !mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
-            // Send playlist to service and send also the index of the track to play
-            mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
+        // Use Cases
+
+        // 1- User has pressed on HOME then long-press HOME then the app
+        //  Actions to take:
+        //      A) Do nothing (keep existing playlist, keep playing currently playing track)
+        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId()) &&
+                mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
+            // Do nothing!
+            return;
         }
 
-        mAudioService.getPlayer().play(mPlayListIndex);
-        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+        else {
 
-        // We will only set service as foreground when this view has been shown at least once
-        // TODO: Is there a better way?
-        App.setNowPlayingViewCreated();
+            // 2- User has selected a track in another playlist
+            //    Actions to take:
+            //      A) Send new playlist to service
+            //      B) Stop currently playing track
+            //      C) Play the new track
+            if (mAudioService.getPlayer().isPlaylistEmpty() ||
+                    !mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
+                // Send playlist to service and send also the index of the track to play
+                mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
+                Utils.log(TAG, "onServiceConnected() - Playlist sent to service");
+            }
+
+            // 3- User has selected another track in the same playlist
+            //  Actions to take:
+            //      A) Stop playing the current track
+            //      B) Play the new track
+
+            mAudioService.getPlayer().play(mPlayListIndex);
+            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+
+            // We will only set service as foreground when this view has been shown at least once
+            // TODO: Is there a better way?
+            App.setNowPlayingViewCreated();
+
+            // 4- User has pressed on HOME then drawer then the app notification
+            //  Actions to take: ???
+
+        }
     }
 
     @Override

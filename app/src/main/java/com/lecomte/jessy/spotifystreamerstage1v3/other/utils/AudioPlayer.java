@@ -183,4 +183,8 @@ public class AudioPlayer {
         }
         return mPlaylist.get(mPlaylistIndex.get());
     }
+
+    public int getPlaylistIndex() {
+        return mPlaylistIndex.get();
+    }
 }

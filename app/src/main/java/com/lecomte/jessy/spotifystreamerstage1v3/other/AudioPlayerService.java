@@ -114,10 +114,12 @@ public class AudioPlayerService extends Service {
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
+            Utils.log(TAG, "onStartCommand() - Action: ACTION_STOP_FOREGROUND");
             stopForeground(true);
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
+            Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
             mAudioPlayer.playNext();
         }
 
