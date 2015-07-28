@@ -218,8 +218,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
-        Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
+        // TODO: Find a way to kill the service... Perhaps use an timer? (e.g. unused for 1 min)
+        //boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
+        //Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
         super.onDestroy();
     }
 

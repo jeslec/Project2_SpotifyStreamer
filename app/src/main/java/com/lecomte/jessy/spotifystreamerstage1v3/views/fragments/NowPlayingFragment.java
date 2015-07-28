@@ -133,6 +133,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (intent != null) {
             mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
             mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+
+            // This happens when NowPlaying is called without setting any extras
+            // Occurs when user selects this app's notification and this screen is launched
+            if (mTrackList == null && mPlayListIndex == 0) {
+                Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
+            }
         }
 
         // Fragment was "started" with newInstance(): this happens in a double-pane layout
@@ -140,11 +146,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             final Bundle args = getArguments();
             mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
             mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
-        }
-
-        // This happens when NowPlaying is called without setting any arguments or extras
-        else {
-            Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
         }
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -320,17 +321,27 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // For service-to-client communication
         mAudioService.setCallback(this);
 
-        // First playlist or a new playlist
-        if (isNewPlaylist()) {
-            mAudioService.getPlayer().setPlaylist(mTrackList);
-            mAudioService.getPlayer().play(mPlayListIndex);
+        // TEST: detect when NowPlaying is called from a notification (pendingIntent)
+        if (mTrackList == null) {
+            Utils.log(TAG, "onServiceConnected() - mTrackList is null!");
+            mTrackList = mAudioService.getPlayer().getPlaylist();
+            mPlayListIndex = mAudioService.getPlayer().getPlaylistIndex();
+            int trackDuration = mAudioService.getPlayer().getTrackDuration();
+            onReceiveTrackDuration(trackDuration);
         }
 
-        // Another track from the same playlist
-        else if (isNewTrack()) {
-            mAudioService.getPlayer().play(mPlayListIndex);
-        }
+        else {
+            // First playlist or a new playlist
+            if (isNewPlaylist()) {
+                mAudioService.getPlayer().setPlaylist(mTrackList);
+                mAudioService.getPlayer().play(mPlayListIndex);
+            }
 
+            // Another track from the same playlist
+            else if (isNewTrack()) {
+                mAudioService.getPlayer().play(mPlayListIndex);
+            }
+        }
         displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
         App.setNowPlayingViewCreated();
     }

@@ -122,6 +122,14 @@ public class AudioPlayer {
         return mPlaylist.get(0).getArtistName();
     }
 
+    public ArrayList<TrackInfo> getPlaylist() {
+        return mPlaylist;
+    }
+
+    public int getTrackDuration() {
+        return mTrackDuration;
+    }
+
     public interface Callback {
         void onTrackCompleted();
         void onReceiveTrackDuration(int duration);
@@ -185,6 +193,10 @@ public class AudioPlayer {
     }
 
     public int getPlaylistIndex() {
+        if (mPlaylistIndex == null) {
+            Utils.log(TAG, "getPlaylistIndex() - mPlaylistIndex is null! Index value returned: 0");
+            return 0;
+        }
         return mPlaylistIndex.get();
     }
 }
