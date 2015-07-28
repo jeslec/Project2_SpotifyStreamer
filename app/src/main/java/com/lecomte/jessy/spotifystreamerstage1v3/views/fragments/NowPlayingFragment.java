@@ -142,6 +142,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
         }
 
+        // This happens when NowPlaying is called without setting any arguments or extras
+        else {
+            Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
+        }
+
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -292,7 +297,46 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 
+    private boolean isNewPlaylist() {
+        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isNewTrack() {
+        if (mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
+
+        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
+
+        // For service-to-client communication
+        mAudioService.setCallback(this);
+
+        // First playlist or a new playlist
+        if (isNewPlaylist()) {
+            mAudioService.getPlayer().setPlaylist(mTrackList);
+            mAudioService.getPlayer().play(mPlayListIndex);
+        }
+
+        // Another track from the same playlist
+        else if (isNewTrack()) {
+            mAudioService.getPlayer().play(mPlayListIndex);
+        }
+
+        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+        App.setNowPlayingViewCreated();
+    }
+
+    // BACKUP
+    /*@Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
 
@@ -342,7 +386,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             //  Actions to take: ???
 
         }
-    }
+    }*/
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
