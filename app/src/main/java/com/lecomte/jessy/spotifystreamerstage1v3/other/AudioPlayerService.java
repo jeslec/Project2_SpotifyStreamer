@@ -1,7 +1,10 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -39,10 +42,14 @@ public class AudioPlayerService extends Service {
     private static final String ACTION_PLAY_NEXT_TRACK =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.PLAY_NEXT_TRACK";
 
-    private static final int NOTIFICATION_ID_FOREGROUND_SERVICE = 1000;
+    private static final String ACTION_PLAY_PREVIOUS_TRACK =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.PLAY_PREV_TRACK";
 
+    private static final String ACTION_PAUSE =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.PAUSE";
 
-    //private AudioPlayer mAudioPlayer = new AudioPlayer(this);
+    private static final int NOTIFICATION_ID_AUDIO_PLAYER_SERVICE = 1000;
+
     private LocalBinder mLocalBinder = new LocalBinder();
     private AudioPlayer mAudioPlayer = new AudioPlayer();
 
@@ -74,6 +81,50 @@ public class AudioPlayerService extends Service {
         }
     }
 
+    private Notification buildNotification() {
+        // Get currently playing track info (or last played)
+        TrackInfo track = mAudioPlayer.getTrackInfo();
+
+        Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
+        //notificationIntent.setAction(ACTION.MAIN_ACTION);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        // Previous track button intent
+        Intent previousIntent = new Intent(this, AudioPlayerService.class);
+        previousIntent.setAction(AudioPlayerService.ACTION_PLAY_PREVIOUS_TRACK);
+        PendingIntent prevPendingIntent = PendingIntent.getService(this, 0, previousIntent, 0);
+
+        // Pause track button intent
+        Intent pauseIntent = new Intent(this, AudioPlayerService.class);
+        pauseIntent.setAction(AudioPlayerService.ACTION_PAUSE);
+        PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+
+        // Next track button intent
+        Intent nextIntent = new Intent(this, AudioPlayerService.class);
+        nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
+        PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
+
+        // Use high priority so notification appears at top of notifications list and that
+        // the control buttons are displayed by default (instead of having to expend notif.)
+        // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
+        return new NotificationCompat.Builder(this)
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.ic_audio_player)
+                        .setContentTitle(track.getTrackName())
+                        .setContentText(track.getArtistName())
+                        .setPriority(Notification.PRIORITY_MAX)
+                        .addAction(android.R.drawable.ic_media_previous, getResources()
+                                        .getString(R.string.notification_action_play_prev),
+                                prevPendingIntent)
+                        .addAction(android.R.drawable.ic_media_pause, getResources()
+                                        .getString(R.string.notification_action_pause),
+                                pausePendingIntent)
+                        .addAction(android.R.drawable.ic_media_next, getResources()
+                                        .getString(R.string.notification_action_play_next),
+                                nextPendingIntent).build();
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Utils.log(TAG, "onStartCommand()");
@@ -86,31 +137,8 @@ public class AudioPlayerService extends Service {
         String action = intent.getAction();
 
         if (action.equals(ACTION_START_FOREGROUND)) {
-
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
-
-            // Get currently playing track info (or last played)
-            TrackInfo track = mAudioPlayer.getTrackInfo();
-
-            Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
-            //notificationIntent.setAction(ACTION.MAIN_ACTION);
-            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-            // Next track button intent
-            Intent nextIntent = new Intent(this, AudioPlayerService.class);
-            nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
-            PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
-
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setContentIntent(pendingIntent)
-                            .setSmallIcon(R.drawable.ic_audio_player)
-                            .setContentTitle(track.getTrackName())
-                            .setContentText(track.getArtistName());
-                            //.addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent);
-
-            startForeground(NOTIFICATION_ID_FOREGROUND_SERVICE, mBuilder.build());
+            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
@@ -118,11 +146,25 @@ public class AudioPlayerService extends Service {
             stopForeground(true);
         }
 
+        else if (action.equals(ACTION_PLAY_PREVIOUS_TRACK)) {
+            Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
+            mAudioPlayer.playPrevious();
+            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
+        }
+
+        else if (action.equals(ACTION_PAUSE)) {
+            Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
+            mAudioPlayer.pause();
+            // TODO: change icon to play
+        }
+
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
             mAudioPlayer.playNext();
+            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
         }
-
         return returnCode;
     }
 
@@ -143,40 +185,3 @@ public class AudioPlayerService extends Service {
         super.onDestroy();
     }
 }
-
- /*// Notification (if you click on it) intent
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            //notificationIntent.setAction(ACTION.MAIN_ACTION);
-            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);*/
-
-            /*// Previous track button intent
-            Intent previousIntent = new Intent(this, ForegroundService.class);
-            previousIntent.setAction(Constants.ACTION.PREV_ACTION);
-            PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
-
-            // Play track button intent
-            Intent playIntent = new Intent(this, ForegroundService.class);
-            playIntent.setAction(Constants.ACTION.PLAY_ACTION);
-            PendingIntent pplayIntent = PendingIntent.getService(this, 0, playIntent, 0);
-
-            // Next track button intent
-            Intent nextIntent = new Intent(this, ForegroundService.class);
-            nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
-            PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
-
-            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.truiton_short);*/
-
-           /* Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle("Track Name")
-                    .setTicker("Track Name") // Jessy: don't know what that is
-                    .setContentText("Album Name")
-                    //.setSmallIcon(R.drawable.ic_launcher)
-                    //.setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true)
-                    *//*.addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent)
-                    .addAction(android.R.drawable.ic_media_play, "Play", playIntent)
-                    .addAction(android.R.drawable.ic_media_next, "Next", pnextIntent)*//*
-                    .build();*/
-

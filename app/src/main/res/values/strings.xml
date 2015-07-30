@@ -27,4 +27,9 @@
     <string name="AudioPlayer_debug_anotherSongIsPlaying">play() - Another song is playing</string>
     <string name="AudioPlayer_debug_playerStopped">stop() - Player stopped and audio player destroyed</string>
 
+    <!-- Notification -->
+    <string name="notification_action_play_prev"></string>
+    <string name="notification_action_pause"></string>
+    <string name="notification_action_play_next"></string>
+
 </resources>
