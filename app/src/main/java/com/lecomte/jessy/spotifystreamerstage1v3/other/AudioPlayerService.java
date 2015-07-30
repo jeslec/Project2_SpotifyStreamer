@@ -110,47 +110,33 @@ public class AudioPlayerService extends Service {
         nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
         PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_audio_player)
+                .setContentTitle(track.getTrackName())
+                .setContentText(track.getArtistName())
+                .setPriority(Notification.PRIORITY_MAX)
+                .addAction(android.R.drawable.ic_media_previous, getResources()
+                                .getString(R.string.notification_action_play_prev),
+                        prevPendingIntent);
+
         if (bAddPlayButton) {
-            // Use high priority so notification appears at top of notifications list and that
-            // the control buttons are displayed by default (instead of having to expend notif.)
-            // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
-            return new NotificationCompat.Builder(this)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_audio_player)
-                    .setContentTitle(track.getTrackName())
-                    .setContentText(track.getArtistName())
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .addAction(android.R.drawable.ic_media_previous, getResources()
-                                    .getString(R.string.notification_action_play_prev),
-                            prevPendingIntent)
-                    .addAction(android.R.drawable.ic_media_play, getResources()
-                                    .getString(R.string.notification_action_resume),
-                            resumePendingIntent)
-                    .addAction(android.R.drawable.ic_media_next, getResources()
-                                    .getString(R.string.notification_action_play_next),
-                            nextPendingIntent).build();
+            builder.addAction(android.R.drawable.ic_media_play,
+                    getResources().getString(R.string.notification_action_resume),
+                    resumePendingIntent);
         }
 
         else {
-            // Use high priority so notification appears at top of notifications list and that
-            // the control buttons are displayed by default (instead of having to expend notif.)
-            // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
-            return new NotificationCompat.Builder(this)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_audio_player)
-                    .setContentTitle(track.getTrackName())
-                    .setContentText(track.getArtistName())
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .addAction(android.R.drawable.ic_media_previous, getResources()
-                                    .getString(R.string.notification_action_play_prev),
-                            prevPendingIntent)
-                    .addAction(android.R.drawable.ic_media_pause, getResources()
-                                    .getString(R.string.notification_action_pause),
-                            pausePendingIntent)
-                    .addAction(android.R.drawable.ic_media_next, getResources()
-                                    .getString(R.string.notification_action_play_next),
-                            nextPendingIntent).build();
+            builder.addAction(android.R.drawable.ic_media_pause,
+                    getResources().getString(R.string.notification_action_pause),
+                    pausePendingIntent);
         }
+
+        builder.addAction(android.R.drawable.ic_media_next,
+                getResources().getString(R.string.notification_action_play_next),
+                nextPendingIntent).build();
+
+        return builder.build();
     }
 
     @Override
@@ -205,7 +191,6 @@ public class AudioPlayerService extends Service {
         }
         return returnCode;
     }
-
 
     @Override
     public void onCreate() {
