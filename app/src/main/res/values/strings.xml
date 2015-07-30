@@ -31,5 +31,6 @@
     <string name="notification_action_play_prev"></string>
     <string name="notification_action_pause"></string>
     <string name="notification_action_play_next"></string>
+    <string name="notification_action_resume"></string>
 
 </resources>

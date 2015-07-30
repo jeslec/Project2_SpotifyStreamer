@@ -14,10 +14,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jessy on 2015-07-24.
@@ -47,6 +44,9 @@ public class AudioPlayerService extends Service {
 
     private static final String ACTION_PAUSE =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.PAUSE";
+
+    private static final String ACTION_RESUME =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.RESUME";;
 
     private static final int NOTIFICATION_ID_AUDIO_PLAYER_SERVICE = 1000;
 
@@ -81,7 +81,7 @@ public class AudioPlayerService extends Service {
         }
     }
 
-    private Notification buildNotification() {
+    private Notification buildNotification(boolean bAddPlayButton) {
         // Get currently playing track info (or last played)
         TrackInfo track = mAudioPlayer.getTrackInfo();
 
@@ -100,29 +100,57 @@ public class AudioPlayerService extends Service {
         pauseIntent.setAction(AudioPlayerService.ACTION_PAUSE);
         PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
 
+        // Resume track button intent
+        Intent resumeIntent = new Intent(this, AudioPlayerService.class);
+        resumeIntent.setAction(AudioPlayerService.ACTION_RESUME);
+        PendingIntent resumePendingIntent = PendingIntent.getService(this, 0, resumeIntent, 0);
+
         // Next track button intent
         Intent nextIntent = new Intent(this, AudioPlayerService.class);
         nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
         PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
-        // Use high priority so notification appears at top of notifications list and that
-        // the control buttons are displayed by default (instead of having to expend notif.)
-        // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
-        return new NotificationCompat.Builder(this)
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.drawable.ic_audio_player)
-                        .setContentTitle(track.getTrackName())
-                        .setContentText(track.getArtistName())
-                        .setPriority(Notification.PRIORITY_MAX)
-                        .addAction(android.R.drawable.ic_media_previous, getResources()
-                                        .getString(R.string.notification_action_play_prev),
-                                prevPendingIntent)
-                        .addAction(android.R.drawable.ic_media_pause, getResources()
-                                        .getString(R.string.notification_action_pause),
-                                pausePendingIntent)
-                        .addAction(android.R.drawable.ic_media_next, getResources()
-                                        .getString(R.string.notification_action_play_next),
-                                nextPendingIntent).build();
+        if (bAddPlayButton) {
+            // Use high priority so notification appears at top of notifications list and that
+            // the control buttons are displayed by default (instead of having to expend notif.)
+            // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
+            return new NotificationCompat.Builder(this)
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.ic_audio_player)
+                    .setContentTitle(track.getTrackName())
+                    .setContentText(track.getArtistName())
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .addAction(android.R.drawable.ic_media_previous, getResources()
+                                    .getString(R.string.notification_action_play_prev),
+                            prevPendingIntent)
+                    .addAction(android.R.drawable.ic_media_play, getResources()
+                                    .getString(R.string.notification_action_resume),
+                            resumePendingIntent)
+                    .addAction(android.R.drawable.ic_media_next, getResources()
+                                    .getString(R.string.notification_action_play_next),
+                            nextPendingIntent).build();
+        }
+
+        else {
+            // Use high priority so notification appears at top of notifications list and that
+            // the control buttons are displayed by default (instead of having to expend notif.)
+            // http://stackoverflow.com/questions/18249871/android-notification-buttons-not-showing-up
+            return new NotificationCompat.Builder(this)
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.ic_audio_player)
+                    .setContentTitle(track.getTrackName())
+                    .setContentText(track.getArtistName())
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .addAction(android.R.drawable.ic_media_previous, getResources()
+                                    .getString(R.string.notification_action_play_prev),
+                            prevPendingIntent)
+                    .addAction(android.R.drawable.ic_media_pause, getResources()
+                                    .getString(R.string.notification_action_pause),
+                            pausePendingIntent)
+                    .addAction(android.R.drawable.ic_media_next, getResources()
+                                    .getString(R.string.notification_action_play_next),
+                            nextPendingIntent).build();
+        }
     }
 
     @Override
@@ -138,7 +166,7 @@ public class AudioPlayerService extends Service {
 
         if (action.equals(ACTION_START_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
-            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
+            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification(false));
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
@@ -150,20 +178,30 @@ public class AudioPlayerService extends Service {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
             mAudioPlayer.playPrevious();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification(false));
         }
 
         else if (action.equals(ACTION_PAUSE)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
             mAudioPlayer.pause();
             // TODO: change icon to play
+            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification(true));
+        }
+
+        else if (action.equals(ACTION_RESUME)) {
+            Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
+            mAudioPlayer.resume();
+            // TODO: change icon to pause
+            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification(false));
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
             mAudioPlayer.playNext();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification());
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildNotification(false));
         }
         return returnCode;
     }
