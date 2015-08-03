@@ -288,7 +288,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         stopSeekBarUpdates();
     }
 
-    void pausePlayer() {
+    void  pausePlayer() {
         mAudioService.getPlayer().pause();
         mPlayButton.setImageResource(android.R.drawable.ic_media_play);
     }
