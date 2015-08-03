@@ -17,6 +17,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Jessy on 2015-07-24.
@@ -91,7 +92,6 @@ public class AudioPlayerService extends Service {
                 R.layout.notification_player);
 
         Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
-        //notificationIntent.setAction(ACTION.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
@@ -118,10 +118,21 @@ public class AudioPlayerService extends Service {
         // Set onClick events for media control buttons: each button calls a pending intent
         notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPrev,
                 prevPendingIntent);
-        notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
-                pausePendingIntent);
         notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonNext,
                 nextPendingIntent);
+
+        // Put "play" button icon and set pending intent to call when button is pressed
+        if (bAddPlayButton) {
+            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
+                    android.R.drawable.ic_media_play);
+            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
+                    resumePendingIntent);
+        } else { // Put "pause" button icon and set pending intent to call when button is pressed
+            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
+                    android.R.drawable.ic_media_pause);
+            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
+                    pausePendingIntent);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContent(notificationRemoteView)
@@ -130,21 +141,18 @@ public class AudioPlayerService extends Service {
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
                 .setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(true); // user cannot remove notificaiton from the notificatoin drawer
+                .setOngoing(true); // user cannot remove notification from the notification drawer
 
-                /*.addAction(android.R.drawable.ic_media_previous, getResources()
-                                .getString(R.string.notification_action_play_prev),
-                        prevPendingIntent);
+        Notification notification = builder.build();
 
-        if (bAddPlayButton) {
-            builder.addAction(android.R.drawable.ic_media_play, getResources().getString(R.string.notification_action_resume), resumePendingIntent);
-        } else {
-            builder.addAction(android.R.drawable.ic_media_pause, getResources().getString(R.string.notification_action_pause), pausePendingIntent);
-        }
+        // Load image asynchronously for this notification
+        Picasso.with(this).load(track.getAlbumSmallImageUrl())
+                .resizeDimen(R.dimen.notification_icon_width_height,
+                        R.dimen.notification_icon_width_height)
+                .into(notificationRemoteView, R.id.notification_imageAlbum,
+                        NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, notification);
 
-        builder.addAction(android.R.drawable.ic_media_next, getResources().getString(R.string.notification_action_play_next), nextPendingIntent).build();*/
-
-        return builder.build();
+        return notification;
     }
 
     /*private Notification buildCustomNotification(boolean bAddPlayButton) {

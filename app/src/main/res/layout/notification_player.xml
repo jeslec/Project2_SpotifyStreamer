@@ -37,7 +37,8 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/notification_buttonPrev"/>
+            android:id="@+id/notification_buttonPrev"
+            android:background="@android:drawable/ic_media_previous"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -47,6 +48,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/notification_buttonNext"/>
+            android:id="@+id/notification_buttonNext"
+            android:background="@android:drawable/ic_media_next"/>
     </LinearLayout>
 </LinearLayout>
