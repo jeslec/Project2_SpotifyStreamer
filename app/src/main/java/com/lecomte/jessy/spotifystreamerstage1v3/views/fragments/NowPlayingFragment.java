@@ -61,7 +61,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private ImageView mAlbumImageView;
     private int mSeekBarProgress = 0;
     private AudioPlayerService mAudioService;
-    private boolean mIsNewPlayList = false;
+
+    // True: means NowPlaying was loaded from TopTracks
+    // False: NowPlaying was loaded from notification or recently opened apps drawer
+    private boolean mIsFromTopTracks = false;
 
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(TrackInfo trackInfo) {
@@ -99,7 +102,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // TEST: this will tell us if we need to stop the player and reload the playlist
         // Added: 2015-07-26, 17h30
-        mIsNewPlayList = true;
+        mIsFromTopTracks = true;
         //------------------
 
         Intent intent = getActivity().getIntent();
@@ -333,71 +336,22 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         else {
             // First playlist or a new playlist
             if (isNewPlaylist()) {
+                Utils.log(TAG, "onServiceConnected() - New playlist");
                 mAudioService.getPlayer().setPlaylist(mTrackList);
                 mAudioService.getPlayer().play(mPlayListIndex);
             }
 
             // Another track from the same playlist
-            else if (isNewTrack()) {
+            else if (isNewTrack() && mIsFromTopTracks) {
+                Utils.log(TAG, "onServiceConnected() - New track");
                 mAudioService.getPlayer().play(mPlayListIndex);
             }
         }
+
         displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
         App.setNowPlayingViewCreated();
+        mIsFromTopTracks = false;
     }
-
-    // BACKUP
-    /*@Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
-
-        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
-
-        // For service-to-client communication
-        mAudioService.setCallback(this);
-
-        // Use Cases
-
-        // 1- User has pressed on HOME then long-press HOME then the app
-        //  Actions to take:
-        //      A) Do nothing (keep existing playlist, keep playing currently playing track)
-        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId()) &&
-                mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
-            // Do nothing!
-            return;
-        }
-
-        else {
-
-            // 2- User has selected a track in another playlist
-            //    Actions to take:
-            //      A) Send new playlist to service
-            //      B) Stop currently playing track
-            //      C) Play the new track
-            if (mAudioService.getPlayer().isPlaylistEmpty() ||
-                    !mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
-                // Send playlist to service and send also the index of the track to play
-                mAudioService.getPlayer().setPlaylist(mTrackList); // Send top tracks list to service
-                Utils.log(TAG, "onServiceConnected() - Playlist sent to service");
-            }
-
-            // 3- User has selected another track in the same playlist
-            //  Actions to take:
-            //      A) Stop playing the current track
-            //      B) Play the new track
-
-            mAudioService.getPlayer().play(mPlayListIndex);
-            displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-
-            // We will only set service as foreground when this view has been shown at least once
-            // TODO: Is there a better way?
-            App.setNowPlayingViewCreated();
-
-            // 4- User has pressed on HOME then drawer then the app notification
-            //  Actions to take: ???
-
-        }
-    }*/
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
