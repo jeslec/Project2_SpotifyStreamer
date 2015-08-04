@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingLeft="5dp">
+            android:paddingLeft="@dimen/notification_texviews_layout_paddingLeft">
 
             <TextView
                 android:layout_width="match_parent"
@@ -61,8 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/notification_buttonPlay"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginLeft="@dimen/notification_play_button_left_right_margin"
+            android:layout_marginRight="@dimen/notification_play_button_left_right_margin"/>
 
         <ImageButton
             android:layout_width="wrap_content"

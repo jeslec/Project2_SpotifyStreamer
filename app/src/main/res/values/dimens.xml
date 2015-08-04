@@ -31,5 +31,7 @@
     <dimen name="listview_item_layout_padding_top">10dp</dimen>
 
     <!-- Player controls notification icon size -->
-    <dimen name="notification_icon_width_height">85dip</dimen>
+    <dimen name="notification_icon_width_height">85dp</dimen>
+    <dimen name="notification_play_button_left_right_margin">15dp</dimen>
+    <dimen name="notification_texviews_layout_paddingLeft">5dp</dimen>
 </resources>
