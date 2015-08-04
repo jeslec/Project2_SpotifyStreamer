@@ -31,5 +31,5 @@
     <dimen name="listview_item_layout_padding_top">10dp</dimen>
 
     <!-- Player controls notification icon size -->
-    <dimen name="notification_icon_width_height">100dp</dimen>
+    <dimen name="notification_icon_width_height">85dip</dimen>
 </resources>

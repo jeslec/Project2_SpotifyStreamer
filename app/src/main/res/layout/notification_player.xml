@@ -12,43 +12,46 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/notification_textTrack"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Track Name"
-            android:id="@+id/notification_textName"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Artist Name"
             android:id="@+id/notification_textArtist"/>
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/notification_buttonPrev"
-            android:background="@android:drawable/ic_media_previous"/>
+            android:background="@android:drawable/ic_media_previous"
+            android:padding="25dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/notification_buttonPlay"/>
+            android:id="@+id/notification_buttonPlay"
+            android:padding="25dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/notification_buttonNext"
-            android:background="@android:drawable/ic_media_next"/>
+            android:background="@android:drawable/ic_media_next"
+            android:padding="25dp"/>
     </LinearLayout>
 </LinearLayout>

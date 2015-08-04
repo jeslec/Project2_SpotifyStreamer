@@ -134,6 +134,10 @@ public class AudioPlayerService extends Service {
                     pausePendingIntent);
         }
 
+        // Set notification texts
+        notificationRemoteView.setTextViewText(R.id.notification_textTrack, track.getTrackName());
+        notificationRemoteView.setTextViewText(R.id.notification_textArtist, track.getArtistName());
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContent(notificationRemoteView)
                 .setContentIntent(pendingIntent)
