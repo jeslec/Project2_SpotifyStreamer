@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="preferences_country"
+        android:title="@string/preferences_searchCountryTitle"
+        android:dialogTitle="@string/preferences_searchCountryDialogTitle"
+        android:entries="@array/preferences_countryEntries"
+        android:entryValues="@array/preferences_countryValues"
+        android:defaultValue="@string/preferences_countryDefaultValue" />
+
+</PreferenceScreen>

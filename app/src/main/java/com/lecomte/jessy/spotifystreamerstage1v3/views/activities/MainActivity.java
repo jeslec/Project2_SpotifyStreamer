@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search_artist, menu);
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return true;
-    }
+    }*/
 
     @Override
     public void onFragmentInteraction(Uri uri) {

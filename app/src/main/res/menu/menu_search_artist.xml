@@ -3,9 +3,14 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity">
 
-    <item android:id="@+id/action_search"
-          android:title="@string/action_search"
-          android:icon="@android:drawable/ic_menu_search"
-          app:showAsAction="always"
-          app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item android:id="@+id/menu_item_search"
+        android:title="@string/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
+
+    <item android:id="@+id/menu_item_preferences"
+        android:title="@string/action_open_preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="never"/>
 </menu>

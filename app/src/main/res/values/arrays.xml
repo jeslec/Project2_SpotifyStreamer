@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="preferences_countryEntries">
+        <item>United States</item>
+        <item>Canada</item>
+        <item>Australia</item>
+        <item>France</item>
+        <item>China</item>
+    </string-array>
+
+    <string-array name="preferences_countryValues">
+        <item>US</item>
+        <item>CA</item>
+        <item>AU</item>
+        <item>FR</item>
+        <item>CN</item>
+    </string-array>
+</resources>

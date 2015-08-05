@@ -16,6 +16,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.squareup.picasso.Picasso;
 
@@ -92,8 +93,27 @@ public class AudioPlayerService extends Service {
                 R.layout.notification_player);
 
         Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        //--------------------------------------------------------------------------
+        // Intent for the activity to open when user selects the notification
+        Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
+        nowPlayingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        // Use TaskStackBuilder to build the back stack and get the PendingIntent
+        PendingIntent pendingIntent =
+                TaskStackBuilder.create(this)
+                        // add all of DetailsActivity's parents to the stack,
+                        // followed by DetailsActivity itself
+                        .addParentStack(NowPlayingActivity.class)
+                        .addNextIntent(nowPlayingIntent)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentIntent(pendingIntent);*/
+
+        //-----------------------------------------------------------------
 
         // Previous track button intent
         Intent previousIntent = new Intent(this, AudioPlayerService.class);
@@ -226,56 +246,5 @@ public class AudioPlayerService extends Service {
         mAudioPlayer.stop();
 
         super.onDestroy();
-    }
-
-    private Notification buildNotification(boolean bAddPlayButton) {
-        // Get currently playing track info (or last played)
-        TrackInfo track = mAudioPlayer.getTrackInfo();
-
-        Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
-        //notificationIntent.setAction(ACTION.MAIN_ACTION);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        // Previous track button intent
-        Intent previousIntent = new Intent(this, AudioPlayerService.class);
-        previousIntent.setAction(AudioPlayerService.ACTION_PLAY_PREVIOUS_TRACK);
-        PendingIntent prevPendingIntent = PendingIntent.getService(this, 0, previousIntent, 0);
-
-        // Pause track button intent
-        Intent pauseIntent = new Intent(this, AudioPlayerService.class);
-        pauseIntent.setAction(AudioPlayerService.ACTION_PAUSE);
-        PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
-
-        // Resume track button intent
-        Intent resumeIntent = new Intent(this, AudioPlayerService.class);
-        resumeIntent.setAction(AudioPlayerService.ACTION_RESUME);
-        PendingIntent resumePendingIntent = PendingIntent.getService(this, 0, resumeIntent, 0);
-
-        // Next track button intent
-        Intent nextIntent = new Intent(this, AudioPlayerService.class);
-        nextIntent.setAction(AudioPlayerService.ACTION_PLAY_NEXT_TRACK);
-        PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_audio_player)
-                .setContentTitle(track.getTrackName())
-                .setContentText(track.getArtistName())
-                .setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(true) // user cannot remove notificaiton from the notificatoin drawer
-                .addAction(android.R.drawable.ic_media_previous, getResources()
-                                .getString(R.string.notification_action_play_prev),
-                        prevPendingIntent);
-
-        if (bAddPlayButton) {
-            builder.addAction(android.R.drawable.ic_media_play, getResources().getString(R.string.notification_action_resume), resumePendingIntent);
-        } else {
-            builder.addAction(android.R.drawable.ic_media_pause, getResources().getString(R.string.notification_action_pause), pausePendingIntent);
-        }
-
-        builder.addAction(android.R.drawable.ic_media_next, getResources().getString(R.string.notification_action_play_next), nextPendingIntent).build();
-
-        return builder.build();
     }
 }

@@ -1,7 +1,10 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.tasks;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
@@ -48,9 +51,10 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
         String artistId = artistIdList[0];
         Map queryOptions = new HashMap();
 
-        // TODO: Put region code (US, CA, etc.) in a Settings view
-        queryOptions.put("country", new String("US"));
-        Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+        String countryCode = prefs.getString("preferences_country", "US");
+        queryOptions.put("country", countryCode);
+        Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId + " [Country: " + countryCode + "]");
 
         tracks = Spotify.getArtistTopTrack(artistId, queryOptions);
 

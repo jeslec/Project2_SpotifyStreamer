@@ -99,11 +99,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
         TrackInfo trackInfo;
-
-        // TEST: this will tell us if we need to stop the player and reload the playlist
-        // Added: 2015-07-26, 17h30
         mIsFromTopTracks = true;
-        //------------------
 
         Intent intent = getActivity().getIntent();
 

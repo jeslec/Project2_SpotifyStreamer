@@ -1,11 +1,18 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -16,6 +23,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.SettingsActivity;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -64,6 +72,9 @@ public class ArtistSearchFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+
+        // Tell fragment manager to call this fragment's onCreateOptionsMenu()
+        setHasOptionsMenu(true);
 
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -145,6 +156,33 @@ public class ArtistSearchFragment extends ListFragment {
         progress.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_search_artist, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        // Make sure to use android.support.v7.widget.SearchView and not android.widget.SearchView
+        // or else the app will crash during run-time
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_item_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
+
+        switch (item.getItemId()) {
+            case R.id.menu_item_preferences:
+                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
+                Intent i = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 
 
