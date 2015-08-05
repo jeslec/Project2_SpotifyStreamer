@@ -16,7 +16,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.squareup.picasso.Picasso;
 
@@ -143,8 +142,12 @@ public class AudioPlayerService extends Service {
 
         // Put "play" button icon and set pending intent to call when button is pressed
         if (bAddPlayButton) {
+            // Set RemoteView widget background
+            // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
             notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
                     android.R.drawable.ic_media_play);
+            // Set an onClick event for a widget located in a remoteView
+            // http://stackoverflow.com/questions/22585696/android-notification-with-remoteviews-having-activity-associated-with-remotevi#22585875
             notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
                     resumePendingIntent);
         } else { // Put "pause" button icon and set pending intent to call when button is pressed
@@ -169,7 +172,8 @@ public class AudioPlayerService extends Service {
 
         Notification notification = builder.build();
 
-        // Load image asynchronously for this notification
+        // Load image asynchronously for this notification (see lines 51-56 on page of link)
+        // https://github.com/square/picasso/blob/master/picasso-sample/src/main/java/com/example/picasso/PicassoSampleAdapter.java
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
                 .resizeDimen(R.dimen.notification_icon_width_height,
                         R.dimen.notification_icon_width_height)

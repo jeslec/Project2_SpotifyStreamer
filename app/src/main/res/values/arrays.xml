@@ -5,7 +5,6 @@
         <item>Canada</item>
         <item>Australia</item>
         <item>France</item>
-        <item>China</item>
     </string-array>
 
     <string-array name="preferences_countryValues">
@@ -13,6 +12,5 @@
         <item>CA</item>
         <item>AU</item>
         <item>FR</item>
-        <item>CN</item>
     </string-array>
 </resources>

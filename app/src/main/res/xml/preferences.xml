@@ -3,8 +3,9 @@
 
     <ListPreference
         android:key="preferences_country"
-        android:title="@string/preferences_searchCountryTitle"
-        android:dialogTitle="@string/preferences_searchCountryDialogTitle"
+        android:title="@string/preferences_countryTitle"
+        android:dialogTitle="@string/preferences_countryDialogTitle"
+        android:summary="@string/preferences_countrySummary"
         android:entries="@array/preferences_countryEntries"
         android:entryValues="@array/preferences_countryValues"
         android:defaultValue="@string/preferences_countryDefaultValue" />

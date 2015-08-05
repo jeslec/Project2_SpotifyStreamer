@@ -51,11 +51,11 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
         String artistId = artistIdList[0];
         Map queryOptions = new HashMap();
 
+        // Retrieve market (country) from preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         String countryCode = prefs.getString("preferences_country", "US");
         queryOptions.put("country", countryCode);
         Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId + " [Country: " + countryCode + "]");
-
         tracks = Spotify.getArtistTopTrack(artistId, queryOptions);
 
         return tracks;
@@ -70,7 +70,13 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
             mTopTracksFragment.hideProgressBar();
             mTopTracksFragment = null;
         }
-        
+
+        // It can happen if the country selected is not one that Spotify offers
+        if (top10Tracks.tracks == null) {
+            Utils.log(TAG, "OnPostExecute() - tracks is null!");
+            return;
+        }
+
         Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - Tracks returned from Spotify: " +
                 top10Tracks.tracks.size());
 
