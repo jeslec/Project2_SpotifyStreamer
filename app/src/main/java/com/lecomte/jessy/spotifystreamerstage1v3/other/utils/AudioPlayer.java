@@ -35,6 +35,7 @@ public class AudioPlayer {
                                                 if (mCallback != null) {
                                                     mCallback.onTrackCompleted();
                                                 }
+                                                //Utils.log(TAG, "onTrackCompleted() - STOPPED playing track");
                                             }
                                         }
         );
@@ -160,6 +161,8 @@ public class AudioPlayer {
         mPlaylistIndex = new SafeIndex(trackIndex, mPlaylist.size() - 1);
         TrackInfo track = mPlaylist.get(mPlaylistIndex.get());
         play(track.getTrackPreviewUrl());
+
+        //Utils.log(TAG, "play() - STARTED playing track: " + track.getTrackPreviewUrl());
     }
 
     // Playlist index initialized in play()

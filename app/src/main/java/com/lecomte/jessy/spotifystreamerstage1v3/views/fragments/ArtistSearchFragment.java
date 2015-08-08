@@ -18,11 +18,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.SettingsActivity;
 
 /**
@@ -44,6 +47,7 @@ public class ArtistSearchFragment extends ListFragment {
     private String mArtistName;
 */
     private OnFragmentInteractionListener mListener;
+    private boolean mIsTrackPlaying = false;
 
     /**
      * Use this factory method to create a new instance of
@@ -176,12 +180,68 @@ public class ArtistSearchFragment extends ListFragment {
         switch (item.getItemId()) {
             case R.id.menu_item_preferences:
                 Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
-                Intent i = new Intent(getActivity(), SettingsActivity.class);
-                startActivity(i);
+                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
+
+            case R.id.menu_item_now_playing:
+                Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
+                /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                startActivity(nowPlayingIntent);*/
+
+                // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
+                if (App.isTwoPaneLayout()) {
+                    /*Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+                    intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
+                            trackInfoList);
+                    intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+                    intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
+                    startActivity(intent);*/
+                }
+
+                // Start the NowPlaying screen as a fullscreen activity
+                else {
+                    // TODO: Check if I should send an extras to NowPlaying
+                    Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                    startActivity(nowPlayingIntent);
+                    /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+                    nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
+                            trackInfoList);
+                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+                    startActivity(nowPlayingIntent);*/
+                }
+
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
+
+        // Show the NowPlaying icon only if the audio service is running
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            nowPlayingItem.setVisible(true);
+        } else {
+            nowPlayingItem.setVisible(false);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // TODO: Determine if it's the best place to put this
+        // Force update of the menu when coming from NowPlaying view
+        // Required so the NowPlaying button gets displayed in the ActionBar
+        getActivity().invalidateOptionsMenu();
     }
 }
 

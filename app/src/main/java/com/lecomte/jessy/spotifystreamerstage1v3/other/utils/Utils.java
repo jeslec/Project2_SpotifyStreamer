@@ -1,5 +1,6 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.utils;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -18,6 +19,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jessy on 2015-07-08.
+ *
+ *  Generic utility methods
+ *
+ *  These methods could be imported in any project and be used AS-IS, without any modification.
+ *
  */
 public class Utils {
 
@@ -92,5 +98,18 @@ public class Utils {
     public static Pair<Long, Long> msecToMinSec(int millis) {
         return new Pair<Long, Long>(TimeUnit.MILLISECONDS.toMinutes(millis),
                 TimeUnit.MILLISECONDS.toSeconds(millis));
+    }
+
+    // Apparently this is the best method to determine if your service is running
+    // http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-on-android#5921190
+    public static boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) App.getContext()
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
