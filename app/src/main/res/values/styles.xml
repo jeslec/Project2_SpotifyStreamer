@@ -91,5 +91,9 @@
         <item name="android:paddingBottom">@dimen/listview_item_layout_padding_bottom</item>
         <item name="android:paddingTop">@dimen/listview_item_layout_padding_top</item>
     </style>
-    
+
+    <style name="ShowOnTopOfLockScreen">
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
 </resources>

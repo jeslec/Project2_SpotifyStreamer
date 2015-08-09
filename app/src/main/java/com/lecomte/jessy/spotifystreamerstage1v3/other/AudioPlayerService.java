@@ -6,10 +6,15 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
@@ -25,6 +30,8 @@ import com.squareup.picasso.Picasso;
 public class AudioPlayerService extends Service {
 
     private static final String TAG = "AudioPlayerService";
+    private WindowManager windowManager;
+    private ImageView chatHead;
 
     // Responses this service will send to the client
     public static final String RESPONSE_TRACK_PREPARED =
@@ -240,6 +247,35 @@ public class AudioPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         Utils.log(TAG, "onCreate()");
+
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+        // TEST: use a theme that does not set window as floating
+        setTheme(R.style.ShowOnTopOfLockScreen);
+
+        // TEST
+        /*Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);*/
+
+
+        chatHead = new ImageView(this);
+        chatHead.setImageResource(R.drawable.android_head);
+
+        //chatHead.setLayoutParams(new ViewGroup.LayoutParams());
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY   /*TYPE_SYSTEM_ALERT*/  /*TYPE_SYSTEM_ALERT*/ /*TYPE_PHONE*/,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED /*|
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE*/,
+                PixelFormat.TRANSLUCENT);
+
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = 0;
+        params.y = 800;
+
+        windowManager.addView(chatHead, params);
     }
 
     @Override
@@ -248,6 +284,10 @@ public class AudioPlayerService extends Service {
 
         // TEST: stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
+
+        if (chatHead != null) {
+            windowManager.removeView(chatHead);
+        }
 
         super.onDestroy();
     }
