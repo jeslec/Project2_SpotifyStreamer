@@ -368,6 +368,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                 Utils.log(TAG, "onServiceConnected() - New track");
                 mAudioService.getPlayer().play(mPlayListIndex);
             }
+
+            // This happens when user selects the same track that was already playing
+            // In that case, we need to update the seek bar
+            else {
+                int trackDuration = mAudioService.getPlayer().getTrackDuration();
+                onReceiveTrackDuration(trackDuration);
+            }
         }
 
         displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
@@ -421,6 +428,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                     // TODO: Find a way not to hardcode the class name (TopTracks)
                     // Did this because navigateUpFromSameTask calls onCreate() of
                     // TopTracksActivity(). This way, onCreate does not get called
+                    // Or find a way to add flags to navigateUpTo() or similar method
                     Intent intent = new Intent(getActivity(), TopTracksActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     NavUtils.navigateUpTo(getActivity(), intent);
