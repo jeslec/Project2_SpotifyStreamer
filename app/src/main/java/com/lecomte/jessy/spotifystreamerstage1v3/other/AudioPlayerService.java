@@ -249,7 +249,7 @@ public class AudioPlayerService extends Service {
         }
         return returnCode;
     }
-    
+
     public class ScreenReceiver extends BroadcastReceiver {
 
         @Override

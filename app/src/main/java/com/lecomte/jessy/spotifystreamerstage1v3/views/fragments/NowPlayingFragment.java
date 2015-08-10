@@ -134,7 +134,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mPlayButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
         ImageButton nextTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonNext);
 
+        // Default value
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        // Get current state of play/pause button from audio service
+        /*if (mAudioService != null || mAudioService.getPlayer().isPlaying()) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        }*/
+
         prevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
         nextTrackButton.setImageResource(android.R.drawable.ic_media_next);
 
@@ -337,6 +345,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         return true;
     }
 
+    private void updatePlayPauseButtonImage() {
+        if (mAudioService.getPlayer().isPlaying()) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
@@ -346,13 +362,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // For service-to-client communication
         mAudioService.setCallback(this);
 
-        // TEST: detect when NowPlaying is called from a notification (pendingIntent)
+        // Detect when NowPlaying is called from a notification (pendingIntent)
         if (mTrackList == null) {
             Utils.log(TAG, "onServiceConnected() - mTrackList is null!");
             mTrackList = mAudioService.getPlayer().getPlaylist();
             mPlayListIndex = mAudioService.getPlayer().getPlaylistIndex();
             int trackDuration = mAudioService.getPlayer().getTrackDuration();
             onReceiveTrackDuration(trackDuration);
+            updatePlayPauseButtonImage();
         }
 
         else {
