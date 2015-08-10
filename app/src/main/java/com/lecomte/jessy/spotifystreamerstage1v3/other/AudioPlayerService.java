@@ -16,7 +16,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -97,7 +96,8 @@ public class AudioPlayerService extends Service {
         }
     }
 
-    private Notification buildCustomNotification(boolean bAddPlayButton) {
+    private Notification buildCustomNotification() {
+
         // Get currently playing track info (or last played)
         TrackInfo track = mAudioPlayer.getTrackInfo();
 
@@ -153,8 +153,14 @@ public class AudioPlayerService extends Service {
         notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonNext,
                 nextPendingIntent);
 
-        // Put "play" button icon and set pending intent to call when button is pressed
-        if (bAddPlayButton) {
+        // Put "pause" button icon and set pending intent to call when button is pressed
+        if (getPlayer().isPlaying()) {
+            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
+                    android.R.drawable.ic_media_pause);
+            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
+                    pausePendingIntent);
+
+        } else {
             // Set RemoteView widget background
             // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
             notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
@@ -163,11 +169,6 @@ public class AudioPlayerService extends Service {
             // http://stackoverflow.com/questions/22585696/android-notification-with-remoteviews-having-activity-associated-with-remotevi#22585875
             notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
                     resumePendingIntent);
-        } else { // Put "pause" button icon and set pending intent to call when button is pressed
-            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
-                    android.R.drawable.ic_media_pause);
-            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
-                    pausePendingIntent);
         }
 
         // Set notification texts
@@ -209,7 +210,7 @@ public class AudioPlayerService extends Service {
 
         if (action.equals(ACTION_START_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
-            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification(false));
+            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
@@ -221,7 +222,7 @@ public class AudioPlayerService extends Service {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
             mAudioPlayer.playPrevious();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification(false));
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PAUSE)) {
@@ -229,7 +230,7 @@ public class AudioPlayerService extends Service {
             mAudioPlayer.pause();
             // TODO: change icon to play
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification(true));
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_RESUME)) {
@@ -237,29 +238,18 @@ public class AudioPlayerService extends Service {
             mAudioPlayer.resume();
             // TODO: change icon to pause
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification(false));
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
             mAudioPlayer.playNext();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification(false));
+                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
         return returnCode;
     }
-
-    /*public class ScreenReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-                Utils.log("$$$$$$", "In Method:  ACTION_USER_PRESENT");
-                //Handle resuming events
-            }
-        }
-    }*/
-
+    
     public class ScreenReceiver extends BroadcastReceiver {
 
         @Override
