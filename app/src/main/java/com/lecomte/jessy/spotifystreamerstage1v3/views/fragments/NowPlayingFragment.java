@@ -112,8 +112,21 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
         mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
         mTotalTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_totalTime);
+        ImageButton shareButton = (ImageButton)v.findViewById(R.id.NowPlaying_shareButton);
 
         mAlbumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String trackUrl = mTrackList.get(mPlayListIndex).getTrackPreviewUrl();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
 
         // MediaPlayer controller buttons
         ImageButton prevTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPrevious);

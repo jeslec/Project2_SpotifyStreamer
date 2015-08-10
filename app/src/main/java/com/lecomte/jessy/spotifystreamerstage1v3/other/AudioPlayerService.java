@@ -4,14 +4,18 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -30,8 +34,10 @@ import com.squareup.picasso.Picasso;
 public class AudioPlayerService extends Service {
 
     private static final String TAG = "AudioPlayerService";
-    private WindowManager windowManager;
-    private ImageView chatHead;
+    private WindowManager mWindowManager;
+    private ImageView mChatHead;
+    private View mOverlayView;
+    private BroadcastReceiver mReceiver;
 
     // Responses this service will send to the client
     public static final String RESPONSE_TRACK_PREPARED =
@@ -243,39 +249,182 @@ public class AudioPlayerService extends Service {
         return returnCode;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Utils.log(TAG, "onCreate()");
+    /*public class ScreenReceiver extends BroadcastReceiver {
 
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+                Utils.log("$$$$$$", "In Method:  ACTION_USER_PRESENT");
+                //Handle resuming events
+            }
+        }
+    }*/
+
+    public class ScreenReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Utils.log(TAG, "ScreenReceiver::onReceive()");
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                // do whatever you need to do here
+                //wasScreenOn = false;
+                Utils.log(TAG, "Screen is OFF");
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                // and do whatever you need to do here
+                //wasScreenOn = true;
+                Utils.log(TAG, "Screen is ON");
+                //addViewToLockScreen2();
+            }else if(intent.getAction().equals(Intent.ACTION_USER_PRESENT)){
+                Utils.log(TAG, "User present");
+                //removeViewFromLockScreen2();
+            }
+        }
+    }
+
+    private void removeViewFromLockScreen() {
+        if (mChatHead != null) {
+            mWindowManager.removeView(mChatHead);
+        }
+    }
+
+    private void removeViewFromLockScreen2() {
+        if (mOverlayView != null) {
+            mWindowManager.removeView(mOverlayView);
+        }
+    }
+
+    private void addViewToLockScreen2() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mOverlayView = inflater.inflate(R.layout.overlay_lockscreen, null);
+
+        ImageView imageViewOverlay = (ImageView)mOverlayView.findViewById(R.id.overlay_imageView);
+        imageViewOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "onClick() - Overlay imageView");
+            }
+        });
+
+        if (mOverlayView == null) {
+            Utils.log(TAG, "mOverlayView is null!");
+            return;
+        }
+
+       /* mChatHead.setClickable(true);
+        mChatHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "Android head touched!");
+            }
+        });*/
+
+        /*WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY, //TYPE_SYSTEM_ALERT, //TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSLUCENT);*/
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = 0;
+        params.y = 800;
+
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mWindowManager.addView(mOverlayView, params);
+    }
+
+    private void addViewToLockScreen() {
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         // TEST: use a theme that does not set window as floating
-        setTheme(R.style.ShowOnTopOfLockScreen);
+        //setTheme(R.style.ShowOnTopOfLockScreen);
 
         // TEST
         /*Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);*/
 
 
-        chatHead = new ImageView(this);
-        chatHead.setImageResource(R.drawable.android_head);
+        mChatHead = new ImageView(this);
+        mChatHead.setImageResource(R.drawable.android_head);
 
-        //chatHead.setLayoutParams(new ViewGroup.LayoutParams());
+        mChatHead.setClickable(true);
+        mChatHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "Android head touched!");
+            }
+        });
+
+        //mChatHead.setLayoutParams(new ViewGroup.LayoutParams());
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY   /*TYPE_SYSTEM_ALERT*/  /*TYPE_SYSTEM_ALERT*/ /*TYPE_PHONE*/,
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED /*|
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE*/,
+                WindowManager.LayoutParams.TYPE_PRIORITY_PHONE, //TYPE_SYSTEM_OVERLAY, //TYPE_SYSTEM_ALERT, //TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
 
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
         params.y = 800;
 
-        windowManager.addView(chatHead, params);
+        mWindowManager.addView(mChatHead, params);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Utils.log(TAG, "onCreate()");
+
+        // ******** TEST *************
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        final BroadcastReceiver mReceiver = new ScreenReceiver();
+        registerReceiver(mReceiver, filter);
+        //***********************************
+
+        //addViewToLockScreen();
+
+        /*mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+        mChatHead = new ImageView(this);
+        mChatHead.setImageResource(R.drawable.android_head);
+
+        mChatHead.setClickable(true);
+        mChatHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "Android head touched!");
+            }
+        });
+
+        //mChatHead.setLayoutParams(new ViewGroup.LayoutParams());
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSLUCENT);
+
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = 0;
+        params.y = 800;
+
+        mWindowManager.addView(mChatHead, params);*/
     }
 
     @Override
@@ -285,10 +434,20 @@ public class AudioPlayerService extends Service {
         // TEST: stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
 
-        if (chatHead != null) {
-            windowManager.removeView(chatHead);
+        if (mChatHead != null) {
+            mWindowManager.removeView(mChatHead);
         }
 
         super.onDestroy();
     }
 }
+
+/*
+WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_SYSTEM_ALERT //TYPE_SYSTEM_OVERLAY  TYPE_SYSTEM_ALERT TYPE_PHONE,
+        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        //WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        //WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSLUCENT);*/

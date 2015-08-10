@@ -5,6 +5,13 @@
               android:layout_height="match_parent"
               android:gravity="center_horizontal">
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/ic_menu_share"
+        android:layout_gravity="right"
+        android:id="@+id/NowPlaying_shareButton"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
