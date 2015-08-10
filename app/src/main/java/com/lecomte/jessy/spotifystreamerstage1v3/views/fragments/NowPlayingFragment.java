@@ -11,8 +11,10 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -112,9 +114,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
         mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
         mTotalTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_totalTime);
-        ImageButton shareButton = (ImageButton)v.findViewById(R.id.NowPlaying_shareButton);
-
         mAlbumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
+        ImageButton shareButton = (ImageButton)v.findViewById(R.id.NowPlaying_shareButton);
 
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,11 +215,23 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         return v;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Required to get action bar back button to do something useful (go back to previous view)
+        setHasOptionsMenu(true);
+    }
+
     /** The system calls this only when creating the layout in a dialog. */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateDialog()");
+
+        // Required to get action bar back button to do something useful (go back to previous view)
+        //setHasOptionsMenu(true);
+
         // The only reason you might override this method when using onCreateView() is
         // to modify any dialog characteristics. For example, the dialog includes a
         // title by default, but your custom layout might not need it. So here you can
@@ -392,5 +405,29 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
+    }
+
+    // Based on book Big Nerd Ranch Android: p.274-275
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // The left-pointing arrow located to the left of the action bar title
+            case android.R.id.home:
+                // This activity's parent must be specified in meta-data section of manifest
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    // Go back to the previous (parent) view
+                    //NavUtils.navigateUpFromSameTask(getActivity());
+
+                    // TODO: Find a way not to hardcode the class name (TopTracks)
+                    // Did this because navigateUpFromSameTask calls onCreate() of
+                    // TopTracksActivity(). This way, onCreate does not get called
+                    Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    NavUtils.navigateUpTo(getActivity(), intent);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

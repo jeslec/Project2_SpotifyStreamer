@@ -217,20 +217,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-   /* @Override
-    public void onPause() {
-        super.onPause();
-
-        App.setIsVisible(false, TAG);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        App.setIsVisible(true, TAG);
-    }*/
-
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
