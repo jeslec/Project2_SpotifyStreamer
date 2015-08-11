@@ -309,9 +309,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
         mSeekBar.setProgress(0);
-        mAudioService.getPlayer().seekTo(0);
         mPlayButton.setImageResource(android.R.drawable.ic_media_play);
         mElapsedTimeTextView.setText("00:00");
+
+        if (mAudioService != null) {
+            mAudioService.getPlayer().seekTo(0);
+        }
     }
 
     @Override
@@ -360,7 +363,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
         // For service-to-client communication
-        mAudioService.setCallback(this);
+        mAudioService.addListener(this);
 
         // Detect when NowPlaying is called from a notification (pendingIntent)
         if (mTrackList == null) {
@@ -402,7 +405,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onServiceDisconnected(ComponentName name) {
         // Make sure service cannot send us anything once we are disconnected
-        mAudioService.setCallback(null);
+        //mAudioService.setCallback(null);
+        mAudioService.removeListener(this);
         mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
@@ -413,11 +417,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (mAudioService != null) {
             getActivity().unbindService(this);
 
-            //--- TEST: 2015-07-26, added 14h54
             // Make sure service cannot send us anything once we are disconnected
-            mAudioService.setCallback(null);
+            //mAudioService.setCallback(null);
+            mAudioService.removeListener(this);
             mAudioService = null;
-            //---------------------------
 
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }

@@ -5,9 +5,13 @@ import android.media.MediaPlayer;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Jessy on 2015-07-20.
@@ -16,7 +20,7 @@ public class AudioPlayer {
     private final String TAG = getClass().getSimpleName();
     private MediaPlayer mPlayer;
     private int mTrackDuration;
-    private Callback mCallback;
+    private Set<Callback> mListeners = new HashSet<Callback>();
     private ArrayList<TrackInfo> mPlaylist = new ArrayList<TrackInfo>();
     private SafeIndex mPlaylistIndex;
     private TrackInfo mTrack;
@@ -32,23 +36,17 @@ public class AudioPlayer {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                             @Override
                                             public void onCompletion(MediaPlayer mp) {
-                                                if (mCallback != null) {
-                                                    mCallback.onTrackCompleted();
-                                                }
-                                                //Utils.log(TAG, "onTrackCompleted() - STOPPED playing track");
+                                                notifyOnTrackCompleted();
                                             }
-                                        }
-        );
+                                        });
 
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mTrackDuration = mp.getDuration();
-                if (mCallback != null) {
-                    mCallback.onReceiveTrackDuration(mTrackDuration);
-                }
                 Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
+                notifyOnReceiveTrackDuration(mTrackDuration);
             }
         });
     }
@@ -83,12 +81,36 @@ public class AudioPlayer {
     public void resume() {
         if (mPlayer != null) {
 
+            notifyOnReceiveTrackDuration(mTrackDuration);
             // TEST: added 2015/07/23 16h41
-            if (mCallback != null) {
-                mCallback.onReceiveTrackDuration(mTrackDuration);
-            }
+            /*if (mListeners != null) {
+                for (int i=0; i<mListeners.size(); i++) {
+                    mListeners.get(i).onReceiveTrackDuration(mTrackDuration);
+                }
+            }*/
 
             mPlayer.start();
+        }
+    }
+
+    private void notifyOnTrackCompleted() {
+        Iterator iterator = mListeners.iterator();
+        while (iterator.hasNext()) {
+            Callback listener = (Callback)iterator.next();
+            if (listener != null) {
+                listener.onTrackCompleted();
+            }
+        }
+    }
+
+    // Notify all listeners the track duration is available
+    private void notifyOnReceiveTrackDuration(int duration) {
+        Iterator iterator = mListeners.iterator();
+        while (iterator.hasNext()) {
+            Callback listener = (Callback)iterator.next();
+            if (listener != null) {
+                listener.onReceiveTrackDuration(duration);
+            }
         }
     }
 
@@ -131,13 +153,20 @@ public class AudioPlayer {
         return mTrackDuration;
     }
 
+    // TODO: Make sure NowPlaying calls this to avoid any memory leaks
+    public void removeListener(Callback listener) {
+        mListeners.remove(listener);
+    }
+
     public interface Callback {
         void onTrackCompleted();
         void onReceiveTrackDuration(int duration);
     }
 
-    public void setCallback(Callback callback) {
-        mCallback = callback;
+    public void addListener(Callback listener) {
+        if (listener != null) {
+            mListeners.add(listener);
+        }
     }
 
     public void setPlaylist(ArrayList<TrackInfo> trackList) {

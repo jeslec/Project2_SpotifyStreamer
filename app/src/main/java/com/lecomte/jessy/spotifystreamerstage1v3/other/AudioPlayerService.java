@@ -30,13 +30,16 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by Jessy on 2015-07-24.
  */
-public class AudioPlayerService extends Service {
+public class AudioPlayerService extends Service implements AudioPlayer.Callback {
 
     private static final String TAG = "AudioPlayerService";
     private WindowManager mWindowManager;
     private ImageView mChatHead;
     private View mOverlayView;
     private BroadcastReceiver mReceiver;
+    private RemoteViews mNotificationRemoteView;
+    private PendingIntent mPausePendingIntent;
+    private PendingIntent mResumePendingIntent;
 
     // Responses this service will send to the client
     public static final String RESPONSE_TRACK_PREPARED =
@@ -65,8 +68,15 @@ public class AudioPlayerService extends Service {
 
     private static final int NOTIFICATION_ID_AUDIO_PLAYER_SERVICE = 1000;
 
-    private LocalBinder mLocalBinder = new LocalBinder();
-    private AudioPlayer mAudioPlayer = new AudioPlayer();
+    private LocalBinder mLocalBinder = null;
+    private AudioPlayer mAudioPlayer = null;
+
+    public AudioPlayerService() {
+        mAudioPlayer = new AudioPlayer();
+        mLocalBinder = new LocalBinder();
+
+        mAudioPlayer.addListener(this);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -75,6 +85,48 @@ public class AudioPlayerService extends Service {
 
     public AudioPlayer getPlayer() {
         return mAudioPlayer;
+    }
+
+    @Override
+    public void onTrackCompleted() {
+        Utils.log(TAG, "onTrackCompleted()");
+        //updatePlayPauseButton();
+        buildCustomNotification();
+    }
+
+    @Override
+    public void onReceiveTrackDuration(int duration) {
+        Utils.log(TAG, "onReceiveTrackDuration()");
+        //updatePlayPauseButton();
+        buildCustomNotification();
+    }
+
+    private void updatePlayPauseButton() {
+
+        if (mNotificationRemoteView == null) {
+            Utils.log(TAG, "updatePlayPauseButton() - mNotificationRemoteView is null!");
+            return;
+        }
+
+        // Put "pause" button icon and set pending intent to call when button is pressed
+        if (getPlayer().isPlaying()) {
+            Utils.log(TAG, "updatePlayPauseButton() - Track playing, setting play/pause button to: PAUSE");
+            mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
+                    android.R.drawable.ic_media_pause);
+            mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
+                    mPausePendingIntent);
+
+        } else {
+            Utils.log(TAG, "updatePlayPauseButton() - Track NOT playing, setting play/pause button to: PLAY");
+            // Set RemoteView widget background
+            // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
+            mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
+                    android.R.drawable.ic_media_play);
+            // Set an onClick event for a widget located in a remoteView
+            // http://stackoverflow.com/questions/22585696/android-notification-with-remoteviews-having-activity-associated-with-remotevi#22585875
+            mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
+                    mResumePendingIntent);
+        }
     }
 
     /**
@@ -88,21 +140,19 @@ public class AudioPlayerService extends Service {
         }
     }
 
-    // Used for service-to-client communication
-    // Get idea from book: Android Programming - Pushing the Limits, p.125-129
-    public void setCallback(AudioPlayer.Callback callback) {
+    public void addListener(AudioPlayer.Callback callback) {
         if (mAudioPlayer != null) {
-            mAudioPlayer.setCallback(callback);
+            mAudioPlayer.addListener(callback);
         }
     }
 
     private Notification buildCustomNotification() {
+        Utils.log(TAG, "buildCustomNotification()");
 
         // Get currently playing track info (or last played)
         TrackInfo track = mAudioPlayer.getTrackInfo();
 
-        RemoteViews notificationRemoteView = new RemoteViews(getPackageName(),
-                R.layout.notification_player);
+        mNotificationRemoteView = new RemoteViews(getPackageName(), R.layout.notification_player);
 
         Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -135,12 +185,12 @@ public class AudioPlayerService extends Service {
         // Pause track button intent
         Intent pauseIntent = new Intent(this, AudioPlayerService.class);
         pauseIntent.setAction(AudioPlayerService.ACTION_PAUSE);
-        PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+        mPausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
 
         // Resume track button intent
         Intent resumeIntent = new Intent(this, AudioPlayerService.class);
         resumeIntent.setAction(AudioPlayerService.ACTION_RESUME);
-        PendingIntent resumePendingIntent = PendingIntent.getService(this, 0, resumeIntent, 0);
+        mResumePendingIntent = PendingIntent.getService(this, 0, resumeIntent, 0);
 
         // Next track button intent
         Intent nextIntent = new Intent(this, AudioPlayerService.class);
@@ -148,35 +198,19 @@ public class AudioPlayerService extends Service {
         PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
         // Set onClick events for media control buttons: each button calls a pending intent
-        notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPrev,
+        mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPrev,
                 prevPendingIntent);
-        notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonNext,
+        mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonNext,
                 nextPendingIntent);
 
-        // Put "pause" button icon and set pending intent to call when button is pressed
-        if (getPlayer().isPlaying()) {
-            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
-                    android.R.drawable.ic_media_pause);
-            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
-                    pausePendingIntent);
-
-        } else {
-            // Set RemoteView widget background
-            // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
-            notificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
-                    android.R.drawable.ic_media_play);
-            // Set an onClick event for a widget located in a remoteView
-            // http://stackoverflow.com/questions/22585696/android-notification-with-remoteviews-having-activity-associated-with-remotevi#22585875
-            notificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
-                    resumePendingIntent);
-        }
+        updatePlayPauseButton();
 
         // Set notification texts
-        notificationRemoteView.setTextViewText(R.id.notification_textTrack, track.getTrackName());
-        notificationRemoteView.setTextViewText(R.id.notification_textArtist, track.getArtistName());
+        mNotificationRemoteView.setTextViewText(R.id.notification_textTrack, track.getTrackName());
+        mNotificationRemoteView.setTextViewText(R.id.notification_textArtist, track.getArtistName());
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContent(notificationRemoteView)
+                .setContent(mNotificationRemoteView)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_audio_player)
                 .setContentTitle(track.getTrackName())
@@ -191,7 +225,7 @@ public class AudioPlayerService extends Service {
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
                 .resizeDimen(R.dimen.notification_icon_width_height,
                         R.dimen.notification_icon_width_height)
-                .into(notificationRemoteView, R.id.notification_imageAlbum,
+                .into(mNotificationRemoteView, R.id.notification_imageAlbum,
                         NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, notification);
 
         return notification;
@@ -417,9 +451,15 @@ public class AudioPlayerService extends Service {
         mWindowManager.addView(mChatHead, params);*/
     }
 
+    public void removeListener(AudioPlayer.Callback listener) {
+        mAudioPlayer.removeListener(listener);
+    }
+
     @Override
     public void onDestroy() {
         Utils.log(TAG, "onDestroy() - Calling AudioPlayer.stop()...");
+
+        mAudioPlayer.removeListener(this);
 
         // TEST: stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
