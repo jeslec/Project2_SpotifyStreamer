@@ -90,14 +90,12 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
     @Override
     public void onTrackCompleted() {
         Utils.log(TAG, "onTrackCompleted()");
-        //updatePlayPauseButton();
         buildCustomNotification();
     }
 
     @Override
     public void onReceiveTrackDuration(int duration) {
         Utils.log(TAG, "onReceiveTrackDuration()");
-        //updatePlayPauseButton();
         buildCustomNotification();
     }
 
@@ -222,6 +220,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
 
         // Load image asynchronously for this notification (see lines 51-56 on page of link)
         // https://github.com/square/picasso/blob/master/picasso-sample/src/main/java/com/example/picasso/PicassoSampleAdapter.java
+        // TODO: Make sure the image is not reloaded from server every time we update the notification
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
                 .resizeDimen(R.dimen.notification_icon_width_height,
                         R.dimen.notification_icon_width_height)

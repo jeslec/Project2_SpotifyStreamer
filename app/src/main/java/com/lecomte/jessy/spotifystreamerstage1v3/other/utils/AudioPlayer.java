@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,15 +79,7 @@ public class AudioPlayer {
     // This should only be called when player is in "Paused" state
     public void resume() {
         if (mPlayer != null) {
-
             notifyOnReceiveTrackDuration(mTrackDuration);
-            // TEST: added 2015/07/23 16h41
-            /*if (mListeners != null) {
-                for (int i=0; i<mListeners.size(); i++) {
-                    mListeners.get(i).onReceiveTrackDuration(mTrackDuration);
-                }
-            }*/
-
             mPlayer.start();
         }
     }

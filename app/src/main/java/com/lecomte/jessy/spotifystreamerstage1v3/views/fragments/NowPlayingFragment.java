@@ -136,12 +136,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Default value
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        // Get current state of play/pause button from audio service
-        /*if (mAudioService != null || mAudioService.getPlayer().isPlaying()) {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-        }*/
 
         prevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
         nextTrackButton.setImageResource(android.R.drawable.ic_media_next);
@@ -304,7 +298,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     // This is called when the track is done playing
     public void onTrackCompleted() {
-        Utils.log(TAG, "PlayerFragmentCommunication.onTrackCompleted()");
+        Utils.log(TAG, "onTrackCompleted()");
 
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
@@ -405,7 +399,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onServiceDisconnected(ComponentName name) {
         // Make sure service cannot send us anything once we are disconnected
-        //mAudioService.setCallback(null);
         mAudioService.removeListener(this);
         mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
@@ -418,10 +411,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             getActivity().unbindService(this);
 
             // Make sure service cannot send us anything once we are disconnected
-            //mAudioService.setCallback(null);
             mAudioService.removeListener(this);
             mAudioService = null;
-
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
     }
