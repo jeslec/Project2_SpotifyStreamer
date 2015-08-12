@@ -27,18 +27,22 @@ import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePlayPauseState;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Jessy on 2015-07-20.
  */
 public class NowPlayingFragment extends DialogFragment implements ServiceConnection,
-        AudioPlayer.Callback {
+        AudioPlayer.Callback,
+        Observer {
 
     private final String TAG = getClass().getSimpleName();
     static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
@@ -342,8 +346,16 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         return true;
     }
 
-    private void updatePlayPauseButtonImage() {
+    /*private void updatePlayPauseButtonImage() {
         if (mAudioService.getPlayer().isPlaying()) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }*/
+
+    private void updatePlayPauseButtonImage(boolean isPlayState) {
+        if (isPlayState) {
             mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
         } else {
             mPlayButton.setImageResource(android.R.drawable.ic_media_play);
@@ -356,6 +368,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
+        // TEST: get notified when state of play/pause button changes
+        mAudioService.getPlayer().addPlayPauseStateObserver(this);
+
         // For service-to-client communication
         mAudioService.addListener(this);
 
@@ -366,7 +381,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mPlayListIndex = mAudioService.getPlayer().getPlaylistIndex();
             int trackDuration = mAudioService.getPlayer().getTrackDuration();
             onReceiveTrackDuration(trackDuration);
-            updatePlayPauseButtonImage();
+            // TEST: removed this after adding observer for play/pause button (2015-08-11, 22h52)
+            //updatePlayPauseButtonImage();
         }
 
         else {
@@ -448,5 +464,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        ObservablePlayPauseState observablePlayPauseState = (ObservablePlayPauseState) observable;
+        Utils.log(TAG, "PlayPauseStateObserver.update() - isPlayState: " +
+                observablePlayPauseState.isPlayState());
+
+        updatePlayPauseButtonImage(observablePlayPauseState.isPlayState());
     }
 }

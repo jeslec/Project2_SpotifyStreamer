@@ -22,15 +22,19 @@ import android.widget.RemoteViews;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePlayPauseState;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.squareup.picasso.Picasso;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Created by Jessy on 2015-07-24.
  */
-public class AudioPlayerService extends Service implements AudioPlayer.Callback {
+public class AudioPlayerService extends Service implements AudioPlayer.Callback, Observer {
 
     private static final String TAG = "AudioPlayerService";
     private WindowManager mWindowManager;
@@ -74,6 +78,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
     public AudioPlayerService() {
         mAudioPlayer = new AudioPlayer();
         mLocalBinder = new LocalBinder();
+
+        // TEST: get notified when state of play/pause button changes
+        getPlayer().addPlayPauseStateObserver(this);
 
         mAudioPlayer.addListener(this);
     }
@@ -125,6 +132,15 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
             mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
                     mResumePendingIntent);
         }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        ObservablePlayPauseState observablePlayPauseState = (ObservablePlayPauseState) observable;
+        Utils.log(TAG, "PlayPauseStateObserver.update() - isPlayState: " +
+                observablePlayPauseState.isPlayState());
+
+        buildCustomNotification();
     }
 
     /**
@@ -460,6 +476,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
 
         mAudioPlayer.removeListener(this);
 
+        mAudioPlayer.deletePlayPauseStateObservers();
+
         // TEST: stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
 
@@ -470,6 +488,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback 
         super.onDestroy();
     }
 }
+
+
 
 /*
 WindowManager.LayoutParams params = new WindowManager.LayoutParams(

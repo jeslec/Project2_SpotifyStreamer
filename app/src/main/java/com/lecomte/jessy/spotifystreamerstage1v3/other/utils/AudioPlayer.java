@@ -5,11 +5,13 @@ import android.media.MediaPlayer;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePlayPauseState;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -23,6 +25,8 @@ public class AudioPlayer {
     private ArrayList<TrackInfo> mPlaylist = new ArrayList<TrackInfo>();
     private SafeIndex mPlaylistIndex;
     private TrackInfo mTrack;
+    // Don't put this in initializePlayer() or else observables will get deleted
+    private ObservablePlayPauseState mPlayPauseState = new ObservablePlayPauseState();
 
     public AudioPlayer() {
         initializePlayer();
@@ -33,11 +37,11 @@ public class AudioPlayer {
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                            @Override
-                                            public void onCompletion(MediaPlayer mp) {
-                                                notifyOnTrackCompleted();
-                                            }
-                                        });
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                notifyOnTrackCompleted();
+            }
+        });
 
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -45,10 +49,32 @@ public class AudioPlayer {
                 mTrackDuration = mp.getDuration();
                 Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
+
+                // Tell listening UIs the play/pause state is now: play
+                mPlayPauseState.setIsPlayState(true);
+
                 notifyOnReceiveTrackDuration(mTrackDuration);
             }
         });
+
+        Utils.log(TAG, "initializePlayer() - Play/pause observables count: " + mPlayPauseState.countObservers());
     }
+
+    public void addPlayPauseStateObserver(Observer observer) {
+        mPlayPauseState.addObserver(observer);
+        Utils.log(TAG, "addPlayPauseStateObserver() - Added: "
+                + observer.getClass().getSimpleName()
+                + " [Size: " + mPlayPauseState.countObservers() + "]");
+    }
+
+    public void removePlayPauseStateObserver(Observer observer) {
+        Utils.log(TAG, "removePlayPauseStateObserver() - Removed: " + observer.getClass().getSimpleName());
+        mPlayPauseState.deleteObserver(observer);
+    }
+
+    /*public void setIsPlayState(boolean bIsPlayState) {
+        mPlayPauseState.setIsPlayState(bIsPlayState);
+    }*/
 
     public int getCurrentPosition() {
         //Utils.log(TAG, "Track position: " + mPlayer.getCurrentPosition());
@@ -81,6 +107,9 @@ public class AudioPlayer {
         if (mPlayer != null) {
             notifyOnReceiveTrackDuration(mTrackDuration);
             mPlayer.start();
+
+            // Tell listening UIs the play/pause state is now: play
+            mPlayPauseState.setIsPlayState(true);
         }
     }
 
@@ -110,6 +139,9 @@ public class AudioPlayer {
     public void pause() {
         if (mPlayer != null) {
             mPlayer.pause();
+
+            // Tell listening UIs the play/pause state is now: play
+            mPlayPauseState.setIsPlayState(false);
         }
     }
 
@@ -147,6 +179,10 @@ public class AudioPlayer {
     // TODO: Make sure NowPlaying calls this to avoid any memory leaks
     public void removeListener(Callback listener) {
         mListeners.remove(listener);
+    }
+
+    public void deletePlayPauseStateObservers() {
+        mPlayPauseState.deleteObservers();
     }
 
     public interface Callback {
