@@ -168,7 +168,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         mNotificationRemoteView = new RemoteViews(getPackageName(), R.layout.notification_player);
 
-        Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
+        //Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 

@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
@@ -73,9 +72,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private boolean mIsFromTopTracks = false;
 
     //int This is  how we send data to the fragment
-    public static NowPlayingFragment newInstance(TrackInfo trackInfo) {
+    public static NowPlayingFragment newInstance(ArrayList<TrackInfo> trackList, int trackIndex) {
         Bundle args = new Bundle();
-        args.putParcelable(EXTRA_TRACK_INFO, trackInfo);
+        //args.putParcelable(EXTRA_TRACK_INFO, trackInfo);
+
+       args.putParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST, trackList);
+       args.putInt(TopTracksActivity.EXTRA_TRACK_INDEX, trackIndex);
+
+
         NowPlayingFragment fragment = new NowPlayingFragment();
         fragment.setArguments(args);
         return fragment;
@@ -146,10 +150,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mSeekBar = (SeekBar)v.findViewById(R.id.NowPlaying_seekBar);
 
-        // Get artist/track data that was attached to this fragment when it was created
+        // Fragment was "started" with newInstance(): this happens in a 2-pane layout
+        if (getActivity().getIntent().getAction() == TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT) {
+            final Bundle args = getArguments();
+            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
+            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+        }
 
         // Fragment was "started" with an intent: this happens in a single-pane layout
-        if (intent != null) {
+        else {
             mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
             mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
 
@@ -158,13 +167,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             if (mTrackList == null && mPlayListIndex == 0) {
                 Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
             }
-        }
-
-        // Fragment was "started" with newInstance(): this happens in a double-pane layout
-        else if (getArguments() != null) {
-            final Bundle args = getArguments();
-            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
         }
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -408,7 +410,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
 
         displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-        App.setNowPlayingViewCreated();
         mIsFromTopTracks = false;
     }
 

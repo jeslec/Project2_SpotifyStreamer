@@ -27,8 +27,6 @@ public class App extends Application {
     private static Handler mForegroundServiceHandler = new Handler();
     private static Runnable mForegroundServiceRunnable;
     private static final int UPDATE_FOREGROUND_SERVICE_INTERVAL = 300; // milliseconds
-    private static boolean mIsInForeground = true;
-    private static boolean mNowPlayingViewCreated = false;
     private static int mActivitiesRunning = 0;
 
     // Get the resources anywhere in my app
@@ -57,10 +55,18 @@ public class App extends Application {
         mForegroundServiceRunnable = new Runnable() {
             @Override public void run() {
 
+                // If the service is running, it means the NowPlaying views has been created,
+                // the audio service was created and a track started playing
+                // We only want to set the service as foreground when the service has been used
+                // If user exits app without having played a track, we don't want to set the audio
+                // service as a foreground service
                 if (Utils.isServiceRunning(AudioPlayerService.class)) {
+                    // Default: assume App is in foreground, setting service as a background service
                     String intentAction = AudioPlayerService.ACTION_STOP_FOREGROUND;
                     Intent intent = new Intent(getContext(), AudioPlayerService.class);
 
+                    // App is in background: set the audio player service as a foreground service
+                    // to prevent OS from shutting down the service
                     if (mActivitiesRunning == 0) {
                         intentAction = AudioPlayerService.ACTION_START_FOREGROUND;
                     }
@@ -78,14 +84,11 @@ public class App extends Application {
         return mIsTwoPaneLayout;
     }
 
+    // Cancel any pending callbacks and set the next one at specified elapsed time
     private static void setupRunnable() {
         mForegroundServiceHandler.removeCallbacks(mForegroundServiceRunnable);
         mForegroundServiceHandler.postDelayed(mForegroundServiceRunnable,
                 UPDATE_FOREGROUND_SERVICE_INTERVAL);
-    }
-
-    public static void setNowPlayingViewCreated() {
-        mNowPlayingViewCreated = true;
     }
 
     // http://baroqueworksdev.blogspot.ca/2012/12/how-to-use-activitylifecyclecallbacks.html
@@ -109,16 +112,7 @@ public class App extends Application {
             // App is in foreground: set the audio player service as a background service
             if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning > 0) {
                 setupRunnable();
-                /*Intent intent = new Intent().setClass(getContext(), AudioPlayerService.class)
-                        .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
-                startService(intent);
-                Utils.log(TAG, "onActivityResumed() - Service set as: BACKGROUND");*/
             }
-
-            /*mIsInForeground = true;
-            if (mNowPlayingViewCreated) {
-                setupRunnable();
-            }*/
         }
 
         @Override
@@ -130,16 +124,7 @@ public class App extends Application {
             // to prevent OS from shutting down the service
             if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning == 0) {
                 setupRunnable();
-                /*Intent intent = new Intent().setClass(getContext(), AudioPlayerService.class)
-                        .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
-                startService(intent);
-                Utils.log(TAG, "onActivityResumed() - Service set as: FOREGROUND");*/
             }
-
-            /*mIsInForeground = false;
-            if (mNowPlayingViewCreated) {
-                setupRunnable();
-            }*/
         }
 
         @Override

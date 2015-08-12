@@ -178,7 +178,6 @@ public class AudioPlayer {
         return mTrackDuration;
     }
 
-    // TODO: Make sure NowPlaying calls this to avoid any memory leaks
     public void removeListener(Callback listener) {
         mListeners.remove(listener);
     }

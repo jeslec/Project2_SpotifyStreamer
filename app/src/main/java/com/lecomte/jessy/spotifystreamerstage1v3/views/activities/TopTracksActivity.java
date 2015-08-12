@@ -24,7 +24,7 @@ public class TopTracksActivity extends AppCompatActivity implements
     public static final String EXTRA_TRACK_LIST =
             "com.lecomte.jessy.spotifystreamerstage1v3.extra.trackInfoList";
 
-    public static final String CUSTOM_ACTION_SHOW_PLAYER =
+    public static final String EXTRA_SHOW_PLAYER_FRAGMENT =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.showPlayer";
 
     public static final String EXTRA_TRACK_INDEX =

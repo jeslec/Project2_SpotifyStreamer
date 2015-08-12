@@ -21,6 +21,8 @@ import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFra
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
         TopTracksFragment.OnFragmentInteractionListener {
@@ -130,36 +132,23 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        // Add NowPlaying activity/fragment loading code here
+        // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
         // TODO: fix this - It will not work as it is right now!!! Must pass TrackInfo list!
         else if (App.isTwoPaneLayout() &&
-                intent.getAction().equals(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER)) {
+                intent.getAction().equals(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT)) {
 
             // Get intent extras
-            String artistName = intent.getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
-            TrackInfo track = intent.getParcelableExtra(TopTracksActivity.EXTRA_TRACK_INFO);
+            ArrayList<TrackInfo> tracks = intent
+                    .getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
+            int trackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
 
             // Large layout: load NowPlaying fragment and show as a dialog
+            // Pass data received as intent extras to new fragment as fragment arguments
             FragmentManager fragmentManager = getSupportFragmentManager();
-            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(track);
+            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(tracks, trackIndex);
             newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
         }
     }
-
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_artist_search_fragment, menu);
-
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        // Make sure to use android.support.v7.widget.SearchView and not android.widget.SearchView
-        // or else the app will crash during run-time
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        return true;
-    }*/
 
     @Override
     public void onFragmentInteraction(Uri uri) {

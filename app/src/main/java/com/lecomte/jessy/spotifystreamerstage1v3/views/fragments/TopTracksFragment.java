@@ -142,26 +142,20 @@ public class TopTracksFragment extends ListFragment {
             trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
         }
 
-        // Tell the MainActivity to load the NowPlaying fragment in his layout
+        // NowPlaying: Either start it as a fullscreen activity or as dialog
+        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
+        Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
+        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+        intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST, trackInfoList);
+        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+
+        // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-            intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                    trackInfoList);
-            intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-            intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
-            startActivity(intent);
+            intent.setClass(getActivity(), MainActivity.class);
+            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
         }
 
-        // Start the NowPlaying screen as a fullscreen activity
-        else {
-            Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-            nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                    trackInfoList);
-            nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-            startActivity(nowPlayingIntent);
-        }
+        startActivity(intent);
     }
 
     // Making the ProgressBar work...
@@ -253,7 +247,7 @@ public class TopTracksFragment extends ListFragment {
                     intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
                             trackInfoList);
                     intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
+                    intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
                     startActivity(intent);*/
                 }
 
