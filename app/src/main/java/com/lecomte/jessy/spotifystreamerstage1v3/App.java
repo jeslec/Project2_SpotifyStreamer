@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 
 /**
  * Created by Jessy on 2015-07-08.
@@ -28,6 +29,7 @@ public class App extends Application {
     private static final int UPDATE_FOREGROUND_SERVICE_INTERVAL = 300; // milliseconds
     private static boolean mIsInForeground = true;
     private static boolean mNowPlayingViewCreated = false;
+    private static int mActivitiesRunning = 0;
 
     // Get the resources anywhere in my app
     public static Resources getRes() {
@@ -55,19 +57,18 @@ public class App extends Application {
         mForegroundServiceRunnable = new Runnable() {
             @Override public void run() {
 
-                //Utils.log(TAG, "ForegroundServiceRunnable - App in foreground: " + mIsInForeground);
+                if (Utils.isServiceRunning(AudioPlayerService.class)) {
+                    String intentAction = AudioPlayerService.ACTION_STOP_FOREGROUND;
+                    Intent intent = new Intent(getContext(), AudioPlayerService.class);
 
-                // TODO: Optimize this
-                if (mIsInForeground) {
-                    Intent intent = new Intent()
-                            .setClass(getContext(), AudioPlayerService.class)
-                            .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
+                    if (mActivitiesRunning == 0) {
+                        intentAction = AudioPlayerService.ACTION_START_FOREGROUND;
+                    }
+
+                    intent.setAction(intentAction);
                     startService(intent);
-                } else {
-                    Intent intent = new Intent()
-                            .setClass(getContext(), AudioPlayerService.class)
-                            .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
-                    startService(intent);
+                    Utils.log(TAG, "Runnable.run() - Service set as: "
+                            + intentAction.substring(intentAction.lastIndexOf(".") + 1));
                 }
             }
         };
@@ -88,7 +89,7 @@ public class App extends Application {
     }
 
     // http://baroqueworksdev.blogspot.ca/2012/12/how-to-use-activitylifecyclecallbacks.html
-    private static final class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
+    private class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -102,20 +103,43 @@ public class App extends Application {
 
         @Override
         public void onActivityResumed(Activity activity) {
-            //Utils.log(TAG, "onActivityResumed() - Activity: " + activity);
-            mIsInForeground = true;
+            mActivitiesRunning++;
+            Utils.log(TAG, "onActivityResumed() - Activities running count: " + mActivitiesRunning + " [Service running: " + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+
+            // App is in foreground: set the audio player service as a background service
+            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning > 0) {
+                setupRunnable();
+                /*Intent intent = new Intent().setClass(getContext(), AudioPlayerService.class)
+                        .setAction(AudioPlayerService.ACTION_STOP_FOREGROUND);
+                startService(intent);
+                Utils.log(TAG, "onActivityResumed() - Service set as: BACKGROUND");*/
+            }
+
+            /*mIsInForeground = true;
             if (mNowPlayingViewCreated) {
                 setupRunnable();
-            }
+            }*/
         }
 
         @Override
         public void onActivityPaused(Activity activity) {
-            //Utils.log(TAG, "onActivityPaused() - Activity: " + activity);
-            mIsInForeground = false;
+            mActivitiesRunning--;
+            Utils.log(TAG, "onActivityPaused() - Activities running count: " + mActivitiesRunning + " [Service running: " + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+
+            // App is in background: set the audio player service as a foreground service
+            // to prevent OS from shutting down the service
+            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning == 0) {
+                setupRunnable();
+                /*Intent intent = new Intent().setClass(getContext(), AudioPlayerService.class)
+                        .setAction(AudioPlayerService.ACTION_START_FOREGROUND);
+                startService(intent);
+                Utils.log(TAG, "onActivityResumed() - Service set as: FOREGROUND");*/
+            }
+
+            /*mIsInForeground = false;
             if (mNowPlayingViewCreated) {
                 setupRunnable();
-            }
+            }*/
         }
 
         @Override

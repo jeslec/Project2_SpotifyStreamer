@@ -79,7 +79,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         mAudioPlayer = new AudioPlayer();
         mLocalBinder = new LocalBinder();
 
-        // TEST: get notified when state of play/pause button changes
+        // Get notified when play/pause state of media player changes
         getPlayer().addPlayPauseStateObserver(this);
 
         mAudioPlayer.addListener(this);
@@ -483,7 +483,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         mAudioPlayer.deletePlayPauseStateObservers();
 
-        // TEST: stop playing track and destroy media player when service gets killed
+        // Stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
 
         if (mChatHead != null) {
