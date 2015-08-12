@@ -248,10 +248,10 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Utils.log(TAG, "onStartCommand()");
         int returnCode = START_STICKY;
 
         if (intent == null || intent.getAction() == null) {
+            Utils.log(TAG, "onStartCommand() - intent or action is null!");
             return returnCode;
         }
 
@@ -295,6 +295,11 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             mAudioPlayer.playNext();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+        }
+
+        // This should never happen
+        else {
+            Utils.log(TAG, "onStartCommand() - Action: UNKNOWN");
         }
         return returnCode;
     }

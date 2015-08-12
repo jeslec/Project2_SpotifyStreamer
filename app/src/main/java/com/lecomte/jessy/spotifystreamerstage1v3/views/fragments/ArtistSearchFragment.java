@@ -163,7 +163,7 @@ public class ArtistSearchFragment extends ListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_search_artist, menu);
+        inflater.inflate(R.menu.menu_artist_search_fragment, menu);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);

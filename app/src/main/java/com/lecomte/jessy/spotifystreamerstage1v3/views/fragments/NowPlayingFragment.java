@@ -346,14 +346,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         return true;
     }
 
-    /*private void updatePlayPauseButtonImage() {
-        if (mAudioService.getPlayer().isPlaying()) {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-        }
-    }*/
-
     private void updatePlayPauseButtonImage(boolean isPlayState) {
         if (isPlayState) {
             mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
@@ -368,21 +360,29 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
 
-        // TEST: get notified when state of play/pause button changes
+        // Get notified when play/pause state of media player changes
         mAudioService.getPlayer().addPlayPauseStateObserver(this);
 
         // For service-to-client communication
         mAudioService.addListener(this);
 
-        // Detect when NowPlaying is called from a notification (pendingIntent)
+        // This can happen in either of these 2 cases:
+        // 1- NowPlaying is called from a notification
+        // 2- NowPlaying is called from the NowPlaying options menu option
+        // This fragment is an observer of the play/pause state of the media player so the
+        // play/pause state usually gets "automatically" updated
+        // But, when this fragment gets recreated, the fragment does not have access to the
+        // play/pause state until the fragment establishes the connection with the service
+        // When the connection is made, we need to get the play/pause state and update this
+        // fragment's play/pause button state
         if (mTrackList == null) {
             Utils.log(TAG, "onServiceConnected() - mTrackList is null!");
             mTrackList = mAudioService.getPlayer().getPlaylist();
             mPlayListIndex = mAudioService.getPlayer().getPlaylistIndex();
             int trackDuration = mAudioService.getPlayer().getTrackDuration();
             onReceiveTrackDuration(trackDuration);
-            // TEST: removed this after adding observer for play/pause button (2015-08-11, 22h52)
-            //updatePlayPauseButtonImage();
+            // Retrieve the play/pause state from the audio player and update the UI
+            updatePlayPauseButtonImage(mAudioService.getPlayer().isPlayState());
         }
 
         else {
@@ -416,6 +416,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onServiceDisconnected(ComponentName name) {
         // Make sure service cannot send us anything once we are disconnected
         mAudioService.removeListener(this);
+        mAudioService.getPlayer().removePlayPauseStateObserver(this);
         mAudioService = null;
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
@@ -427,6 +428,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             getActivity().unbindService(this);
 
             // Make sure service cannot send us anything once we are disconnected
+
+            // Don't receive play/pause state
+            mAudioService.getPlayer().removePlayPauseStateObserver(this);
+
             mAudioService.removeListener(this);
             mAudioService = null;
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");

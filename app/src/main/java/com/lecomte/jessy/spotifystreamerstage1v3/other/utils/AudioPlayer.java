@@ -68,13 +68,15 @@ public class AudioPlayer {
     }
 
     public void removePlayPauseStateObserver(Observer observer) {
-        Utils.log(TAG, "removePlayPauseStateObserver() - Removed: " + observer.getClass().getSimpleName());
         mPlayPauseState.deleteObserver(observer);
+        Utils.log(TAG, "removePlayPauseStateObserver() - Removed: "
+                + observer.getClass().getSimpleName()
+                + " [Size: " + mPlayPauseState.countObservers() + "]");
     }
 
-    /*public void setIsPlayState(boolean bIsPlayState) {
-        mPlayPauseState.setIsPlayState(bIsPlayState);
-    }*/
+    public boolean isPlayState() {
+        return mPlayPauseState.isPlayState();
+    }
 
     public int getCurrentPosition() {
         //Utils.log(TAG, "Track position: " + mPlayer.getCurrentPosition());

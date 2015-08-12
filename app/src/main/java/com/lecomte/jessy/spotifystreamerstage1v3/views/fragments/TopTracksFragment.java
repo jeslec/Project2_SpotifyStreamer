@@ -6,9 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
@@ -210,7 +212,7 @@ public class TopTracksFragment extends ListFragment {
     }
 
     // Based on book Big Nerd Ranch Android: p.274-275
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // The left-pointing arrow located to the left of the action bar title
@@ -224,21 +226,80 @@ public class TopTracksFragment extends ListFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }*/
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_top_tracks_fragment, menu);
+
     }
 
-    /*@Override
-    public void onPause() {
-        super.onPause();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
 
-        App.setIsVisible(false, TAG);
+        switch (item.getItemId()) {
+
+            case R.id.menu_item_now_playing:
+                Utils.log(TAG, "onOptionsItemSelected() - Loading NowPlaying view...");
+                /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                startActivity(nowPlayingIntent);*/
+
+                // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
+                if (App.isTwoPaneLayout()) {
+                    /*Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+                    intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
+                            trackInfoList);
+                    intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+                    intent.setAction(TopTracksActivity.CUSTOM_ACTION_SHOW_PLAYER);
+                    startActivity(intent);*/
+                }
+
+                // Start the NowPlaying screen as a fullscreen activity
+                else {
+                    // TODO: Check if I should send an extras to NowPlaying
+                    Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                    startActivity(nowPlayingIntent);
+                    /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
+                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+                    nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
+                            trackInfoList);
+                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+                    startActivity(nowPlayingIntent);*/
+                }
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
+
+        // Show the NowPlaying icon only if the audio service is running
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            nowPlayingItem.setVisible(true);
+        } else {
+            nowPlayingItem.setVisible(false);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        App.setIsVisible(true, TAG);
-    }*/
+        // TODO: Determine if it's the best place to put this
+        // Force update of the menu when coming from NowPlaying view
+        // Required so the NowPlaying button gets displayed in the ActionBar
+        getActivity().invalidateOptionsMenu();
+    }
 }
 
 
