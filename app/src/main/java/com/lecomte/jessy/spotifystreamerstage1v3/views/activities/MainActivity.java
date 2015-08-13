@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
 
         if (App.isTwoPaneLayout()) {
-            Utils.showToast("2-pane layout");
+            Utils.log(TAG, "Layout configuration: 2-pane");
 
             // This fragment is present only in 2-pan layouts
             addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);

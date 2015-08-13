@@ -20,12 +20,15 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePlayPauseState;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.Observable;
@@ -161,12 +164,34 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     }
 
     private Notification buildCustomNotification() {
-        Utils.log(TAG, "buildCustomNotification()");
+        //Utils.log(TAG, "buildCustomNotification()");
 
         // Get currently playing track info (or last played)
         TrackInfo track = mAudioPlayer.getTrackInfo();
 
         mNotificationRemoteView = new RemoteViews(getPackageName(), R.layout.notification_player);
+
+       //***************************************
+
+        // NowPlaying: Either start it as a fullscreen activity or as dialog
+        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
+        Intent intent = new Intent(this, NowPlayingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        /*intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+        intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST, trackInfoList);
+        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);*/
+
+        // Tell the MainActivity to load the NowPlaying fragment in its layout
+        if (App.isTwoPaneLayout()) {
+            intent.setClass(this, MainActivity.class);
+            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
+                + (App.isTwoPaneLayout()?"MainActivity":"NowPlayingActivity"));
+
+        //**************************************
 
         //Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -174,7 +199,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         //--------------------------------------------------------------------------
         // Intent for the activity to open when user selects the notification
-        Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
+        /*Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
         nowPlayingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // Use TaskStackBuilder to build the back stack and get the PendingIntent
@@ -184,7 +209,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                         // followed by DetailsActivity itself
                         .addParentStack(NowPlayingActivity.class)
                         .addNextIntent(nowPlayingIntent)
-                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
 
         /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentIntent(pendingIntent);*/
@@ -264,34 +289,37 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_STOP_FOREGROUND");
-            stopForeground(true);
+            // TODO: Should the notification be removed or not?
+            stopForeground(false);
         }
 
         else if (action.equals(ACTION_PLAY_PREVIOUS_TRACK)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
+            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
+            Utils.log(TAG, "Notification - Clicked on: PREVIOUS");
             mAudioPlayer.playPrevious();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PAUSE)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
+            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
+            Utils.log(TAG, "Notification - Clicked on: PAUSE");
             mAudioPlayer.pause();
-            // TODO: change icon to play
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_RESUME)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
+            //Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
+            Utils.log(TAG, "Notification - Clicked on: PLAY");
             mAudioPlayer.resume();
-            // TODO: change icon to pause
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
+            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
+            Utils.log(TAG, "Notification - Clicked on: NEXT");
             mAudioPlayer.playNext();
             ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());

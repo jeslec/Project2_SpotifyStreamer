@@ -107,7 +107,11 @@ public class App extends Application {
         @Override
         public void onActivityResumed(Activity activity) {
             mActivitiesRunning++;
-            Utils.log(TAG, "onActivityResumed() - Activities running count: " + mActivitiesRunning + " [Service running: " + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+            Utils.log(TAG, "onActivityResumed() - [Activity: "
+                    + activity.getClass().getSimpleName() + "] "
+                    + "[Activities running: " + mActivitiesRunning + "] "
+                    + "[Service running: "
+                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");
 
             // App is in foreground: set the audio player service as a background service
             if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning > 0) {
@@ -118,7 +122,11 @@ public class App extends Application {
         @Override
         public void onActivityPaused(Activity activity) {
             mActivitiesRunning--;
-            Utils.log(TAG, "onActivityPaused() - Activities running count: " + mActivitiesRunning + " [Service running: " + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+            Utils.log(TAG, "onActivityPaused() - [Activity: "
+                    + activity.getClass().getSimpleName() + "] "
+                    + "[Activities running: " + mActivitiesRunning + "] "
+                    + "[Service running: "
+                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");
 
             // App is in background: set the audio player service as a foreground service
             // to prevent OS from shutting down the service

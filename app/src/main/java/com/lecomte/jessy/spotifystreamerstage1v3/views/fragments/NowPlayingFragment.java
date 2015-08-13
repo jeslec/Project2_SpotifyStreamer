@@ -174,8 +174,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             public void onClick(View v) {
                 // Toggle player between 2 actions: play and pause
                 if (mAudioService.getPlayer().isPlaying()) {
+                    Utils.log(TAG, "Clicked on: PAUSE");
                     pausePlayer();
                 } else {
+                    Utils.log(TAG, "Clicked on: PLAY");
                     resumePlayer();
                 }
             }
@@ -184,6 +186,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         prevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.log(TAG, "Clicked on: PREVIOUS");
                 mAudioService.getPlayer().playPrevious();
                 displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
             }
@@ -192,6 +195,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         nextTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.log(TAG, "Clicked on: NEXT");
                 mAudioService.getPlayer().playNext();
                 displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
             }
