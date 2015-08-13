@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -43,188 +44,61 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         AudioPlayer.Callback,
         Observer {
 
+    //**********************************************************************************************
+    // CONSTANTS
+    //**********************************************************************************************
+
     private final String TAG = getClass().getSimpleName();
     static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
     static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";
     static final int SEEK_BAR_UPDATE_INTERVAL = 40; // milliseconds
     static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
 
-    private String mTrackUrl = "";
-    private SeekBar mSeekBar;
-    private Handler mSeekBarHandler = new Handler();
-    private Handler mSeekBarTextHandler = new Handler();
-    private Runnable mUpdateSeekBarRunnable;
-    private Runnable mUpdateSeekBarTextRunnable;
-    private TextView mElapsedTimeTextView;
-    private TextView mTotalTimeTextView;
-    private ImageButton mPlayButton;
-    private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
-    private int mPlayListIndex = 0;
-    private TextView mArtistTextView;
-    private TextView mTrackTextView;
-    private TextView mAlbumTextView;
-    private ImageView mAlbumImageView;
-    private int mSeekBarProgress = 0;
-    private AudioPlayerService mAudioService;
+    //**********************************************************************************************
+    // VARIABLES
+    //**********************************************************************************************
 
+    //**** [Primitive] ****
+    private int mPlayListIndex = 0;
+    private int mSeekBarProgress = 0;
     // True: means NowPlaying was loaded from TopTracks
     // False: NowPlaying was loaded from notification or recently opened apps drawer
     private boolean mIsFromTopTracks = false;
 
+    //**** [Widgets] ****
+    private ImageButton mShareButton;
+    private TextView mElapsedTimeTextView;
+    private TextView mTotalTimeTextView;
+    private TextView mArtistTextView;
+    private TextView mTrackTextView;
+    private TextView mAlbumTextView;
+    private ImageView mAlbumImageView;
+    private SeekBar mSeekBar;
+    private ImageButton mPlayButton;
+    private ImageButton mPrevTrackButton;
+    private ImageButton mNextTrackButton;
+
+    //**** [Other] ****
+    private Handler mSeekBarHandler = new Handler();
+    private Handler mSeekBarTextHandler = new Handler();
+    private Runnable mUpdateSeekBarRunnable;
+    private Runnable mUpdateSeekBarTextRunnable;
+    private String mTrackUrl = "";
+    private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
+    private AudioPlayerService mAudioService;
+
+    //**********************************************************************************************
+    // FRAMEWORK METHODS
+    //**********************************************************************************************
+
     //int This is  how we send data to the fragment
     public static NowPlayingFragment newInstance(ArrayList<TrackInfo> trackList, int trackIndex) {
         Bundle args = new Bundle();
-        //args.putParcelable(EXTRA_TRACK_INFO, trackInfo);
-
-       args.putParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST, trackList);
-       args.putInt(TopTracksActivity.EXTRA_TRACK_INDEX, trackIndex);
-
-
+        args.putParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST, trackList);
+        args.putInt(TopTracksActivity.EXTRA_TRACK_INDEX, trackIndex);
         NowPlayingFragment fragment = new NowPlayingFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    // Update UI with track info
-    void displayTrackInfo(TrackInfo track) {
-        mArtistTextView.setText(track.getArtistName());
-        mTrackTextView.setText(track.getTrackName());
-        mAlbumTextView.setText(track.getAlbumName());
-
-        if (track.getAlbumBigImageUrl().isEmpty()) {
-            mAlbumImageView.setImageResource(R.drawable.noimage);
-        } else {
-            Picasso.with(getActivity()).load(track.getAlbumBigImageUrl()).into(mAlbumImageView);
-        }
-    }
-
-    // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
-    // http://developer.android.com/guide/topics/ui/dialogs.html
-
-    /** The system calls this to get the DialogFragment's layout, regardless
-     of whether it's being displayed as a dialog or an embedded fragment. */
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreateView()");
-        TrackInfo trackInfo;
-        mIsFromTopTracks = true;
-
-        Intent intent = getActivity().getIntent();
-
-        getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
-
-        View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
-
-        mArtistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
-        mTrackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
-        mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
-        mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
-        mTotalTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_totalTime);
-        mAlbumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
-        ImageButton shareButton = (ImageButton)v.findViewById(R.id.NowPlaying_shareButton);
-
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String trackUrl = mTrackList.get(mPlayListIndex).getTrackPreviewUrl();
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
-            }
-        });
-
-        // MediaPlayer controller buttons
-        ImageButton prevTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPrevious);
-        mPlayButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
-        ImageButton nextTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonNext);
-
-        // Default value
-        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-
-        prevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
-        nextTrackButton.setImageResource(android.R.drawable.ic_media_next);
-
-        mSeekBar = (SeekBar)v.findViewById(R.id.NowPlaying_seekBar);
-
-        // Fragment was "started" with newInstance(): this happens in a 2-pane layout
-        if (getActivity().getIntent().getAction() == TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT) {
-            final Bundle args = getArguments();
-            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
-        }
-
-        // Fragment was "started" with an intent: this happens in a single-pane layout
-        else {
-            mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
-
-            // This happens when NowPlaying is called without setting any extras
-            // Occurs when user selects this app's notification and this screen is launched
-            if (mTrackList == null && mPlayListIndex == 0) {
-                Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
-            }
-        }
-
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Toggle player between 2 actions: play and pause
-                if (mAudioService.getPlayer().isPlaying()) {
-                    Utils.log(TAG, "Clicked on: PAUSE");
-                    pausePlayer();
-                } else {
-                    Utils.log(TAG, "Clicked on: PLAY");
-                    resumePlayer();
-                }
-            }
-        });
-
-        prevTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.log(TAG, "Clicked on: PREVIOUS");
-                mAudioService.getPlayer().playPrevious();
-                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-            }
-        });
-
-        nextTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.log(TAG, "Clicked on: NEXT");
-                mAudioService.getPlayer().playNext();
-                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-            }
-        });
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    Utils.log(TAG, "seekBar.onProgressChanged()");
-                    mSeekBarProgress = progress;
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Utils.log(TAG, "seekBar.onStartTrackingTouch()");
-                pausePlayer();
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Utils.log(TAG, "seekBar.onStopTrackingTouch()");
-                mAudioService.getPlayer().seekTo(mSeekBarProgress);
-                resumePlayer();
-            }
-        });
-
-        return v;
     }
 
     @Override
@@ -235,7 +109,30 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         setHasOptionsMenu(true);
     }
 
-    /** The system calls this only when creating the layout in a dialog. */
+    // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
+    // http://developer.android.com/guide/topics/ui/dialogs.html
+    /** The system calls this to get the DialogFragment's layout, regardless
+     of whether it's being displayed as a dialog or an embedded fragment. */
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        Utils.log(TAG, "onCreateView()");
+        mIsFromTopTracks = true;
+        getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
+
+        getFragmentData();
+
+        View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
+
+        getWidgets(v);
+        setWidgetsListeners();
+        setWidgetsProperties();
+
+        return v;
+    }
+
+    // The system calls this only when creating the layout in a dialog
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -253,72 +150,29 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         return dialog;
     }
 
-    // Start updating the seek bar and the seek bar text values at regular intervals
-    // We use 2 different intervals because the seek bar needs to be updated much more often
-    // (at a perceivable real-time rate >= 25 fps) than the text values which change every second
-    public void onReceiveTrackDuration(int duration) {
-        // Cancel all previous runnables
-        stopSeekBarUpdates();
-
-        // Update seek bar progression
-        mUpdateSeekBarRunnable = new Runnable() {
-            @Override public void run() {
-                if (mAudioService != null && mAudioService.getPlayer() != null) {
-                    mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
-                }
-                mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
-            }
-        };
-
-        // Update seek bar elapsed time in textView
-        mUpdateSeekBarTextRunnable = new Runnable() {
-            @Override public void run() {
-                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
-                if (mAudioService != null && mAudioService.getPlayer() != null) {
-                    Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
-
-                    mElapsedTimeTextView.setText(getResources()
-                            .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
-                                    minSecPair.second));
-                }
-                mSeekBarTextHandler.postDelayed(this, SEEK_BAR_TEXT_UPDATE_INTERVAL);
-            }
-        };
-
-        mSeekBar.setMax(duration);
-
-        Pair<Long, Long> minSecPair = Utils.msecToMinSec(duration);
-
-        mTotalTimeTextView.setText(getResources()
-                .getString(R.string.NowPlaying_totalTime, minSecPair.first,
-                        minSecPair.second));
-
-        // The runnable must be called once explicitly for it to be called automatically after
-        // http://stackoverflow.com/questions/21929529/runnable-not-running-at-all-inside-fragment#21929571
-        mSeekBarHandler.post(mUpdateSeekBarRunnable);
-        mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
-    }
-
-    // Stop updating seek bar and text values
-    public void stopSeekBarUpdates() {
-        Utils.log(TAG, "stopSeekBarUpdates()");
-        mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
-        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
-    }
-
-    // This is called when the track is done playing
-    public void onTrackCompleted() {
-        Utils.log(TAG, "onTrackCompleted()");
-
-        // Reset seek bar & seek bar text values and our media controller buttons
-        stopSeekBarUpdates();
-        mSeekBar.setProgress(0);
-        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-        mElapsedTimeTextView.setText("00:00");
-
+    @Override
+    public void onPause() {
+        super.onPause();
         if (mAudioService != null) {
-            mAudioService.getPlayer().seekTo(0);
+            getActivity().unbindService(this);
+
+            // Make sure service cannot send us anything once we are disconnected
+
+            // Don't receive play/pause state
+            mAudioService.getPlayer().removePlayPauseStateObserver(this);
+
+            mAudioService.removeListener(this);
+            mAudioService = null;
+            Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
+        getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
+        Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
     }
 
     @Override
@@ -328,37 +182,36 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         stopSeekBarUpdates();
     }
 
-    void  pausePlayer() {
-        mAudioService.getPlayer().pause();
-        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-    }
+    // Based on book Big Nerd Ranch Android: p.274-275
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // The left-pointing arrow located to the left of the action bar title
+            case android.R.id.home:
+                // This activity's parent must be specified in meta-data section of manifest
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    // Go back to the previous (parent) view
+                    //NavUtils.navigateUpFromSameTask(getActivity());
 
-    void resumePlayer() {
-        mAudioService.getPlayer().resume();
-        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-    }
-
-    private boolean isNewPlaylist() {
-        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isNewTrack() {
-        if (mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
-            return false;
-        }
-        return true;
-    }
-
-    private void updatePlayPauseButtonImage(boolean isPlayState) {
-        if (isPlayState) {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+                    // TODO: Find a way not to hardcode the class name (TopTracks)
+                    // Did this because navigateUpFromSameTask calls onCreate() of
+                    // TopTracksActivity(). This way, onCreate does not get called
+                    // Or find a way to add flags to navigateUpTo() or similar method
+                    Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    NavUtils.navigateUpTo(getActivity(), intent);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
+
+    //**********************************************************************************************
+    // API INTERFACE IMPLEMENTATION METHODS
+    //**********************************************************************************************
+
+    //**** [Interface: ServiceConnection] ****
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -426,53 +279,70 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mAudioService != null) {
-            getActivity().unbindService(this);
+    //**********************************************************************************************
+    // CUSTOM INTERFACE IMPLEMENTATION METHODS
+    //**********************************************************************************************
 
-            // Make sure service cannot send us anything once we are disconnected
+    //**** [Interface: AudioPlayer.Callback] ****
 
-            // Don't receive play/pause state
-            mAudioService.getPlayer().removePlayPauseStateObserver(this);
+    // Start updating the seek bar and the seek bar text values at regular intervals
+    // We use 2 different intervals because the seek bar needs to be updated much more often
+    // (at a perceivable real-time rate >= 25 fps) than the text values which change every second
+    public void onReceiveTrackDuration(int duration) {
+        // Cancel all previous runnables
+        stopSeekBarUpdates();
 
-            mAudioService.removeListener(this);
-            mAudioService = null;
-            Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
-        getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
-        Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
-    }
-
-    // Based on book Big Nerd Ranch Android: p.274-275
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // The left-pointing arrow located to the left of the action bar title
-            case android.R.id.home:
-                // This activity's parent must be specified in meta-data section of manifest
-                if (NavUtils.getParentActivityName(getActivity()) != null) {
-                    // Go back to the previous (parent) view
-                    //NavUtils.navigateUpFromSameTask(getActivity());
-
-                    // TODO: Find a way not to hardcode the class name (TopTracks)
-                    // Did this because navigateUpFromSameTask calls onCreate() of
-                    // TopTracksActivity(). This way, onCreate does not get called
-                    // Or find a way to add flags to navigateUpTo() or similar method
-                    Intent intent = new Intent(getActivity(), TopTracksActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    NavUtils.navigateUpTo(getActivity(), intent);
+        // Update seek bar progression
+        mUpdateSeekBarRunnable = new Runnable() {
+            @Override public void run() {
+                if (mAudioService != null && mAudioService.getPlayer() != null) {
+                    mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
                 }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
+            }
+        };
+
+        // Update seek bar elapsed time in textView
+        mUpdateSeekBarTextRunnable = new Runnable() {
+            @Override public void run() {
+                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
+                if (mAudioService != null && mAudioService.getPlayer() != null) {
+                    Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
+
+                    mElapsedTimeTextView.setText(getResources()
+                            .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
+                                    minSecPair.second));
+                }
+                mSeekBarTextHandler.postDelayed(this, SEEK_BAR_TEXT_UPDATE_INTERVAL);
+            }
+        };
+
+        mSeekBar.setMax(duration);
+
+        Pair<Long, Long> minSecPair = Utils.msecToMinSec(duration);
+
+        mTotalTimeTextView.setText(getResources()
+                .getString(R.string.NowPlaying_totalTime, minSecPair.first,
+                        minSecPair.second));
+
+        // The runnable must be called once explicitly for it to be called automatically after
+        // http://stackoverflow.com/questions/21929529/runnable-not-running-at-all-inside-fragment#21929571
+        mSeekBarHandler.post(mUpdateSeekBarRunnable);
+        mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
+    }
+
+    // This is called when the track is done playing
+    public void onTrackCompleted() {
+        Utils.log(TAG, "onTrackCompleted()");
+
+        // Reset seek bar & seek bar text values and our media controller buttons
+        stopSeekBarUpdates();
+        mSeekBar.setProgress(0);
+        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        mElapsedTimeTextView.setText("00:00");
+
+        if (mAudioService != null) {
+            mAudioService.getPlayer().seekTo(0);
         }
     }
 
@@ -483,5 +353,176 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                 observablePlayPauseState.isPlayState());
 
         updatePlayPauseButtonImage(observablePlayPauseState.isPlayState());
+    }
+
+    //**********************************************************************************************
+    // NON-FRAMEWORK METHODS
+    //**********************************************************************************************
+
+    private void getWidgets(View v) {
+        mSeekBar = (SeekBar)v.findViewById(R.id.NowPlaying_seekBar);
+        mArtistTextView = (TextView)v.findViewById(R.id.NowPlaying_artistName);
+        mTrackTextView = (TextView)v.findViewById(R.id.NowPlaying_trackName);
+        mAlbumTextView = (TextView)v.findViewById(R.id.NowPlaying_albumName);
+        mElapsedTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_elapsedTime);
+        mTotalTimeTextView = (TextView)v.findViewById(R.id.NowPlaying_totalTime);
+        mAlbumImageView = (ImageView)v.findViewById(R.id.NowPlaying_albumImage);
+        mShareButton = (ImageButton)v.findViewById(R.id.NowPlaying_shareButton);
+        mPrevTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPrevious);
+        mPlayButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonPlay);
+        mNextTrackButton = (ImageButton)v.findViewById(R.id.NowPlaying_buttonNext);
+    }
+
+    private void setWidgetsListeners() {
+
+        mShareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String trackUrl = mTrackList.get(mPlayListIndex).getTrackPreviewUrl();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggle player between 2 actions: play and pause
+                if (mAudioService.getPlayer().isPlaying()) {
+                    Utils.log(TAG, "Clicked on: PAUSE");
+                    pausePlayer();
+                } else {
+                    Utils.log(TAG, "Clicked on: PLAY");
+                    resumePlayer();
+                }
+            }
+        });
+
+        mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "Clicked on: PREVIOUS");
+                mAudioService.getPlayer().playPrevious();
+                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+            }
+        });
+
+        mNextTrackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.log(TAG, "Clicked on: NEXT");
+                mAudioService.getPlayer().playNext();
+                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+            }
+        });
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    Utils.log(TAG, "seekBar.onProgressChanged()");
+                    mSeekBarProgress = progress;
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Utils.log(TAG, "seekBar.onStartTrackingTouch()");
+                pausePlayer();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Utils.log(TAG, "seekBar.onStopTrackingTouch()");
+                mAudioService.getPlayer().seekTo(mSeekBarProgress);
+                resumePlayer();
+            }
+        });
+    }
+
+    private void setWidgetsProperties() {
+
+        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        mPrevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
+        mNextTrackButton.setImageResource(android.R.drawable.ic_media_next);
+    }
+
+    // Stop updating seek bar and text values
+    public void stopSeekBarUpdates() {
+        Utils.log(TAG, "stopSeekBarUpdates()");
+        mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
+    }
+
+    private void  pausePlayer() {
+        mAudioService.getPlayer().pause();
+        mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+    }
+
+    private void resumePlayer() {
+        mAudioService.getPlayer().resume();
+        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+    }
+
+    private boolean isNewPlaylist() {
+        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isNewTrack() {
+        if (mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
+            return false;
+        }
+        return true;
+    }
+
+    private void updatePlayPauseButtonImage(boolean isPlayState) {
+        if (isPlayState) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
+    private void getFragmentData() {
+
+        Intent intent = getActivity().getIntent();
+
+        // Fragment was "started" with newInstance(): this happens in a 2-pane layout
+        if (getActivity().getIntent().getAction() == TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT) {
+            final Bundle args = getArguments();
+            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
+            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+        }
+
+        // Fragment was "started" with an intent: this happens in a single-pane layout
+        else {
+            mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
+            mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+
+            // This happens when NowPlaying is called without setting any extras
+            // Occurs when user selects this app's notification and this screen is launched
+            if (mTrackList == null && mPlayListIndex == 0) {
+                Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
+            }
+        }
+    }
+
+    // Update UI with track info
+    void displayTrackInfo(TrackInfo track) {
+        mArtistTextView.setText(track.getArtistName());
+        mTrackTextView.setText(track.getTrackName());
+        mAlbumTextView.setText(track.getAlbumName());
+
+        if (track.getAlbumBigImageUrl().isEmpty()) {
+            mAlbumImageView.setImageResource(R.drawable.noimage);
+        } else {
+            Picasso.with(getActivity()).load(track.getAlbumBigImageUrl()).into(mAlbumImageView);
+        }
     }
 }
