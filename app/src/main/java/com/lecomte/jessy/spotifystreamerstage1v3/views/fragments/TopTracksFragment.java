@@ -34,7 +34,26 @@ import java.util.ArrayList;
  */
 public class TopTracksFragment extends ListFragment {
 
+    //**********************************************************************************************
+    // CONSTANTS
+    //**********************************************************************************************
+
     private final String TAG = getClass().getSimpleName();
+    // Data required by this fragment upon creation
+    private static final String ARG_ARTIST_ID =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistId";
+    private static final String ARG_ARTIST_NAME =
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistName";
+
+    //**********************************************************************************************
+    // VARIABLES
+    //**********************************************************************************************
+
+    //**** [Primitive] ****
+
+    //**** [Widgets] ****
+
+    //**** [Other] ****
     private ArrayList<TrackInfo> mTopTracks;
     private String mArtistId;
     private String mArtistName;
@@ -42,33 +61,17 @@ public class TopTracksFragment extends ListFragment {
     private TopTracksAdapter mTopTracksAdapter;
     private OnFragmentInteractionListener mListener;
 
-    // Data required by this fragment upon creation
-    private static final String ARG_ARTIST_ID =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistId";
-    private static final String ARG_ARTIST_NAME =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistName";
+    //**********************************************************************************************
+    // CONSTRUCTORS
+    //**********************************************************************************************
 
     public TopTracksFragment() {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TopTracksFragment newInstance(String artistId, String artistName) {
-        TopTracksFragment fragment = new TopTracksFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_ARTIST_ID, artistId);
-        args.putString(ARG_ARTIST_NAME, artistName);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    //**********************************************************************************************
+    // FRAMEWORK METHODS
+    //**********************************************************************************************
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,98 +132,6 @@ public class TopTracksFragment extends ListFragment {
             }
         }
     }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
-
-        // Put all tracks in a list so we can send it to the NowPlaying fragment
-        int itemsCount = getListAdapter().getCount();
-        ArrayList<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(itemsCount);
-
-        for (int i=0; i<itemsCount; i++) {
-            trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
-        }
-
-        // NowPlaying: Either start it as a fullscreen activity or as dialog
-        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
-        Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
-        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-        intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST, trackInfoList);
-        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-
-        // Tell the MainActivity to load the NowPlaying fragment in its layout
-        if (App.isTwoPaneLayout()) {
-            intent.setClass(getActivity(), MainActivity.class);
-            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
-        }
-
-        startActivity(intent);
-    }
-
-    // Making the ProgressBar work...
-    // Creating 2 methods in fragment and passing fragment to AsyncTask idea was obtained here:
-    //http://www.mobiledeveloperguide.com/android/using-asynctask-and-fragments.html
-    public void showProgressBar() {
-        ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.TopTracks_progressBar);
-        progress.setVisibility(View.VISIBLE);
-        progress.setIndeterminate(true);
-    }
-
-    public void hideProgressBar() {
-        ProgressBar progress = (ProgressBar)getActivity()
-                .findViewById(R.id.TopTracks_progressBar);
-        progress.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement " + TAG + ".OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        public ActionBar getTheActionBar();
-    }
-
-    // Based on book Big Nerd Ranch Android: p.274-275
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // The left-pointing arrow located to the left of the action bar title
-            case android.R.id.home:
-                // This activity's parent must be specified in meta-data section of manifest
-                if (NavUtils.getParentActivityName(getActivity()) != null) {
-                    // Go back to the previous (parent) view
-                    NavUtils.navigateUpFromSameTask(getActivity());
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -294,6 +205,124 @@ public class TopTracksFragment extends ListFragment {
         // Required so the NowPlaying button gets displayed in the ActionBar
         getActivity().invalidateOptionsMenu();
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement " + TAG + ".OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
+
+        // Put all tracks in a list so we can send it to the NowPlaying fragment
+        int itemsCount = getListAdapter().getCount();
+        ArrayList<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(itemsCount);
+
+        for (int i=0; i<itemsCount; i++) {
+            trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
+        }
+
+        // NowPlaying: Either start it as a fullscreen activity or as dialog
+        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
+        Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
+        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
+        intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST, trackInfoList);
+        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+
+        // Tell the MainActivity to load the NowPlaying fragment in its layout
+        if (App.isTwoPaneLayout()) {
+            intent.setClass(getActivity(), MainActivity.class);
+            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
+        }
+
+        startActivity(intent);
+    }
+
+    //**********************************************************************************************
+    // NON-FRAMEWORK METHODS
+    //**********************************************************************************************
+
+    // Making the ProgressBar work...
+    // Creating 2 methods in fragment and passing fragment to AsyncTask idea was obtained here:
+    //http://www.mobiledeveloperguide.com/android/using-asynctask-and-fragments.html
+    public void showProgressBar() {
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.TopTracks_progressBar);
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(true);
+    }
+
+    public void hideProgressBar() {
+        ProgressBar progress = (ProgressBar)getActivity()
+                .findViewById(R.id.TopTracks_progressBar);
+        progress.setVisibility(View.GONE);
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment SearchFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static TopTracksFragment newInstance(String artistId, String artistName) {
+        TopTracksFragment fragment = new TopTracksFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ARTIST_ID, artistId);
+        args.putString(ARG_ARTIST_NAME, artistName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    //**********************************************************************************************
+    // INTERFACES
+    //**********************************************************************************************
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        public ActionBar getTheActionBar();
+    }
+
+    // Based on book Big Nerd Ranch Android: p.274-275
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // The left-pointing arrow located to the left of the action bar title
+            case android.R.id.home:
+                // This activity's parent must be specified in meta-data section of manifest
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    // Go back to the previous (parent) view
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
 }
 
 
