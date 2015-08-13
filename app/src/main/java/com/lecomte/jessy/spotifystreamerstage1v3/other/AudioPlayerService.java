@@ -12,7 +12,6 @@ import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.Observable;
@@ -184,7 +183,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
             intent.setClass(this, MainActivity.class);
-            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
+            intent.setAction(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);

@@ -55,6 +55,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";*/
     static final int SEEK_BAR_UPDATE_INTERVAL = 40; // milliseconds
     static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
+    public static final String ACTION_LOAD_PLAYLIST_PLAY_TRACK =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.loadPlaylistPlayTrack";
+    public static final String ACTION_SHOW_PLAYER =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.showPlayer";
+    public static final String ACTION_PLAY_TRACK =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.playTrack";
 
     //**********************************************************************************************
     // VARIABLES
@@ -217,8 +223,16 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // At this point, our UI reflects the audio service's states and
         // is ready to receive input from the user
+        if (isNewPlaylist()) {
+            Utils.log(TAG, "onServiceConnected() - New playlist");
+            mAudioService.getPlayer().setPlaylist(mFragmentData.getTrackList());
+            mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
+        }
 
-
+        else if (isNewTrack()) {
+            Utils.log(TAG, "onServiceConnected() - New track");
+            mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
+        }
 
         // Get notified when play/pause state of media player changes
         /*mAudioService.getPlayer().addPlayPauseStateObserver(this);
@@ -531,18 +545,36 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 
-    private boolean isNewPlaylist() {
+    /*private boolean isNewPlaylist() {
         if (mFragmentData.getTrackList().get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
             return false;
         }
         return true;
+    }*/
+
+    private boolean isNewPlaylist() {
+        Intent intent = getActivity().getIntent();
+
+        if (intent.getAction() == ACTION_LOAD_PLAYLIST_PLAY_TRACK) {
+            return true;
+        }
+        return false;
     }
 
-    private boolean isNewTrack() {
+    /*private boolean isNewTrack() {
         if (mFragmentData.getTrackIndex() == mAudioService.getPlayer().getPlaylistIndex()) {
             return false;
         }
         return true;
+    }*/
+
+    private boolean isNewTrack() {
+        Intent intent = getActivity().getIntent();
+
+        if (intent.getAction() == ACTION_PLAY_TRACK) {
+            return true;
+        }
+        return false;
     }
 
     private void getFragmentData() {
@@ -550,17 +582,17 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent intent = getActivity().getIntent();
 
         // Fragment was "started" with newInstance(): this happens in a 2-pane layout
-        if (getActivity().getIntent().getAction() == TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT) {
+        /*if (getActivity().getIntent().getAction() == NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) {
             final Bundle args = getArguments();
             ArrayList<TrackInfo> trackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
             mFragmentData.setTrackList(trackList);
             mFragmentData.setTrackIndex(args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0));
-        }
+        }*/
 
         // Fragment was "started" with an intent: this happens in a single-pane layout
-        else {
+        //else {
             mFragmentData = intent.getParcelableExtra(EXTRA_FRAGMENT_DATA);
-        }
+        //}
 
         Utils.log(TAG, "getFragmentData() - [TrackList size: "
                 + (mFragmentData.getTrackList()==null?"null":mFragmentData.getTrackList().size() + "] ")

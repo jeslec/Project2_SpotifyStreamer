@@ -16,13 +16,10 @@ import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
-import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
         // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
         // TODO: fix this - It will not work as it is right now!!! Must pass TrackInfo list!
         else if (App.isTwoPaneLayout() &&
-                intent.getAction().equals(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT)) {
+                intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
 
             NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
             fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);

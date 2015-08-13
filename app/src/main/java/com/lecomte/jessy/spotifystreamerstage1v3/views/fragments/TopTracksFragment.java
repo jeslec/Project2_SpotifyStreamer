@@ -51,6 +51,8 @@ public class TopTracksFragment extends ListFragment {
     //**********************************************************************************************
 
     //**** [Primitive] ****
+    private boolean mIsNewTopTracksList = false;
+    private int mPreviousTrackIndex = -1;
 
     //**** [Widgets] ****
 
@@ -127,6 +129,7 @@ public class TopTracksFragment extends ListFragment {
             if (Utils.isInternetAvailable()) {
                 new GetTopTracksTask(mTopTracksAdapter, this).execute(mArtistId);
                 mPreviousArtistId = mArtistId;
+                mIsNewTopTracksList = true;
             }
             else {
                 Utils.showToast(R.string.TopTracks_noInternet);
@@ -159,7 +162,7 @@ public class TopTracksFragment extends ListFragment {
                     intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
                             trackInfoList);
                     intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
+                    intent.setAction(TopTracksActivity.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
                     startActivity(intent);*/
                 }
 
@@ -227,6 +230,8 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
+        boolean isNewTrackIndex = position != mPreviousTrackIndex? true : false;
+
         NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
         fragmentData.setTrackIndex(position);
 
@@ -242,13 +247,24 @@ public class TopTracksFragment extends ListFragment {
         Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
         intent.putExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA, fragmentData);
 
+        if (mIsNewTopTracksList) {
+            intent.setAction(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
+        } else if (isNewTrackIndex){
+            intent.setAction(NowPlayingFragment.ACTION_PLAY_TRACK);
+        } else {
+            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+        }
+
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
             intent.setClass(getActivity(), MainActivity.class);
-            intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
         }
 
         startActivity(intent);
+
+        // The current top tracks list has been processed
+        mIsNewTopTracksList = false;
+        mPreviousTrackIndex = position;
     }
 
     //**********************************************************************************************

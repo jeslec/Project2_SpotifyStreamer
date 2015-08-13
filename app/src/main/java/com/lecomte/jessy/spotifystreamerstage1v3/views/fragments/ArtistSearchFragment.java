@@ -196,7 +196,7 @@ public class ArtistSearchFragment extends ListFragment {
                     intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
                             trackInfoList);
                     intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    intent.setAction(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT);
+                    intent.setAction(TopTracksActivity.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
                     startActivity(intent);*/
                 }
 
