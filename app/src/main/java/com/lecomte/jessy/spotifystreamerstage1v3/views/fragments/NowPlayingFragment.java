@@ -24,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.AudioPlayerStates;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
@@ -59,7 +60,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     //**********************************************************************************************
 
     //**** [Primitive] ****
-    private int mPlayListIndex = 0;
     private int mSeekBarProgress = 0;
     // True: means NowPlaying was loaded from TopTracks
     // False: NowPlaying was loaded from notification or recently opened apps drawer
@@ -84,8 +84,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private Runnable mUpdateSeekBarRunnable;
     private Runnable mUpdateSeekBarTextRunnable;
     private String mTrackUrl = "";
-    private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
+    //private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
     private AudioPlayerService mAudioService;
+    NowPlayingFragmentData mFragmentData = new NowPlayingFragmentData();
 
     //**********************************************************************************************
     // FRAMEWORK METHODS
@@ -128,6 +129,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         getWidgets(v);
         setWidgetsListeners();
         setWidgetsProperties();
+        disableWidgets();
 
         return v;
     }
@@ -226,10 +228,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // At this point, our UI reflects the audio service's states and
         // is ready to receive input from the user
 
-                
+
 
         // Get notified when play/pause state of media player changes
-        mAudioService.getPlayer().addPlayPauseStateObserver(this);
+        /*mAudioService.getPlayer().addPlayPauseStateObserver(this);
 
         // For service-to-client communication
         mAudioService.addListener(this);
@@ -250,7 +252,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             int trackDuration = mAudioService.getPlayer().getTrackDuration();
             onReceiveTrackDuration(trackDuration);
             // Retrieve the play/pause state from the audio player and update the UI
-            updatePlayPauseButtonImage(mAudioService.getPlayer().isPlayState());
+            setPlayPauseButtonImage(mAudioService.getPlayer().isPlayState());
         }
 
         else {
@@ -276,7 +278,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
 
         displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-        mIsFromTopTracks = false;
+        mIsFromTopTracks = false;*/
     }
 
     @Override
@@ -361,7 +363,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Utils.log(TAG, "PlayPauseStateObserver.update() - isPlayState: " +
                 observablePlayPauseState.isPlayState());
 
-        updatePlayPauseButtonImage(observablePlayPauseState.isPlayState());
+        setPlayPauseButtonImage(observablePlayPauseState.isPlayState());
     }
 
     //**********************************************************************************************
@@ -387,7 +389,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String trackUrl = mTrackList.get(mPlayListIndex).getTrackPreviewUrl();
+                String trackUrl = mFragmentData.getTrackList().get(mFragmentData.getTrackIndex())
+                        .getTrackPreviewUrl();
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
@@ -481,6 +484,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         setPlayPauseButtonBehavior(bSetAsPlayButton);
     }
 
+    private void setPlayPauseButtonBehavior(boolean bSetAsPlayButton) {
+        setPlayPauseButtonImage(bSetAsPlayButton);
+        setPlayPauseButtonListener(bSetAsPlayButton);
+    }
+
     void setPlayPauseButtonListener(boolean bSetAsPlayButton) {
 
         if (bSetAsPlayButton) {
@@ -504,12 +512,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
     }
 
-    private void setPlayPauseButtonBehavior(boolean bSetAsPlayButton) {
-        updatePlayPauseButtonImage(bSetAsPlayButton);
-        setPlayPauseButtonListener(bSetAsPlayButton);
-    }
-
-    private void updatePlayPauseButtonImage(boolean setAsPlayButton) {
+    private void setPlayPauseButtonImage(boolean setAsPlayButton) {
 
         if (setAsPlayButton) {
             mPlayButton.setImageResource(android.R.drawable.ic_media_play);
@@ -539,14 +542,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private boolean isNewPlaylist() {
-        if (mTrackList.get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
+        if (mFragmentData.getTrackList().get(0).getArtistName().equals(mAudioService.getPlayer().getPlaylistId())) {
             return false;
         }
         return true;
     }
 
     private boolean isNewTrack() {
-        if (mPlayListIndex == mAudioService.getPlayer().getPlaylistIndex()) {
+        if (mFragmentData.getTrackIndex() == mAudioService.getPlayer().getPlaylistIndex()) {
             return false;
         }
         return true;
@@ -559,21 +562,29 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Fragment was "started" with newInstance(): this happens in a 2-pane layout
         if (getActivity().getIntent().getAction() == TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT) {
             final Bundle args = getArguments();
-            mTrackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            mPlayListIndex = args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            ArrayList<TrackInfo> trackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
+            mFragmentData.setTrackList(trackList);
+            mFragmentData.setTrackIndex(args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0));
         }
 
         // Fragment was "started" with an intent: this happens in a single-pane layout
         else {
-            mTrackList = intent.getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            mPlayListIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+            ArrayList<TrackInfo> trackList = intent
+                    .getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
+            mFragmentData.setTrackList(trackList);
+            mFragmentData.setTrackIndex(intent
+                    .getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0));
 
             // This happens when NowPlaying is called without setting any extras
             // Occurs when user selects this app's notification and this screen is launched
-            if (mTrackList == null && mPlayListIndex == 0) {
+            if (mFragmentData.getTrackList() == null && mFragmentData.getTrackIndex() == 0) {
                 Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
             }
         }
+
+        Utils.log(TAG, "getFragmentData() - [TrackList size: "
+                + (mFragmentData.getTrackList()==null?"null":mFragmentData.getTrackList().size() + "] ")
+                + "[Track index: " + mFragmentData.getTrackIndex() + "]");
     }
 
     // Update UI with track info
