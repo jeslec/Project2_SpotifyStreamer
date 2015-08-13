@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.AudioPlayerStates;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePlayPauseState;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
@@ -170,6 +170,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onResume() {
         super.onResume();
+
+        // Connect to audio service so we can send it requests (play, pause, etc.)
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
         Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
@@ -217,7 +219,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onServiceConnected(ComponentName name, IBinder service) {
         Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
 
-        mAudioService = ((AudioPlayerService.LocalBinder) service).getService();
+        mAudioService = ((AudioPlayerService.LocalBinder)service).getService();
+        updateWidgets(mAudioService.getPlayer().getStates());
+        enableWidgets();
+
+        // At this point, our UI reflects the audio service's states and
+        // is ready to receive input from the user
+
+                
 
         // Get notified when play/pause state of media player changes
         mAudioService.getPlayer().addPlayPauseStateObserver(this);
@@ -387,7 +396,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             }
         });
 
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
+        //setPlayPauseButtonListener(true);
+        /*mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Toggle player between 2 actions: play and pause
@@ -399,7 +409,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                     resumePlayer();
                 }
             }
-        });
+        });*/
 
         mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -444,10 +454,71 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private void setWidgetsProperties() {
-
         mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
         mPrevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
         mNextTrackButton.setImageResource(android.R.drawable.ic_media_next);
+    }
+
+    private void enableWidgets() {
+        setEnableWidgets(true);
+    }
+
+    private void disableWidgets() {
+        setEnableWidgets(false);
+    }
+
+    private void setEnableWidgets(boolean bEnable) {
+        mPlayButton.setEnabled(bEnable);
+        mPrevTrackButton.setEnabled(bEnable);
+        mNextTrackButton.setEnabled(bEnable);
+        mSeekBar.setEnabled(bEnable);
+        mShareButton.setEnabled(bEnable);
+    }
+
+    private void updateWidgets(AudioPlayerStates states) {
+        // If track is playing, set as pause button (if not playing, set as play button)
+        boolean bSetAsPlayButton = !states.isPlaying();
+        setPlayPauseButtonBehavior(bSetAsPlayButton);
+    }
+
+    void setPlayPauseButtonListener(boolean bSetAsPlayButton) {
+
+        if (bSetAsPlayButton) {
+            mPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.log(TAG, "Clicked on: PLAY");
+                    resumePlayer();
+                }
+            });
+        }
+        // Set as pause button
+        else {
+            mPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.log(TAG, "Clicked on: PAUSE");
+                    pausePlayer();
+                }
+            });
+        }
+    }
+
+    private void setPlayPauseButtonBehavior(boolean bSetAsPlayButton) {
+        updatePlayPauseButtonImage(bSetAsPlayButton);
+        setPlayPauseButtonListener(bSetAsPlayButton);
+    }
+
+    private void updatePlayPauseButtonImage(boolean setAsPlayButton) {
+
+        if (setAsPlayButton) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+
+        // Set as pause button
+        else {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        }
     }
 
     // Stop updating seek bar and text values
@@ -479,14 +550,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             return false;
         }
         return true;
-    }
-
-    private void updatePlayPauseButtonImage(boolean isPlayState) {
-        if (isPlayState) {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-        }
     }
 
     private void getFragmentData() {
