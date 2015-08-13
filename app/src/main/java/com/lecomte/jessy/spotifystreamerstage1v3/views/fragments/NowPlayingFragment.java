@@ -50,8 +50,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     //**********************************************************************************************
 
     private final String TAG = getClass().getSimpleName();
-    static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
-    static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";
+    public static final String EXTRA_FRAGMENT_DATA = "com.lecomte.jessy.spotifystreamerstage1v3.fragmentData";;
+    /*static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
+    static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";*/
     static final int SEEK_BAR_UPDATE_INTERVAL = 40; // milliseconds
     static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
 
@@ -84,23 +85,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private Runnable mUpdateSeekBarRunnable;
     private Runnable mUpdateSeekBarTextRunnable;
     private String mTrackUrl = "";
-    //private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
     private AudioPlayerService mAudioService;
     NowPlayingFragmentData mFragmentData = new NowPlayingFragmentData();
 
     //**********************************************************************************************
     // FRAMEWORK METHODS
     //**********************************************************************************************
-
-    //int This is  how we send data to the fragment
-    public static NowPlayingFragment newInstance(ArrayList<TrackInfo> trackList, int trackIndex) {
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST, trackList);
-        args.putInt(TopTracksActivity.EXTRA_TRACK_INDEX, trackIndex);
-        NowPlayingFragment fragment = new NowPlayingFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -569,17 +559,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Fragment was "started" with an intent: this happens in a single-pane layout
         else {
-            ArrayList<TrackInfo> trackList = intent
-                    .getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            mFragmentData.setTrackList(trackList);
-            mFragmentData.setTrackIndex(intent
-                    .getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0));
-
-            // This happens when NowPlaying is called without setting any extras
-            // Occurs when user selects this app's notification and this screen is launched
-            if (mFragmentData.getTrackList() == null && mFragmentData.getTrackIndex() == 0) {
-                Utils.log(TAG, "onCreateView() - mTrackList & mPlayListIndex are null!");
-            }
+            mFragmentData = intent.getParcelableExtra(EXTRA_FRAGMENT_DATA);
         }
 
         Utils.log(TAG, "getFragmentData() - [TrackList size: "
@@ -598,5 +578,20 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         } else {
             Picasso.with(getActivity()).load(track.getAlbumBigImageUrl()).into(mAlbumImageView);
         }
+    }
+
+    //int This is  how we send data to the fragment
+    public static NowPlayingFragment newInstance(NowPlayingFragmentData data) {
+        Bundle args = new Bundle();
+        args.putParcelable(NowPlayingFragment.EXTRA_FRAGMENT_DATA, data);
+        NowPlayingFragment fragment = new NowPlayingFragment();
+        fragment.setArguments(args);
+        return fragment;
+
+        /*args.putParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST, trackList);
+        args.putInt(TopTracksActivity.EXTRA_TRACK_INDEX, trackIndex);
+        NowPlayingFragment fragment = new NowPlayingFragment();
+        fragment.setArguments(args);
+        return fragment;*/
     }
 }

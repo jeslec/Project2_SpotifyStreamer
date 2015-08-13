@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
@@ -137,7 +138,16 @@ public class MainActivity extends AppCompatActivity implements
         else if (App.isTwoPaneLayout() &&
                 intent.getAction().equals(TopTracksActivity.EXTRA_SHOW_PLAYER_FRAGMENT)) {
 
-            // Get intent extras
+            NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+            fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+
+            // Large layout: load NowPlaying fragment and show as a dialog
+            // Pass data received as intent extras to new fragment as fragment arguments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
+            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+
+            /*// Get intent extras
             ArrayList<TrackInfo> tracks = intent
                     .getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
             int trackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
@@ -146,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements
             // Pass data received as intent extras to new fragment as fragment arguments
             FragmentManager fragmentManager = getSupportFragmentManager();
             NowPlayingFragment newFragment = NowPlayingFragment.newInstance(tracks, trackIndex);
-            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);*/
         }
     }
 

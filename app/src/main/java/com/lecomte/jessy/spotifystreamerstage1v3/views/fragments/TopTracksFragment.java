@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.TopTracksAdapter;
+import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.GetTopTracksTask;
@@ -225,22 +226,21 @@ public class TopTracksFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        TrackInfo trackInfo = (TrackInfo) getListAdapter().getItem(position);
+
+        NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+        fragmentData.setTrackIndex(position);
 
         // Put all tracks in a list so we can send it to the NowPlaying fragment
-        int itemsCount = getListAdapter().getCount();
-        ArrayList<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(itemsCount);
+        final int itemsCount = getListAdapter().getCount();
 
         for (int i=0; i<itemsCount; i++) {
-            trackInfoList.add((TrackInfo)getListAdapter().getItem(i));
+            fragmentData.getTrackList().add((TrackInfo)getListAdapter().getItem(i));
         }
 
         // NowPlaying: Either start it as a fullscreen activity or as dialog
         // 2-pane layout: dialog; 1-pane layout: fullscreen activity
         Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
-        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-        intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST, trackInfoList);
-        intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
+        intent.putExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA, fragmentData);
 
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
