@@ -1,6 +1,7 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.other.observables;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 
 import java.util.Observable;
 
@@ -10,7 +11,7 @@ import java.util.Observable;
 // Keep play/pause state and keep listeners informed
 public class ObservablePlayPauseState extends Observable
 {
-    //private boolean mIsPlayState = false;
+    private static final String TAG = "ObservablePlayPauseState";
     private AudioPlayer.TrackPlayingState mState;
 
     public ObservablePlayPauseState()
@@ -25,7 +26,7 @@ public class ObservablePlayPauseState extends Observable
 
     public void setState(AudioPlayer.TrackPlayingState state)
     {
-        //mIsPlayState = isPlayState;
+        Utils.log(TAG, "State set to: " + state.toString());
         mState = state;
         setChanged();
         notifyObservers();

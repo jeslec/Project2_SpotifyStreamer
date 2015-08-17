@@ -504,10 +504,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
     @Override
     public void onDestroy() {
-        Utils.log(TAG, "onDestroy() - Calling AudioPlayer.stop()...");
+        Utils.log(TAG, "onDestroy()");
 
         mAudioPlayer.removeListener(this);
-
         mAudioPlayer.deletePlayPauseStateObservers();
 
         // Stop playing track and destroy media player when service gets killed

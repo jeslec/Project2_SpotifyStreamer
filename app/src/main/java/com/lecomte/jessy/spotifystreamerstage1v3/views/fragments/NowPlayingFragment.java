@@ -68,7 +68,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private int mSeekBarProgress = 0;
     // True: means NowPlaying was loaded from TopTracks
     // False: NowPlaying was loaded from notification or recently opened apps drawer
-    private boolean mIsFromTopTracks = false;
+    //private boolean mIsFromTopTracks = false;
 
     //**** [Widgets] ****
     private ImageButton mShareButton;
@@ -113,7 +113,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
-        mIsFromTopTracks = true;
+        //mIsFromTopTracks = true;
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
 
         getFragmentData();
@@ -149,6 +149,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onPause() {
         super.onPause();
+        Utils.log(TAG, "onPause()");
         if (mAudioService != null) {
             getActivity().unbindService(this);
 
@@ -166,6 +167,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onResume() {
         super.onResume();
+        Utils.log(TAG, "onResume()");
 
         // Connect to audio service so we can send it requests (play, pause, etc.)
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
@@ -175,8 +177,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Utils.log(TAG, "onDestroy()");
+        super.onDestroy();
         stopSeekBarUpdates();
     }
 
@@ -235,6 +237,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
 
         updateWidgets(mAudioService.getPlayer().getTrackInfo());
+        setPlayPauseButtonImage(mAudioService.getPlayer().isPlayState());
         enableWidgets();
 
         // For service-to-client communication
@@ -287,11 +290,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
+        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
         // Make sure service cannot send us anything once we are disconnected
         mAudioService.removeListener(this);
         mAudioService.getPlayer().removePlayPauseStateObserver(this);
         mAudioService = null;
-        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
     }
 
     //**********************************************************************************************

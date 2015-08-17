@@ -126,6 +126,8 @@ public class AudioPlayer {
         while (iterator.hasNext()) {
             Callback listener = (Callback)iterator.next();
             if (listener != null) {
+                Utils.log(TAG, "notifyOnReceiveTrackDuration() - Notifying listener: "
+                        + listener.getClass().getSimpleName());
                 listener.onReceiveTrackDuration(duration);
             }
         }
@@ -168,16 +170,20 @@ public class AudioPlayer {
 
     // This should only be called when player is in "Paused" state
     public void resume() {
+        Utils.log(TAG, "resume()");
         if (mPlayer != null) {
-            notifyOnReceiveTrackDuration(mTrackDuration);
+            // Important: player must be started before player state is sent to listeners
+            // so make sure to keep order of method calling as it currently is
             mPlayer.start();
             mTrackPlayingState.setState(TrackPlayingState.TRACK_PLAYING);
+            notifyOnReceiveTrackDuration(mTrackDuration);
         }
     }
 
     // After this, player will be in "Paused" state
     // Only valid actions after are: start() or stop()
     public void pause() {
+        Utils.log(TAG, "pause()");
         if (mPlayer != null) {
             mPlayer.pause();
 
