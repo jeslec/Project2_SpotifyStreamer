@@ -103,28 +103,28 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     }
 
     @Override
-    public void onReceiveTrackDuration(int duration) {
+    public void onReceiveTrackDuration(long duration) {
         Utils.log(TAG, "onReceiveTrackDuration()");
         buildCustomNotification();
     }
 
-    private void updatePlayPauseButton() {
+    private void updateNotificationPlayPauseButton() {
 
         if (mNotificationRemoteView == null) {
-            Utils.log(TAG, "updatePlayPauseButton() - mNotificationRemoteView is null!");
+            Utils.log(TAG, "updateNotificationPlayPauseButton() - mNotificationRemoteView is null!");
             return;
         }
 
         // Put "pause" button icon and set pending intent to call when button is pressed
         if (getPlayer().isPlaying()) {
-            Utils.log(TAG, "updatePlayPauseButton() - Track playing, setting play/pause button to: PAUSE");
+            Utils.log(TAG, "updateNotificationPlayPauseButton() - Track playing, setting play/pause button to: PAUSE");
             mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
                     android.R.drawable.ic_media_pause);
             mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
                     mPausePendingIntent);
 
         } else {
-            Utils.log(TAG, "updatePlayPauseButton() - Track NOT playing, setting play/pause button to: PLAY");
+            Utils.log(TAG, "updateNotificationPlayPauseButton() - Track NOT playing, setting play/pause button to: PLAY");
             // Set RemoteView widget background
             // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
             mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
@@ -139,8 +139,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     @Override
     public void update(Observable observable, Object data) {
         ObservablePlayPauseState observablePlayPauseState = (ObservablePlayPauseState) observable;
-        Utils.log(TAG, "PlayPauseStateObserver.update() - isPlayState: " +
-                observablePlayPauseState.isPlayState());
+        Utils.log(TAG, "PlayPauseStateObserver.update() - Track is playing: " +
+                observablePlayPauseState.isTrackPlaying());
 
         buildCustomNotification();
     }
@@ -241,7 +241,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonNext,
                 nextPendingIntent);
 
-        updatePlayPauseButton();
+        updateNotificationPlayPauseButton();
 
         // Set notification texts
         mNotificationRemoteView.setTextViewText(R.id.notification_textTrack, track.getTrackName());

@@ -72,6 +72,10 @@ public class TrackInfo implements Parcelable {
         return mArtistName;
     }
 
+    public void setTrackDuration(int trackDuration) {
+        mTrackDuration = trackDuration;
+    }
+
     @Override
     public String toString() {
         String artistName = getArtistName();

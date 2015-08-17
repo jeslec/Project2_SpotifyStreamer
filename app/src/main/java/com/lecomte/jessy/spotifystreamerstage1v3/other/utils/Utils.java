@@ -65,8 +65,7 @@ public class Utils {
     // I could have used log(tag, msg) but it will run faster (1 less if) by duplicating code
     public static void log(String tag, int stringId) {
         if (SHOW_DEBUG) {
-            String msg = App.getRes().getString(stringId);
-            Log.d(tag, msg);
+            Log.d(tag, App.getRes().getString(stringId));
         }
     }
 
@@ -95,7 +94,7 @@ public class Utils {
     // Returns pair:
     // -First: minutes
     // -Second: seconds
-    public static Pair<Long, Long> msecToMinSec(int millis) {
+    public static Pair<Long, Long> msecToMinSec(long millis) {
         return new Pair<Long, Long>(TimeUnit.MILLISECONDS.toMinutes(millis),
                 TimeUnit.MILLISECONDS.toSeconds(millis));
     }
