@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements
             String intentAction = intent.getAction();
             Utils.log(TAG, "handleIntent() - Intent action: " + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
+            // New playlist so therefore a new track also
             if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
                 NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
                 fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements
                 newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
 
+            // New track from the current playlist
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
                 NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
                 fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
@@ -158,8 +160,15 @@ public class MainActivity extends AppCompatActivity implements
                 newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
 
+            // Same track from the same playlist
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
+                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
+                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
         }
     }
