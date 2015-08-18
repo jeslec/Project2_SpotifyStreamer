@@ -479,14 +479,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private void updateWidgets(TrackInfo track) {
+        Utils.log(TAG, "updateWidgets() - Track duration: " + track.getTrackDuration());
         displayTrackInfo(track);
 
-        // TODO: Call this in onReceiveTrackDuration just when track is ready to play or else we get a length of 0
-        //onReceiveTrackDuration(track.getTrackDuration());
-
-        // If track is playing, set as pause button (if not playing, set as play button)
-        /*boolean bSetAsPlayButton = !states.isPlaying();
-        setPlayPauseButtonBehavior(bSetAsPlayButton);*/
+        // Track duration is 0 until the first onReceiveTrackDuration() is received
+        // When fragment is started from notification, the track length is valid so we set it
+        if (track.getTrackDuration() > 0) {
+            onReceiveTrackDuration(track.getTrackDuration());
+        }
     }
 
     private void setPlayPauseButtonImage(boolean trackIsPlaying) {

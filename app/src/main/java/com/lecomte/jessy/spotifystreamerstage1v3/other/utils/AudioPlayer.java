@@ -162,6 +162,12 @@ public class AudioPlayer {
 
     public void stop() {
         if (mPlayer != null) {
+
+            if (mPlayer.isPlaying()) {
+                mPlayer.stop();
+                mTrackPlayingState.setState(TrackPlayingState.TRACK_NOT_PLAYING);
+            }
+
             mPlayer.release();
             mPlayer = null;
             Utils.log(TAG, R.string.AudioPlayer_debug_playerStopped);
