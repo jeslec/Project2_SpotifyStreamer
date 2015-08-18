@@ -133,10 +133,12 @@ public class MainActivity extends AppCompatActivity implements
         // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
         // Large layout: load NowPlaying fragment and show as a dialog
         // Pass data received as intent extras to new fragment as fragment arguments
+        // TODO: Optimize this
         else if (App.isTwoPaneLayout()) {
 
             String intentAction = intent.getAction();
-            Utils.log(TAG, "handleIntent() - Intent action: " + intentAction.substring(intentAction.lastIndexOf(".") + 1));
+            Utils.log(TAG, "handleIntent() - Intent action: "
+                    + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
             // New playlist so therefore a new track also
             if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
@@ -160,15 +162,22 @@ public class MainActivity extends AppCompatActivity implements
                 newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
 
-            // Same track from the same playlist
+            // Same track from the same playlist (no need to send any data, use existing data)
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
-                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
-                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
-                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
-                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+                FragmentManager fm = getSupportFragmentManager();
+                NowPlayingFragment fragment = (NowPlayingFragment)fm.findFragmentByTag(DIALOG_MEDIA_PLAYER);
+
+                if (fragment == null) {
+                    fragment = NowPlayingFragment.newInstance();
+                    fm.beginTransaction()
+                            .add(fragment, DIALOG_MEDIA_PLAYER)
+                            // Was getting exception:
+                            // java.lang.IllegalStateException: Can not perform this action after
+                            // onSaveInstanceState
+                            // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
+                            .commitAllowingStateLoss();
+                }
             }
         }
     }

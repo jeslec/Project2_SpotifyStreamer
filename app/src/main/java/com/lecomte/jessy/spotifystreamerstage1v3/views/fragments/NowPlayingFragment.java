@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -49,26 +50,21 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     private final String TAG = getClass().getSimpleName();
     public static final String EXTRA_FRAGMENT_DATA = "com.lecomte.jessy.spotifystreamerstage1v3.fragmentData";;
-    /*static final String EXTRA_TRACK_INFO = "com.lecomte.jessy.spotifystreamerstage1v3.trackInfo";
-    static final String EXTRA_ARTIST_NAME = "com.lecomte.jessy.spotifystreamerstage1v3.artistName";*/
     static final int SEEK_BAR_UPDATE_INTERVAL = 40; // milliseconds
     static final int SEEK_BAR_TEXT_UPDATE_INTERVAL = 1000; // milliseconds
     public static final String ACTION_LOAD_PLAYLIST_PLAY_TRACK =
-            "com.lecomte.jessy.spotifystreamerstage1v3.action.loadPlaylistPlayTrack";
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_LOAD_PLAYLIST_PLAY_TRACK";
     public static final String ACTION_SHOW_PLAYER =
-            "com.lecomte.jessy.spotifystreamerstage1v3.action.showPlayer";
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER";
     public static final String ACTION_PLAY_TRACK =
-            "com.lecomte.jessy.spotifystreamerstage1v3.action.playTrack";
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_PLAY_TRACK";
 
     //**********************************************************************************************
-    // VARIABLES
+    // MEMBER VARIABLES
     //**********************************************************************************************
 
     //**** [Primitive] ****
     private int mSeekBarProgress = 0;
-    // True: means NowPlaying was loaded from TopTracks
-    // False: NowPlaying was loaded from notification or recently opened apps drawer
-    //private boolean mIsFromTopTracks = false;
 
     //**** [Widgets] ****
     private ImageButton mShareButton;
@@ -599,7 +595,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
     }
 
-    //int This is  how we send data to the fragment
+    // Use this when the action requires data (ACTION_LOAD_PLAYLIST_PLAY_TRACK, ACTION_PLAY_TRACK)
     public static NowPlayingFragment newInstance(NowPlayingFragmentData data) {
         Bundle args = new Bundle();
         args.putParcelable(NowPlayingFragment.EXTRA_FRAGMENT_DATA, data);
@@ -607,4 +603,20 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         fragment.setArguments(args);
         return fragment;
     }
+
+    // Use this when the action does not require any data (ACTION_SHOW_PLAYER)
+    public static NowPlayingFragment newInstance() {
+        NowPlayingFragment fragment = new NowPlayingFragment();
+        return fragment;
+    }
+
+    // This prevents us from having multiple instances of the dialog running
+    //http://www.jorgecoca.com/android-quick-tip-avoid-opening-multiple-dialogs-when-tapping-an-element/
+    /*
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        if (manager.findFragmentByTag(tag) == null) {
+            super.show(manager, tag);
+        }
+    }*/
 }

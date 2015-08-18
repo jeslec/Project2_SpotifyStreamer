@@ -42,9 +42,9 @@ public class TopTracksFragment extends ListFragment {
     private final String TAG = getClass().getSimpleName();
     // Data required by this fragment upon creation
     private static final String ARG_ARTIST_ID =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistId";
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ARG_ARTIST_ID";
     private static final String ARG_ARTIST_NAME =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.artistName";
+            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ARG_ARTIST_NAME";
 
     //**********************************************************************************************
     // VARIABLES
@@ -157,6 +157,9 @@ public class TopTracksFragment extends ListFragment {
 
                 // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
                 if (App.isTwoPaneLayout()) {
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                    startActivity(intent);
                     /*Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
                     intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
@@ -168,15 +171,9 @@ public class TopTracksFragment extends ListFragment {
 
                 // Start the NowPlaying screen as a fullscreen activity
                 else {
-                    // TODO: Check if I should send an extras to NowPlaying
-                    Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                    startActivity(nowPlayingIntent);
-                    /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-                    nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                            trackInfoList);
-                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    startActivity(nowPlayingIntent);*/
+                    Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
+                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                    startActivity(intent);
                 }
 
                 return true;
@@ -227,42 +224,50 @@ public class TopTracksFragment extends ListFragment {
         mListener = null;
     }
 
+    /*
+    * ACTION_LOAD_PLAYLIST_PLAY_TRACK: user wants to play a track in a new playlist. This action
+    *                                   requires the new playlist and the track index.
+    *
+    * ACTION_PLAY_TRACK: user wants to play a new track in the current playlist. This action
+    *                   requires the track index.
+    *
+    * ACTION_SHOW_PLAYER: user selected the same track that's currently playing. This action
+    *                       does not require any data.
+     */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
-        boolean isNewTrackIndex = position != mPreviousTrackIndex? true : false;
+        boolean isNewTrack = position != mPreviousTrackIndex? true : false;
+
+        // 2-pane layout: ask MainActivity to load NowPlaying fragment in its layout
+        // 1-pane layout: start a fullscreen activity with NowPlaying fragment inside
+        Intent intent = new Intent(getActivity(),
+                App.isTwoPaneLayout()? MainActivity.class : NowPlayingActivity.class);
+        intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
         fragmentData.setTrackIndex(position);
 
-        // Put all tracks in a list so we can send it to the NowPlaying fragment
-        final int itemsCount = getListAdapter().getCount();
-
-        for (int i=0; i<itemsCount; i++) {
-            fragmentData.getTrackList().add((TrackInfo)getListAdapter().getItem(i));
-        }
-
-        // NowPlaying: Either start it as a fullscreen activity or as dialog
-        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
-        Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
-        intent.putExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA, fragmentData);
-
         if (mIsNewTopTracksList) {
             intent.setAction(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
-            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_LOAD_PLAYLIST_PLAY_TRACK");
-        } else if (isNewTrackIndex){
+
+            // Put all tracks in a list so we can send it to the NowPlaying fragment
+            final int itemsCount = getListAdapter().getCount();
+
+            for (int i=0; i<itemsCount; i++) {
+                fragmentData.getTrackList().add((TrackInfo)getListAdapter().getItem(i));
+            }
+        }
+
+        else if (isNewTrack) {
             intent.setAction(NowPlayingFragment.ACTION_PLAY_TRACK);
-            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_PLAY_TRACK");
-        } else { // Probably only happens when user selects the same track that's already playing
-            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_SHOW_PLAYER");
         }
 
-        // Tell the MainActivity to load the NowPlaying fragment in its layout
-        if (App.isTwoPaneLayout()) {
-            intent.setClass(getActivity(), MainActivity.class);
-        }
+        Utils.log(TAG, "onListItemClick() - Intent action set to: "
+                + intent.getAction().substring(intent.getAction().lastIndexOf(".") + 1));
 
+        intent.putExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA, fragmentData);
         startActivity(intent);
 
         // The current top tracks list has been processed

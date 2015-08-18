@@ -25,6 +25,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.SettingsActivity;
 
@@ -191,6 +192,11 @@ public class ArtistSearchFragment extends ListFragment {
 
                 // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
                 if (App.isTwoPaneLayout()) {
+
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                    startActivity(intent);
+
                     /*Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
                     intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
@@ -203,8 +209,9 @@ public class ArtistSearchFragment extends ListFragment {
                 // Start the NowPlaying screen as a fullscreen activity
                 else {
                     // TODO: Check if I should send an extras to NowPlaying
-                    Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                    startActivity(nowPlayingIntent);
+                    Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
+                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                    startActivity(intent);
                     /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
                     nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
                     nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
