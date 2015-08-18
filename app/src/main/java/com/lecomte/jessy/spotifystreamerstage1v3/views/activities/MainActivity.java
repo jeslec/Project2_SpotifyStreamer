@@ -131,29 +131,36 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
-        // TODO: fix this - It will not work as it is right now!!! Must pass TrackInfo list!
-        else if (App.isTwoPaneLayout() &&
-                intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
+        // Large layout: load NowPlaying fragment and show as a dialog
+        // Pass data received as intent extras to new fragment as fragment arguments
+        else if (App.isTwoPaneLayout()) {
 
-            NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
-            fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+            String intentAction = intent.getAction();
+            Utils.log(TAG, "handleIntent() - Intent action: " + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
-            // Large layout: load NowPlaying fragment and show as a dialog
-            // Pass data received as intent extras to new fragment as fragment arguments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
-            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+            if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
+                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
-            /*// Get intent extras
-            ArrayList<TrackInfo> tracks = intent
-                    .getParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST);
-            int trackIndex = intent.getIntExtra(TopTracksActivity.EXTRA_TRACK_INDEX, 0);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
+                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+            }
 
-            // Large layout: load NowPlaying fragment and show as a dialog
-            // Pass data received as intent extras to new fragment as fragment arguments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            NowPlayingFragment newFragment = NowPlayingFragment.newInstance(tracks, trackIndex);
-            newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);*/
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
+                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
+                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+            }
+
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
+
+            }
         }
     }
 

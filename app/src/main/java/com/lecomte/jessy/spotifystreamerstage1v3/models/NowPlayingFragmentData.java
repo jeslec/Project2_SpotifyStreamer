@@ -3,6 +3,8 @@ package com.lecomte.jessy.spotifystreamerstage1v3.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+
 import java.util.ArrayList;
 
 /**
@@ -10,10 +12,16 @@ import java.util.ArrayList;
  */
 public class NowPlayingFragmentData implements Parcelable {
 
+    private static final String TAG = "NowPlayingFragmentData";
     private ArrayList<TrackInfo> mTrackList = new ArrayList<TrackInfo>();
     private int mTrackIndex = 0;
 
     public NowPlayingFragmentData() {
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[TrackCount: %s] [TrackIndex: %s]", mTrackList.size(), mTrackIndex);
     }
 
     public ArrayList<TrackInfo> getTrackList() {

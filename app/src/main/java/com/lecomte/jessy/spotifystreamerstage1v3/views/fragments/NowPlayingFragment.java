@@ -102,6 +102,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Required to get action bar back button to do something useful (go back to previous view)
         setHasOptionsMenu(true);
+
+        // Make the dialog modal so it does not accept input outside the dialog area
+        // TODO: Change theme for one that doesn't have a transparent background
+        setStyle(STYLE_NO_FRAME, 0);
     }
 
     // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
@@ -143,6 +147,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // remove the dialog title, but you must call the superclass to get the Dialog.
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         return dialog;
     }
 
@@ -226,11 +231,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // New playlist so therefore a new track as well
         if (isNewPlaylist()) {
             Utils.log(TAG, "onServiceConnected() - New playlist");
-            mAudioService.getPlayer().setPlaylist(mFragmentData.getTrackList());
-            mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
+            if (mFragmentData != null) {
+                mAudioService.getPlayer().setPlaylist(mFragmentData.getTrackList());
+                mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
+            }
         }
 
-        // New track from current playlist
+        // Another track selection from the same playlist
         else if (isNewTrack()) {
             Utils.log(TAG, "onServiceConnected() - New track");
             mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
@@ -240,52 +247,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         setPlayPauseButtonImage(mAudioService.getPlayer().isPlayState());
         enableWidgets();
 
-        // For service-to-client communication
-        //mAudioService.addListener(this);
-
-        // This can happen in either of these 2 cases:
-        // 1- NowPlaying is called from a notification
-        // 2- NowPlaying is called from the NowPlaying options menu option
-        // This fragment is an observer of the play/pause state of the media player so the
-        // play/pause state usually gets "automatically" updated
-        // But, when this fragment gets recreated, the fragment does not have access to the
-        // play/pause state until the fragment establishes the connection with the service
-        // When the connection is made, we need to get the play/pause state and update this
-        // fragment's play/pause button state
-        /*if (mTrackList == null) {
-            Utils.log(TAG, "onServiceConnected() - mTrackList is null!");
-            mTrackList = mAudioService.getPlayer().getPlaylist();
-            mPlayListIndex = mAudioService.getPlayer().getPlaylistIndex();
-            int trackDuration = mAudioService.getPlayer().getTrackDuration();
-            onReceiveTrackDuration(trackDuration);
-            // Retrieve the play/pause state from the audio player and update the UI
-            setPlayPauseButtonImage(mAudioService.getPlayer().isTrackPlaying());
-        }
-
-        else {
-            // First playlist or a new playlist
-            if (isNewPlaylist()) {
-                Utils.log(TAG, "onServiceConnected() - New playlist");
-                mAudioService.getPlayer().setPlaylist(mTrackList);
-                mAudioService.getPlayer().play(mPlayListIndex);
-            }
-
-            // Another track from the same playlist
-            else if (isNewTrack() && mIsFromTopTracks) {
-                Utils.log(TAG, "onServiceConnected() - New track");
-                mAudioService.getPlayer().play(mPlayListIndex);
-            }
-
-            // This happens when user selects the same track that was already playing
-            // In that case, we need to update the seek bar
-            else {
-                int trackDuration = mAudioService.getPlayer().getTrackDuration();
-                onReceiveTrackDuration(trackDuration);
-            }
-        }
-
-        displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-        mIsFromTopTracks = false;*/
+        // Once action has been handled, reset intent action to default action
+        // This action is received when fragment is started from notification or app history drawer
+        getActivity().getIntent().setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
     }
 
     @Override
@@ -313,10 +277,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                if (mAudioService != null && mAudioService.getPlayer() != null) {
+                if (mAudioService != null && mAudioService.getPlayer() != null
+                        && mSeekBar != null) {
                     mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
                 }
-                mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
+
+                if (mSeekBarHandler != null) {
+                    mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
+                }
             }
         };
 
@@ -324,29 +292,43 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         mUpdateSeekBarTextRunnable = new Runnable() {
             @Override public void run() {
                 //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
-                if (mAudioService != null && mAudioService.getPlayer() != null) {
+                if (mAudioService != null && mAudioService.getPlayer() != null
+                        && mElapsedTimeTextView != null) {
                     Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
 
                     mElapsedTimeTextView.setText(getResources()
                             .getString(R.string.NowPlaying_elapsedTime, minSecPair.first,
                                     minSecPair.second));
                 }
-                mSeekBarTextHandler.postDelayed(this, SEEK_BAR_TEXT_UPDATE_INTERVAL);
+
+                if (mSeekBarTextHandler != null) {
+                    mSeekBarTextHandler.postDelayed(this, SEEK_BAR_TEXT_UPDATE_INTERVAL);
+                }
             }
         };
 
-        mSeekBar.setMax((int)duration);
+        if (mSeekBar != null) {
+            mSeekBar.setMax((int)duration);
+        }
+
 
         Pair<Long, Long> minSecPair = Utils.msecToMinSec((int)duration);
 
-        mTotalTimeTextView.setText(getResources()
-                .getString(R.string.NowPlaying_totalTime, minSecPair.first,
-                        minSecPair.second));
+        if (mTotalTimeTextView != null) {
+            mTotalTimeTextView.setText(getResources()
+                    .getString(R.string.NowPlaying_totalTime, minSecPair.first,
+                            minSecPair.second));
+        }
 
         // The runnable must be called once explicitly for it to be called automatically after
         // http://stackoverflow.com/questions/21929529/runnable-not-running-at-all-inside-fragment#21929571
-        mSeekBarHandler.post(mUpdateSeekBarRunnable);
-        mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
+        if (mSeekBarHandler != null) {
+            mSeekBarHandler.post(mUpdateSeekBarRunnable);
+        }
+
+        if (mSeekBarTextHandler != null) {
+            mSeekBarTextHandler.post(mUpdateSeekBarTextRunnable);
+        }
     }
 
     // This is called when the track is done playing
@@ -355,9 +337,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
-        mSeekBar.setProgress(0);
+
+        if (mSeekBar != null) {
+            mSeekBar.setProgress(0);
+        }
+
         //mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-        mElapsedTimeTextView.setText("00:00");
+        if (mElapsedTimeTextView != null) {
+            mElapsedTimeTextView.setText("00:00");
+        }
 
         /*if (mAudioService != null) {
             mAudioService.getPlayer().seekTo(0);
@@ -393,73 +381,89 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     private void setWidgetsListeners() {
 
-        mShareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String trackUrl = mFragmentData.getTrackList().get(mFragmentData.getTrackIndex())
-                        .getTrackPreviewUrl();
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
-            }
-        });
-
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.log(TAG, "Clicked on: play/pause button");
-                mAudioService.getPlayer().togglePlayPauseState();
-            }
-        });
-
-        mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.log(TAG, "Clicked on: PREVIOUS");
-                mAudioService.getPlayer().playPrevious();
-                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-            }
-        });
-
-        mNextTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.log(TAG, "Clicked on: NEXT");
-                mAudioService.getPlayer().playNext();
-                displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
-            }
-        });
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    Utils.log(TAG, "seekBar.onProgressChanged()");
-                    mSeekBarProgress = progress;
+        if (mShareButton != null) {
+            mShareButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String trackUrl = mAudioService.getPlayer().getTrackInfo().getTrackPreviewUrl();
+                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, trackUrl);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
                 }
-            }
+            });
+        }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Utils.log(TAG, "seekBar.onStartTrackingTouch()");
-                pausePlayer();
-            }
+        if (mPlayButton != null) {
+            mPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.log(TAG, "Clicked on: play/pause button");
+                    mAudioService.getPlayer().togglePlayPauseState();
+                }
+            });
+        }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Utils.log(TAG, "seekBar.onStopTrackingTouch()");
-                mAudioService.getPlayer().seekTo(mSeekBarProgress);
-                resumePlayer();
-            }
-        });
+        if (mPrevTrackButton != null) {
+            mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.log(TAG, "Clicked on: PREVIOUS");
+                    mAudioService.getPlayer().playPrevious();
+                    displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+                }
+            });
+        }
+
+        if (mNextTrackButton != null) {
+            mNextTrackButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.log(TAG, "Clicked on: NEXT");
+                    mAudioService.getPlayer().playNext();
+                    displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
+                }
+            });
+        }
+
+        if (mSeekBar != null) {
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (fromUser) {
+                        Utils.log(TAG, "seekBar.onProgressChanged()");
+                        mSeekBarProgress = progress;
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    Utils.log(TAG, "seekBar.onStartTrackingTouch()");
+                    pausePlayer();
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    Utils.log(TAG, "seekBar.onStopTrackingTouch()");
+                    mAudioService.getPlayer().seekTo(mSeekBarProgress);
+                    resumePlayer();
+                }
+            });
+        }
     }
 
     private void setWidgetsProperties() {
-        mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-        mPrevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
-        mNextTrackButton.setImageResource(android.R.drawable.ic_media_next);
+        if (mPlayButton != null) {
+            mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
+        }
+
+        if (mPrevTrackButton != null) {
+            mPrevTrackButton.setImageResource(android.R.drawable.ic_media_previous);
+        }
+
+        if (mNextTrackButton != null) {
+            mNextTrackButton.setImageResource(android.R.drawable.ic_media_next);
+        }
     }
 
     private void enableWidgets() {
@@ -471,11 +475,25 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private void setEnableWidgets(boolean bEnable) {
-        mPlayButton.setEnabled(bEnable);
-        mPrevTrackButton.setEnabled(bEnable);
-        mNextTrackButton.setEnabled(bEnable);
-        mSeekBar.setEnabled(bEnable);
-        mShareButton.setEnabled(bEnable);
+        if (mPlayButton != null) {
+            mPlayButton.setEnabled(bEnable);
+        }
+
+        if (mPrevTrackButton != null) {
+            mPrevTrackButton.setEnabled(bEnable);
+        }
+
+        if (mNextTrackButton != null) {
+            mNextTrackButton.setEnabled(bEnable);
+        }
+
+        if (mSeekBar != null) {
+            mSeekBar.setEnabled(bEnable);
+        }
+
+        if (mShareButton != null) {
+            mShareButton.setEnabled(bEnable);
+        }
     }
 
     private void updateWidgets(TrackInfo track) {
@@ -490,6 +508,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private void setPlayPauseButtonImage(boolean trackIsPlaying) {
+        if (mPlayButton ==  null) {
+            return;
+        }
 
         // Set as pause button
         if (trackIsPlaying) {
@@ -506,8 +527,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     // Stop updating seek bar and text values
     public void stopSeekBarUpdates() {
         Utils.log(TAG, "stopSeekBarUpdates()");
-        mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
-        mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
+        if (mSeekBarHandler != null) {
+            mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        }
+
+        if (mSeekBarHandler != null) {
+            mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        }
     }
 
     private void  pausePlayer() {

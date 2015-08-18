@@ -249,10 +249,13 @@ public class TopTracksFragment extends ListFragment {
 
         if (mIsNewTopTracksList) {
             intent.setAction(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
+            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_LOAD_PLAYLIST_PLAY_TRACK");
         } else if (isNewTrackIndex){
             intent.setAction(NowPlayingFragment.ACTION_PLAY_TRACK);
-        } else {
+            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_PLAY_TRACK");
+        } else { // Probably only happens when user selects the same track that's already playing
             intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+            Utils.log(TAG, "onListItemClick() - Intent action set to: ACTION_SHOW_PLAYER");
         }
 
         // Tell the MainActivity to load the NowPlaying fragment in its layout

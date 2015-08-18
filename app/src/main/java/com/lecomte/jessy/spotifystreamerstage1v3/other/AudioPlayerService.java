@@ -181,7 +181,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
             intent.setClass(this, MainActivity.class);
-            intent.setAction(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
+            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -260,8 +260,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // https://github.com/square/picasso/blob/master/picasso-sample/src/main/java/com/example/picasso/PicassoSampleAdapter.java
         // TODO: Make sure the image is not reloaded from server every time we update the notification
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
-                .resizeDimen(R.dimen.notification_icon_width_height,
-                        R.dimen.notification_icon_width_height)
+                .resizeDimen(R.dimen.notification_icon_width_height, R.dimen.notification_icon_width_height)
                 .into(mNotificationRemoteView, R.id.notification_imageAlbum,
                         NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, notification);
 
