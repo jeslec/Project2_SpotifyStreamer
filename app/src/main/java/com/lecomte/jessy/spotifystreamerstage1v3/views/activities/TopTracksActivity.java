@@ -1,17 +1,29 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
 
 
 public class TopTracksActivity extends AppCompatActivity implements
         TopTracksFragment.OnFragmentInteractionListener {
+
+    private final String TAG = getClass().getSimpleName();
 
     public static final String EXTRA_ARTIST_ID =
             "com.lecomte.jessy.spotifystreamerstage1v3.extra.EXTRA_ARTIST_ID";
@@ -80,6 +92,54 @@ public class TopTracksActivity extends AppCompatActivity implements
     @Override
     public ActionBar getTheActionBar() {
         return mActionBar;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_top_tracks_activity, menu);
+
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
+
+        // Show the NowPlaying icon only if the audio service is running
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            nowPlayingItem.setVisible(true);
+        } else {
+            nowPlayingItem.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
+
+        switch (item.getItemId()) {
+           /* case R.id.menu_item_preferences:
+                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;*/
+
+            case R.id.menu_item_now_playing:
+                Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
+                Intent intent = new Intent(this,
+                        App.isTwoPaneLayout()? MainActivity.class: NowPlayingActivity.class);
+                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 

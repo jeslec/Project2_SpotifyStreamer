@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreateOptionsMenu(menu);
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_artist_search_fragment, menu);
+        getMenuInflater().inflate(R.menu.menu_main_activity, menu);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
