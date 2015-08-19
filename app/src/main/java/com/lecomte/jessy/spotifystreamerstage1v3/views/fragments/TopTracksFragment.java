@@ -83,7 +83,7 @@ public class TopTracksFragment extends ListFragment {
         setRetainInstance(true);
 
         // Required to get action bar back button to do something useful (go back to previous view)
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
 
         // Get params sent to this fragment upon creation, namely the artist id and name
          if (getArguments() != null) {
@@ -134,66 +134,6 @@ public class TopTracksFragment extends ListFragment {
             else {
                 Utils.showToast(R.string.TopTracks_noInternet);
             }
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_top_tracks_fragment, menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
-
-        switch (item.getItemId()) {
-
-            case R.id.menu_item_now_playing:
-                Utils.log(TAG, "onOptionsItemSelected() - Loading NowPlaying view...");
-                /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                startActivity(nowPlayingIntent);*/
-
-                // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
-                if (App.isTwoPaneLayout()) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-                    startActivity(intent);
-                    /*Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-                    intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                            trackInfoList);
-                    intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    intent.setAction(TopTracksActivity.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
-                    startActivity(intent);*/
-                }
-
-                // Start the NowPlaying screen as a fullscreen activity
-                else {
-                    Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
-                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-                    startActivity(intent);
-                }
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
-
-        // Show the NowPlaying icon only if the audio service is running
-        if (Utils.isServiceRunning(AudioPlayerService.class)) {
-            nowPlayingItem.setVisible(true);
-        } else {
-            nowPlayingItem.setVisible(false);
         }
     }
 

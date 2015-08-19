@@ -61,10 +61,6 @@ public class ArtistSearchFragment extends ListFragment {
     // TODO: Rename and change types and number of parameters
     public static ArtistSearchFragment newInstance(String param1, String param2) {
         ArtistSearchFragment fragment = new ArtistSearchFragment();
-        /*Bundle args = new Bundle();
-        args.putString(ARG_ARTIST_ID, param1);
-        args.putString(ARG_ARTIST_NAME, param2);
-        fragment.setArguments(args);*/
         return fragment;
     }
 
@@ -77,14 +73,6 @@ public class ArtistSearchFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
-
-        // Tell fragment manager to call this fragment's onCreateOptionsMenu()
-        setHasOptionsMenu(true);
-
-        /*if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }*/
 
         // Set up the adapter to display search results sent to us by search fragment
         mSearchResultAdapter = new SearchResultAdapter(getActivity());
@@ -159,86 +147,6 @@ public class ArtistSearchFragment extends ListFragment {
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.SearchResult_progressBar);
         progress.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_artist_search_fragment, menu);
-
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        // Make sure to use android.support.v7.widget.SearchView and not android.widget.SearchView
-        // or else the app will crash during run-time
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_item_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
-
-        switch (item.getItemId()) {
-            case R.id.menu_item_preferences:
-                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
-                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;
-
-            case R.id.menu_item_now_playing:
-                Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
-                /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                startActivity(nowPlayingIntent);*/
-
-                // TODO: Tell the MainActivity to load the NowPlaying fragment in his layout
-                if (App.isTwoPaneLayout()) {
-
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-                    startActivity(intent);
-
-                    /*Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-                    intent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                            trackInfoList);
-                    intent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    intent.setAction(TopTracksActivity.ACTION_LOAD_PLAYLIST_PLAY_TRACK);
-                    startActivity(intent);*/
-                }
-
-                // Start the NowPlaying screen as a fullscreen activity
-                else {
-                    // TODO: Check if I should send an extras to NowPlaying
-                    Intent intent = new Intent(getActivity(), NowPlayingActivity.class);
-                    intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-                    startActivity(intent);
-                    /*Intent nowPlayingIntent = new Intent(getActivity(), NowPlayingActivity.class);
-                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mArtistName);
-                    nowPlayingIntent.putParcelableArrayListExtra(TopTracksActivity.EXTRA_TRACK_LIST,
-                            trackInfoList);
-                    nowPlayingIntent.putExtra(TopTracksActivity.EXTRA_TRACK_INDEX, position);
-                    startActivity(nowPlayingIntent);*/
-                }
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
-
-        // Show the NowPlaying icon only if the audio service is running
-        if (Utils.isServiceRunning(AudioPlayerService.class)) {
-            nowPlayingItem.setVisible(true);
-        } else {
-            nowPlayingItem.setVisible(false);
-        }
     }
 
     @Override

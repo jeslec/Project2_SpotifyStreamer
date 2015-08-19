@@ -2,6 +2,7 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +12,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
@@ -232,5 +237,60 @@ public class MainActivity extends AppCompatActivity implements
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         Utils.log(TAG, "onCreate()");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_artist_search_fragment, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        // Make sure to use android.support.v7.widget.SearchView and not android.widget.SearchView
+        // or else the app will crash during run-time
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_item_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
+
+        // Show the NowPlaying icon only if the audio service is running
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            nowPlayingItem.setVisible(true);
+        } else {
+            nowPlayingItem.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
+
+        switch (item.getItemId()) {
+            case R.id.menu_item_preferences:
+                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+
+            case R.id.menu_item_now_playing:
+                Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
+                Intent intent = new Intent(this,
+                        App.isTwoPaneLayout()? MainActivity.class: NowPlayingActivity.class);
+                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
