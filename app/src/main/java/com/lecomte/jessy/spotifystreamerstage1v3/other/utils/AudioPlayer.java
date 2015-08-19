@@ -168,6 +168,11 @@ public class AudioPlayer {
                 mTrackPlayingState.setState(TrackPlayingState.TRACK_NOT_PLAYING);
             }
 
+            // Do a reset() before release() to avoid getting "mediaplayer went away with unhandled
+            // events" message in Logcat as suggested by:
+            // http://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+            mPlayer.reset();
+
             mPlayer.release();
             mPlayer = null;
             Utils.log(TAG, R.string.AudioPlayer_debug_playerStopped);

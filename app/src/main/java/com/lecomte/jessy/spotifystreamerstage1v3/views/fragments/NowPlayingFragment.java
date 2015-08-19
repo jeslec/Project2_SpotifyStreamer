@@ -100,7 +100,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         setHasOptionsMenu(true);
 
         // Make the dialog modal so it does not accept input outside the dialog area
-        // TODO: Change theme for one that doesn't have a transparent background
+        // http://stackoverflow.com/questions/12322356/how-to-make-dialogfragment-modal
         setStyle(STYLE_NO_FRAME, 0);
     }
 
@@ -612,11 +612,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     // This prevents us from having multiple instances of the dialog running
     //http://www.jorgecoca.com/android-quick-tip-avoid-opening-multiple-dialogs-when-tapping-an-element/
-    /*
     @Override
     public void show(FragmentManager manager, String tag) {
         if (manager.findFragmentByTag(tag) == null) {
             super.show(manager, tag);
         }
-    }*/
+    }
 }

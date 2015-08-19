@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
-        Utils.log(TAG, "onNewIntent()");
+        //Utils.log(TAG, "onNewIntent()");
     }
 
     private void handleIntent(Intent intent) {
@@ -140,37 +140,27 @@ public class MainActivity extends AppCompatActivity implements
             Utils.log(TAG, "handleIntent() - Intent action: "
                     + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
             // New playlist so therefore a new track also
-            if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK)) {
+            if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) ||
+                    intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
                 NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
                 fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
                 Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
-                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
-            }
-
-            // New track from the current playlist
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
-                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
-                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
-                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
                 NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
                 newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
 
             // Same track from the same playlist (no need to send any data, use existing data)
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
-
-                FragmentManager fm = getSupportFragmentManager();
-                NowPlayingFragment fragment = (NowPlayingFragment)fm.findFragmentByTag(DIALOG_MEDIA_PLAYER);
+                NowPlayingFragment fragment = (NowPlayingFragment)fragmentManager
+                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
 
                 if (fragment == null) {
                     fragment = NowPlayingFragment.newInstance();
-                    fm.beginTransaction()
+                    fragmentManager.beginTransaction()
                             .add(fragment, DIALOG_MEDIA_PLAYER)
                             // Was getting exception:
                             // java.lang.IllegalStateException: Can not perform this action after
