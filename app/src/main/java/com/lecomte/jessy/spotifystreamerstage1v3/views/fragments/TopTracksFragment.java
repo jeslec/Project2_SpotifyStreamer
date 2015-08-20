@@ -113,8 +113,11 @@ public class TopTracksFragment extends ListFragment {
         ActionBar actionBar = mListener.getTheActionBar();
         actionBar.setSubtitle(mArtistName);
 
-        // Use action bar arrow as navigation button
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        // Use action bar arrow as navigation button, but only in 1-pane layouts
+        // In 2-pane layout, there is only 1 activity with 2 fragments so no screen to go back to
+        if (!App.isTwoPaneLayout()) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         return v;
     }
