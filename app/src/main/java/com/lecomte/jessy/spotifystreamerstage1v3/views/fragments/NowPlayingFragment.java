@@ -13,7 +13,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.util.DisplayMetrics;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.TrackInfo;
@@ -134,15 +137,26 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateDialog()");
 
-        // Required to get action bar back button to do something useful (go back to previous view)
-        //setHasOptionsMenu(true);
-
         // The only reason you might override this method when using onCreateView() is
         // to modify any dialog characteristics. For example, the dialog includes a
         // title by default, but your custom layout might not need it. So here you can
         // remove the dialog title, but you must call the superclass to get the Dialog.
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // TEST: 2015-08-19
+        /*Window window = dialog.getWindow();
+        window.setLayout(800, 400);*/
+        //WindowManager.LayoutParams params = window.getAttributes();
+
+        //params.lay
+
+        // Just an example; edit to suit your needs.
+        /*params.x = sourceX - dpToPx(110); // about half of confirm button size left of source view
+        params.y = sourceY - dpToPx(80); // above source view
+
+        window.setAttributes(params);*/
+        //--------------
 
         return dialog;
     }
@@ -162,6 +176,32 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mAudioService.removeListener(this);
             mAudioService = null;
             Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // TODO: Consider optimizing but be careful of configuration changes (phone rotations)
+        // Resize dialog window (a dialog window is only used in a 2-pane configuration,
+        // in a 1-pane configuration we use a fullscreen activity)
+        // Resizing of window must be done in onStart() or onResume() as explained here:
+        // http://w3facility.org/question/how-to-set-dialogfragments-width-and-height/?r=3#answer-21966763
+        if (App.isTwoPaneLayout()) {
+            // Extract float values from dimens.xml explained here:
+            // http://stackoverflow.com/questions/3282390/add-floating-point-value-to-android-resources-values#8780360
+            TypedValue widthMultiplier = new TypedValue();
+            TypedValue heightMultiplier = new TypedValue();
+            getResources().getValue(R.dimen.dialog_window_width, widthMultiplier, true);
+            getResources().getValue(R.dimen.dialog_window_height, heightMultiplier, true);
+
+            // Get screen dimensions and other display metrics, code from:
+            // http://developer.android.com/reference/android/util/DisplayMetrics.html
+            DisplayMetrics metrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            getDialog().getWindow().setLayout((int)(widthMultiplier.getFloat() * metrics.widthPixels),
+                    (int)(heightMultiplier.getFloat() * metrics.heightPixels));
         }
     }
 
