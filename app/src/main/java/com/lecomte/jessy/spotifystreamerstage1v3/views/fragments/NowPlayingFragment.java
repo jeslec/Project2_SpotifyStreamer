@@ -553,8 +553,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
         }
 
-        if (mSeekBarHandler != null) {
-            mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
+        if (mSeekBarTextHandler != null) {
+            mSeekBarTextHandler.removeCallbacks(mUpdateSeekBarTextRunnable);
         }
     }
 
