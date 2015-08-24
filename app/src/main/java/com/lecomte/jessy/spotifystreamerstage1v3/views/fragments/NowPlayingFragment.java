@@ -123,7 +123,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
-        //mIsFromTopTracks = true;
         getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
 
         getFragmentData();

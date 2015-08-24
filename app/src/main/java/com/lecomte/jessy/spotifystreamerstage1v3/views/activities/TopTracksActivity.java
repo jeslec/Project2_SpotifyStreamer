@@ -137,6 +137,12 @@ public class TopTracksActivity extends AppCompatActivity implements
                 startActivity(intent);
                 return true;
 
+            case R.id.menu_item_preferences:
+                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

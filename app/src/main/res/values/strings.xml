@@ -41,6 +41,6 @@
     <string name="preferences_countryDefaultValue">US</string>
     <string name="preferences_countryDialogTitle">Market Selection</string>
     <string name="preferences_countryTitle">Market</string>
-    <string name="preferences_countrySummary">Select country where to search for top tracks</string>
+    <string name="preferences_countrySummary">Country where to search for top tracks</string>
 
 </resources>

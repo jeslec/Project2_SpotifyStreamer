@@ -26,5 +26,4 @@ public class SettingsFragment extends PreferenceFragment {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
-
 }

@@ -38,7 +38,9 @@ import java.util.Observer;
 /**
  * Created by Jessy on 2015-07-24.
  */
-public class AudioPlayerService extends Service implements AudioPlayer.Callback, Observer {
+public class AudioPlayerService extends Service implements AudioPlayer.Callback,
+        Observer,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "AudioPlayerService";
     private WindowManager mWindowManager;
@@ -167,6 +169,12 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     private Notification buildCustomNotification() {
         //Utils.log(TAG, "buildCustomNotification()");
 
+        // Don't build a notification if notifications are disabled in the app settings
+        if (!App.isNotificationEnabled())
+        {
+            return null;
+        }
+
         // Get currently playing track info (or last played)
         TrackInfo track = mAudioPlayer.getTrackInfo();
 
@@ -191,7 +199,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
                 + (App.isTwoPaneLayout()?"MainActivity":"NowPlayingActivity"));
 
-        //**************************************
+        /***************************************
 
         //Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -199,7 +207,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         //--------------------------------------------------------------------------
         // Intent for the activity to open when user selects the notification
-        /*Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
+        *//*Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
         nowPlayingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // Use TaskStackBuilder to build the back stack and get the PendingIntent
@@ -209,12 +217,13 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                         // followed by DetailsActivity itself
                         .addParentStack(NowPlayingActivity.class)
                         .addNextIntent(nowPlayingIntent)
-                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*//*
 
-        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentIntent(pendingIntent);*/
+        *//*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentIntent(pendingIntent);*//*
 
         //-----------------------------------------------------------------
+        */
 
         // Previous track button intent
         Intent previousIntent = new Intent(this, AudioPlayerService.class);
@@ -254,8 +263,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 .setSmallIcon(R.drawable.ic_audio_player)
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
-                .setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(true); // user cannot remove notification from the notification drawer
+                //.setPriority(Notification.PRIORITY_MAX)
+                .setOngoing(false); // user cannot remove notification from the notification drawer
 
         Notification notification = builder.build();
 
@@ -284,10 +293,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         if (action.equals(ACTION_START_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
 
-            SharedPreferences prefs = PreferenceManager
-                    .getDefaultSharedPreferences(App.getContext());
-
-            if (prefs.getBoolean("preferences_notificationsEnabled", true)) {
+            if (App.isNotificationEnabled()) {
                 startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
             }
         }
@@ -295,7 +301,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_STOP_FOREGROUND");
             // TODO: Should the notification be removed or not?
-            stopForeground(false);
+            stopForeground(true);
         }
 
         else if (action.equals(ACTION_PLAY_PREVIOUS_TRACK)) {
@@ -523,6 +529,13 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         }*/
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("preferences_notificationsEnabled")) {
+            boolean notificationsEnabled = sharedPreferences.getBoolean(key, true);
+        }
     }
 }
 

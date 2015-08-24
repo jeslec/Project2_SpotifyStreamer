@@ -4,8 +4,13 @@
       tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity">
 
     <item android:id="@+id/menu_item_now_playing"
-          android:title="@string/menu_item_now_playing"
-          android:icon="@android:drawable/ic_menu_info_details"
-          app:showAsAction="always"/>
+        android:title="@string/menu_item_now_playing"
+        android:icon="@android:drawable/ic_menu_info_details"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/menu_item_preferences"
+        android:title="@string/action_open_preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="never"/>
 
 </menu>

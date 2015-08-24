@@ -66,10 +66,5 @@ public class NowPlayingActivity extends AppCompatActivity {
             }
         }
     }
-
-    /*@Override
-    public ActionBar getTheActionBar() {
-        return mActionBar;
-    }*/
 }
 

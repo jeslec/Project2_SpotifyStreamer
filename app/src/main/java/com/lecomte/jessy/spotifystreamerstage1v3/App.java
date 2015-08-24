@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
@@ -80,6 +82,13 @@ public class App extends Application {
         };
     }
 
+    // Returns true if notifications are enabled in the app settings
+    public static boolean isNotificationEnabled() {
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(App.getContext());
+        return prefs.getBoolean("preferences_notificationsEnabled", true) == true;
+    }
+
     public static boolean isTwoPaneLayout() {
         return mIsTwoPaneLayout;
     }
@@ -114,7 +123,12 @@ public class App extends Application {
                     + Utils.isServiceRunning(AudioPlayerService.class) + "]");
 
             // App is in foreground: set the audio player service as a background service
-            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning > 0) {
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(App.getContext());
+            boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
+
+            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning > 0 &&
+                    prefs.getBoolean("preferences_notificationsEnabled", true) == true) {
                 setupRunnable();
             }
         }
@@ -130,7 +144,12 @@ public class App extends Application {
 
             // App is in background: set the audio player service as a foreground service
             // to prevent OS from shutting down the service
-            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning == 0) {
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(App.getContext());
+            boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
+
+            if (Utils.isServiceRunning(AudioPlayerService.class) && mActivitiesRunning == 0 &&
+                    prefs.getBoolean("preferences_notificationsEnabled", true) == true) {
                 setupRunnable();
             }
         }
