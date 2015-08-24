@@ -4,9 +4,11 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -230,6 +232,15 @@ public class MainActivity extends AppCompatActivity implements
         // TODO: Find a way to kill the service... Perhaps use an timer? (e.g. unused for 1 min)
         //boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
         //Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
+
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(App.getContext());
+
+        // Stop service if notifications are OFF (no way of controlling player is app not running)
+        if (!prefs.getBoolean("preferences_notificationsEnabled", true)) {
+            stopService(new Intent(this, AudioPlayerService.class));
+        }
+
         super.onDestroy();
     }
 

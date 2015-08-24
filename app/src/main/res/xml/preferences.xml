@@ -10,4 +10,10 @@
         android:entryValues="@array/preferences_countryValues"
         android:defaultValue="@string/preferences_countryDefaultValue" />
 
+    <CheckBoxPreference
+        android:key="preferences_notificationsEnabled"
+        android:title="Notifications"
+        android:summary="Notification drawer and lock screen"
+        android:defaultValue="true"/>
+
 </PreferenceScreen>

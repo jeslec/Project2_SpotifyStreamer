@@ -8,9 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,7 +44,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     private WindowManager mWindowManager;
     private ImageView mChatHead;
     private View mOverlayView;
-    private BroadcastReceiver mReceiver;
+    //private BroadcastReceiver mReceiver;
     private RemoteViews mNotificationRemoteView;
     private PendingIntent mPausePendingIntent;
     private PendingIntent mResumePendingIntent;
@@ -281,7 +283,13 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         if (action.equals(ACTION_START_FOREGROUND)) {
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
-            startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(App.getContext());
+
+            if (prefs.getBoolean("preferences_notificationsEnabled", true)) {
+                startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+            }
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
@@ -456,11 +464,11 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         Utils.log(TAG, "onCreate()");
 
         // ******** TEST *************
-        final IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        /*final IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_USER_PRESENT);
         final BroadcastReceiver mReceiver = new ScreenReceiver();
-        registerReceiver(mReceiver, filter);
+        registerReceiver(mReceiver, filter);*/
         //***********************************
 
         //addViewToLockScreen();
@@ -510,9 +518,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // Stop playing track and destroy media player when service gets killed
         mAudioPlayer.stop();
 
-        if (mChatHead != null) {
+        /*if (mChatHead != null) {
             mWindowManager.removeView(mChatHead);
-        }
+        }*/
 
         super.onDestroy();
     }

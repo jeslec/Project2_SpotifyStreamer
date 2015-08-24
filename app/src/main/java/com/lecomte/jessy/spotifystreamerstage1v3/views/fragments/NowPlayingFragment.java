@@ -68,6 +68,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     //**** [Primitive] ****
     private int mSeekBarProgress = 0;
+    private int mTrackEndThreshold = 0;
 
     //**** [Widgets] ****
     private ImageButton mShareButton;
@@ -105,6 +106,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Make the dialog modal so it does not accept input outside the dialog area
         // http://stackoverflow.com/questions/12322356/how-to-make-dialogfragment-modal
         setStyle(STYLE_NO_FRAME, 0);
+
+        // Number of milliseconds from track end at which point we consider track finished
+        // Used in special case where player is loaded from notification and track has ended
+        TypedValue trackEndThreshold = new TypedValue();
+        getResources().getValue(R.dimen.track_end_threshold, trackEndThreshold, false);
+        mTrackEndThreshold = trackEndThreshold.data;
     }
 
     // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
@@ -364,14 +371,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mSeekBar.setProgress(0);
         }
 
-        //mPlayButton.setImageResource(android.R.drawable.ic_media_play);
         if (mElapsedTimeTextView != null) {
             mElapsedTimeTextView.setText("00:00");
         }
-
-        /*if (mAudioService != null) {
-            mAudioService.getPlayer().seekTo(0);
-        }*/
     }
 
     @Override
@@ -521,6 +523,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private void updateWidgets(TrackInfo track) {
         Utils.log(TAG, "updateWidgets() - Track duration: " + track.getTrackDuration());
         displayTrackInfo(track);
+
+        // Special case: track ended when app not visible and player is started from notification
+        // In this case, we reset the seek bar and text values when app is reloaded
+        if (!mAudioService.getPlayer().isPlaying() && track.getTrackDuration() > 0 &&
+                mAudioService.getPlayer().getCurrentPosition() >
+                        (track.getTrackDuration() - mTrackEndThreshold)) {
+            onTrackCompleted();
+            return;
+        }
 
         // Track duration is 0 until the first onReceiveTrackDuration() is received
         // When fragment is started from notification, the track length is valid so we set it

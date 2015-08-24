@@ -39,4 +39,7 @@
     <item name="dialog_window_width" format="float" type="dimen">0.85</item>
     <item name="dialog_window_height" format="float" type="dimen">0.5</item>
 
+    <!-- Number of milliseconds from track end at which point we consider track finished -->
+    <item name="track_end_threshold" format="integer" type="dimen">500</item>
+
 </resources>
