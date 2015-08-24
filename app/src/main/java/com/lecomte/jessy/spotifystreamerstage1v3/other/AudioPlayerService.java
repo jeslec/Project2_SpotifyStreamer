@@ -177,6 +177,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         Intent intent = new Intent(this, NowPlayingActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {

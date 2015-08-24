@@ -17,7 +17,13 @@ import java.util.Set;
 /**
  * Created by Jessy on 2015-07-20.
  */
-public class AudioPlayer {
+public class AudioPlayer implements MediaPlayer.OnErrorListener {
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Utils.log(TAG, "MediaPlayer error: " + what);
+        return false;
+    }
 
     public enum TrackPlayingState {
         TRACK_NOT_PLAYING   (false),

@@ -19,6 +19,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/NowPlaying_artistName"
         android:ellipsize="end"
+        android:singleLine="true"
         android:gravity="center_horizontal"/>
 
     <TextView
@@ -26,6 +27,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:ellipsize="end"
+        android:singleLine="true"
         android:id="@+id/NowPlaying_trackName"/>
 
     <ImageView
@@ -37,6 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:id="@+id/NowPlaying_albumName"/>
 
     <RelativeLayout

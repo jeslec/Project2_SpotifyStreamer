@@ -144,20 +144,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        // TEST: 2015-08-19
-        /*Window window = dialog.getWindow();
-        window.setLayout(800, 400);*/
-        //WindowManager.LayoutParams params = window.getAttributes();
-
-        //params.lay
-
-        // Just an example; edit to suit your needs.
-        /*params.x = sourceX - dpToPx(110); // about half of confirm button size left of source view
-        params.y = sourceY - dpToPx(80); // above source view
-
-        window.setAttributes(params);*/
-        //--------------
-
         return dialog;
     }
 
@@ -601,19 +587,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private void getFragmentData() {
 
         Intent intent = getActivity().getIntent();
-
-        // Fragment was "started" with newInstance(): this happens in a 2-pane layout
-        /*if (getActivity().getIntent().getAction() == NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) {
-            final Bundle args = getArguments();
-            ArrayList<TrackInfo> trackList = args.getParcelableArrayList(TopTracksActivity.EXTRA_TRACK_LIST);
-            mFragmentData.setTrackList(trackList);
-            mFragmentData.setTrackIndex(args.getInt(TopTracksActivity.EXTRA_TRACK_INDEX, 0));
-        }*/
-
-        // Fragment was "started" with an intent: this happens in a single-pane layout
-        //else {
-            mFragmentData = intent.getParcelableExtra(EXTRA_FRAGMENT_DATA);
-        //}
+        mFragmentData = intent.getParcelableExtra(EXTRA_FRAGMENT_DATA);
 
         if (mFragmentData != null) {
             Utils.log(TAG, "getFragmentData() - [TrackList size: "
