@@ -7,12 +7,9 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -75,10 +72,17 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     private static final String ACTION_RESUME =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.RESUME";
 
-    private static final int NOTIFICATION_ID_AUDIO_PLAYER_SERVICE = 1000;
+    public static final String ACTION_SHOW_NOTIFICATION =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.SHOW_NOTIFICATION";
+
+    public static final String ACTION_HIDE_NOTIFICATION =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.HIDE_NOTIFICATION";
+
+    private static final int NOTIFICATION_ID_AUDIO_SERVICE = 1000;
 
     private LocalBinder mLocalBinder = null;
     private AudioPlayer mAudioPlayer = null;
+    private NotificationManager mNotificationManager;
 
     public AudioPlayerService() {
         mAudioPlayer = new AudioPlayer();
@@ -262,8 +266,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 .setSmallIcon(R.drawable.ic_audio_player)
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
-                //.setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(false); // user cannot remove notification from the notification drawer
+                .setPriority(Notification.PRIORITY_MAX)
+                .setOngoing(true); // user cannot remove notification from the notification drawer
 
         Notification notification = builder.build();
 
@@ -273,7 +277,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
                 .resizeDimen(R.dimen.notification_icon_width_height, R.dimen.notification_icon_width_height)
                 .into(mNotificationRemoteView, R.id.notification_imageAlbum,
-                        NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, notification);
+                        NOTIFICATION_ID_AUDIO_SERVICE, notification);
 
         return notification;
     }
@@ -293,7 +297,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
 
             if (App.isNotificationEnabled()) {
-                startForeground(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+                startForeground(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
             }
         }
 
@@ -307,32 +311,31 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
             Utils.log(TAG, "Notification - Clicked on: PREVIOUS");
             mAudioPlayer.playPrevious();
-            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+            mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PAUSE)) {
             //Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
             Utils.log(TAG, "Notification - Clicked on: PAUSE");
             mAudioPlayer.pause();
-            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+            mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_RESUME)) {
             //Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
             Utils.log(TAG, "Notification - Clicked on: PLAY");
             mAudioPlayer.resume();
-            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+            mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
-        else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
-            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
-            Utils.log(TAG, "Notification - Clicked on: NEXT");
-            mAudioPlayer.playNext();
-            ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(NOTIFICATION_ID_AUDIO_PLAYER_SERVICE, buildCustomNotification());
+        else if (action.equals(ACTION_SHOW_NOTIFICATION)) {
+            Utils.log(TAG, "onStartCommand() - ACTION_SHOW_NOTIFICATION");
+            mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
+        }
+
+        else if (action.equals(ACTION_HIDE_NOTIFICATION)) {
+            Utils.log(TAG, "onStartCommand() - ACTION_HIDE_NOTIFICATION");
+            mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
         }
 
         // This should never happen
@@ -507,6 +510,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         params.y = 800;
 
         mWindowManager.addView(mChatHead, params);*/
+
+        mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public void removeListener(AudioPlayer.Callback listener) {

@@ -1,6 +1,7 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.activities;
 
 
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -82,10 +83,19 @@ public class MainActivity extends AppCompatActivity implements
         // React to changes made to the app settings
         mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                // Implementation
+
                 if (key.equals("preferences_notificationsEnabled")) {
                     boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
                     Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
+                    Intent intent = new Intent(App.getContext(), AudioPlayerService.class);
+                    String intentAction = AudioPlayerService.ACTION_HIDE_NOTIFICATION;
+
+                    if (notificationsEnabled) {
+                        intentAction = AudioPlayerService.ACTION_SHOW_NOTIFICATION;
+                    }
+
+                    intent.setAction(intentAction);
+                    startService(intent);
                 }
             }
         };
