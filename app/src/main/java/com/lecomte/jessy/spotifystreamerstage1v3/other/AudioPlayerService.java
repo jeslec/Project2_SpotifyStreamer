@@ -39,8 +39,7 @@ import java.util.Observer;
  * Created by Jessy on 2015-07-24.
  */
 public class AudioPlayerService extends Service implements AudioPlayer.Callback,
-        Observer,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        Observer {
 
     private static final String TAG = "AudioPlayerService";
     private WindowManager mWindowManager;
@@ -529,13 +528,6 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         }*/
 
         super.onDestroy();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("preferences_notificationsEnabled")) {
-            boolean notificationsEnabled = sharedPreferences.getBoolean(key, true);
-        }
     }
 }
 

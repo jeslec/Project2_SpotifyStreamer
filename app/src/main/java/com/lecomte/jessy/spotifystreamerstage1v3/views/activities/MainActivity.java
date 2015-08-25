@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements
     private String mPreviousQuery;
     private ActionBar mActionBar;
     private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
 
     /* ALWAYS SET THESE 3 VALUES WHEN YOU RE-USE (COPY & PASTE) THIS FILE */
 
@@ -77,6 +78,20 @@ public class MainActivity extends AppCompatActivity implements
             // This fragment is present only in 2-pan layouts
             addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
         }
+
+        // React to changes made to the app settings
+        mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                // Implementation
+                if (key.equals("preferences_notificationsEnabled")) {
+                    boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
+                    Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
+                }
+            }
+        };
+
+        PreferenceManager.getDefaultSharedPreferences(App.getContext())
+                .registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
     }
 
     private void addFragmentToLayout(int fragmentContainerId, String className) {
@@ -239,7 +254,10 @@ public class MainActivity extends AppCompatActivity implements
         // Stop service if notifications are OFF (no way of controlling player is app not running)
         if (!prefs.getBoolean("preferences_notificationsEnabled", true)) {
             stopService(new Intent(this, AudioPlayerService.class));
+            Utils.log(TAG, "onDestroy() - Service stopped");
         }
+
+        prefs.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
 
         super.onDestroy();
     }
