@@ -17,5 +17,5 @@
     <item android:id="@+id/menu_item_preferences"
         android:title="@string/action_open_preferences"
         android:icon="@android:drawable/ic_menu_preferences"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 </menu>

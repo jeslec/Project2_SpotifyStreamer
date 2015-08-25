@@ -275,7 +275,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // https://github.com/square/picasso/blob/master/picasso-sample/src/main/java/com/example/picasso/PicassoSampleAdapter.java
         // TODO: Make sure the image is not reloaded from server every time we update the notification
         Picasso.with(this).load(track.getAlbumSmallImageUrl())
-                .resizeDimen(R.dimen.notification_icon_width_height, R.dimen.notification_icon_width_height)
+                .resizeDimen(R.dimen.notification_icon_width_height,
+                        R.dimen.notification_icon_width_height)
                 .into(mNotificationRemoteView, R.id.notification_imageAlbum,
                         NOTIFICATION_ID_AUDIO_SERVICE, notification);
 
@@ -305,6 +306,13 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             Utils.log(TAG, "onStartCommand() - Action: ACTION_STOP_FOREGROUND");
             // TODO: Should the notification be removed or not?
             stopForeground(true);
+        }
+
+        else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
+            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
+            Utils.log(TAG, "Notification - Clicked on: NEXT");
+            mAudioPlayer.playNext();
+            mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PLAY_PREVIOUS_TRACK)) {

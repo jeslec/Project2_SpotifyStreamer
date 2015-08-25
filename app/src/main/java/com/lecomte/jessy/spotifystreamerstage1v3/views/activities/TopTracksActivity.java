@@ -123,12 +123,6 @@ public class TopTracksActivity extends AppCompatActivity implements
         Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
 
         switch (item.getItemId()) {
-           /* case R.id.menu_item_preferences:
-                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;*/
-
             case R.id.menu_item_now_playing:
                 Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
                 Intent intent = new Intent(this,
