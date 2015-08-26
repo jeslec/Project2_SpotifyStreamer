@@ -28,7 +28,7 @@ public class SettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             // Load default values into the dialog only if user has not chosen any values yet
-            PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
+            //PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
         }
     }
 

@@ -261,6 +261,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         mNotificationRemoteView.setTextViewText(R.id.notification_textArtist, track.getArtistName());
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContent(mNotificationRemoteView)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_audio_player)
@@ -374,7 +375,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         }
     }
 
-    private void removeViewFromLockScreen() {
+    /*private void removeViewFromLockScreen() {
         if (mChatHead != null) {
             mWindowManager.removeView(mChatHead);
         }
@@ -384,9 +385,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         if (mOverlayView != null) {
             mWindowManager.removeView(mOverlayView);
         }
-    }
+    }*/
 
-    private void addViewToLockScreen2() {
+    /*private void addViewToLockScreen2() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         mOverlayView = inflater.inflate(R.layout.overlay_lockscreen, null);
 
@@ -403,22 +404,22 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             return;
         }
 
-       /* mChatHead.setClickable(true);
+       *//* mChatHead.setClickable(true);
         mChatHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.log(TAG, "Android head touched!");
             }
-        });*/
+        });*//*
 
-        /*WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        *//*WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY, //TYPE_SYSTEM_ALERT, //TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                PixelFormat.TRANSLUCENT);*/
+                PixelFormat.TRANSLUCENT);*//*
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.TYPE_PHONE,
@@ -432,17 +433,17 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mOverlayView, params);
-    }
+    }*/
 
-    private void addViewToLockScreen() {
+    /*private void addViewToLockScreen() {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         // TEST: use a theme that does not set window as floating
         //setTheme(R.style.ShowOnTopOfLockScreen);
 
         // TEST
-        /*Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);*/
+        *//*Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);*//*
 
 
         mChatHead = new ImageView(this);
@@ -472,7 +473,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         params.y = 800;
 
         mWindowManager.addView(mChatHead, params);
-    }
+    }*/
 
     @Override
     public void onCreate() {

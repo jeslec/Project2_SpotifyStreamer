@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements
         mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 
-                if (key.equals("preferences_notificationsEnabled")) {
+                if (key.equals("preferences_notificationsEnabled") &&
+                        Utils.isServiceRunning(AudioPlayerService.class)) {
                     boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
                     Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
                     Intent intent = new Intent(App.getContext(), AudioPlayerService.class);
@@ -102,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements
 
         PreferenceManager.getDefaultSharedPreferences(App.getContext())
                 .registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+
+        // Load default values into the dialog only if user has not chosen any values yet
+        PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
     }
 
     private void addFragmentToLayout(int fragmentContainerId, String className) {
@@ -300,11 +304,18 @@ public class MainActivity extends AppCompatActivity implements
 
         MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
 
+        if (nowPlayingItem == null) {
+            Utils.log(TAG, "onPrepareOptionsMenu() - nowPlayingItem is null!");
+            return true;
+        }
+
         // Show the NowPlaying icon only if the audio service is running
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
             nowPlayingItem.setVisible(true);
+            Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: VISIBLE");
         } else {
             nowPlayingItem.setVisible(false);
+            Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: HIDDEN");
         }
         return true;
     }

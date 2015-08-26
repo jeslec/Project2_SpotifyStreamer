@@ -305,8 +305,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                if (mAudioService != null && mAudioService.getPlayer() != null
-                        && mSeekBar != null) {
+                if (mAudioService != null && mAudioService.getPlayer() != null && mSeekBar != null) {
                     mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
                 }
 
@@ -338,7 +337,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (mSeekBar != null) {
             mSeekBar.setMax((int)duration);
         }
-
 
         Pair<Long, Long> minSecPair = Utils.msecToMinSec((int)duration);
 
@@ -546,11 +544,17 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Set as pause button
         if (trackIsPlaying) {
+            // Resume updating seek bar and related text values
+            onReceiveTrackDuration(mAudioService.getPlayer().getTrackDuration());
+
             mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
             Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PAUSE");
         }
-
+        
         else {
+            // Optimization: stop updating seek bar and related text values
+            stopSeekBarUpdates();
+
             mPlayButton.setImageResource(android.R.drawable.ic_media_play);
             Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PLAY");
         }
