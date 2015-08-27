@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +71,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     //**** [Primitive] ****
     private int mSeekBarProgress = 0;
     private int mTrackEndThreshold = 0;
+    private float mWidthMultiplier = 1;
+    private float mHeightMultiplier = 1;
+    private float mDimAmount = 0;
 
     //**** [Widgets] ****
     private ImageButton mShareButton;
@@ -117,8 +121,24 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         TypedValue trackEndThreshold = new TypedValue();
         getResources().getValue(R.dimen.track_end_threshold, trackEndThreshold, false);
         mTrackEndThreshold = trackEndThreshold.data;
-    }
 
+        // Extract float values from dimens.xml explained here:
+        // http://stackoverflow.com/questions/3282390/add-floating-point-value-to-android-resources-values#8780360
+        // This is done only if NowPlayingFragment is a dialog (as opposed to fullscreen activity)
+        if (App.isTwoPaneLayout()) {
+            TypedValue width = new TypedValue();
+            TypedValue height = new TypedValue();
+            TypedValue dim = new TypedValue();
+
+            getResources().getValue(R.dimen.dialog_window_width, width, true);
+            getResources().getValue(R.dimen.dialog_window_height, height, true);
+            getResources().getValue(R.dimen.dim_behind_dialog_amount, dim, true);
+
+            mWidthMultiplier = width.getFloat();
+            mHeightMultiplier = height.getFloat();
+            mDimAmount = dim.getFloat();
+        }
+    }
     // See section: Showing a Dialog Fullscreen or as an Embedded Fragment from
     // http://developer.android.com/guide/topics/ui/dialogs.html
     /** The system calls this to get the DialogFragment's layout, regardless
@@ -203,19 +223,21 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Resizing of window must be done in onStart() or onResume() as explained here:
         // http://w3facility.org/question/how-to-set-dialogfragments-width-and-height/?r=3#answer-21966763
         if (App.isTwoPaneLayout()) {
-            // Extract float values from dimens.xml explained here:
-            // http://stackoverflow.com/questions/3282390/add-floating-point-value-to-android-resources-values#8780360
-            TypedValue widthMultiplier = new TypedValue();
-            TypedValue heightMultiplier = new TypedValue();
-            getResources().getValue(R.dimen.dialog_window_width, widthMultiplier, true);
-            getResources().getValue(R.dimen.dialog_window_height, heightMultiplier, true);
+            Window dialogWindow = getDialog().getWindow();
+            int dimFlag = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 
             // Get screen dimensions and other display metrics, code from:
             // http://developer.android.com/reference/android/util/DisplayMetrics.html
             DisplayMetrics metrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            getDialog().getWindow().setLayout((int) (widthMultiplier.getFloat() * metrics.widthPixels),
-                    (int) (heightMultiplier.getFloat() * metrics.heightPixels));
+
+            // Resize dialog window so it takes maximum advantage of each device's screen size
+            dialogWindow.setLayout((int) (mWidthMultiplier * metrics.widthPixels),
+                    (int)(mHeightMultiplier * metrics.heightPixels));
+
+            // Dim behind this dialog (must be called after dialog is created and view is set)
+            dialogWindow.setFlags(dimFlag, dimFlag);
+            dialogWindow.setDimAmount(mDimAmount);
         }
     }
 

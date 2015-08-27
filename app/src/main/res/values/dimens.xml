@@ -42,4 +42,7 @@
     <!-- Number of milliseconds from track end at which point we consider track finished -->
     <item name="track_end_threshold" format="integer" type="dimen">500</item>
 
+    <!-- Behind music player dim amount [0.0: no dimming; 1.0: full dimming] -->
+    <item name="dim_behind_dialog_amount" format="float" type="dimen">0.6</item>
+
 </resources>
