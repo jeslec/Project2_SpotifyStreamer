@@ -199,31 +199,26 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
                 Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
-                newFragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
+                NowPlayingFragment fragment = NowPlayingFragment.newInstance(fragmentData);
+                fragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
             }
 
             // Same track from the same playlist (no need to send any data, use existing data)
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
+           else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
                 NowPlayingFragment fragment = (NowPlayingFragment)fragmentManager
                         .findFragmentByTag(DIALOG_MEDIA_PLAYER);
 
-                // When a configuration change occurs, like a device rotation, the only way I have
-                // found to see the NowPlayingFragment is to delete it and recreate a new one
-                if (fragment != null) {
-                    fragment.dismiss();
-                    fragment = null;
+                if (fragment == null) {
+                    Utils.log(TAG, "handleIntent() - NowPlayingFragment: adding to MainActivity's layout");
+                    fragment = NowPlayingFragment.newInstance();
+                    fragmentManager.beginTransaction()
+                            .add(fragment, DIALOG_MEDIA_PLAYER)
+                            // Was getting exception:
+                            // java.lang.IllegalStateException: Can not perform this action after
+                            // onSaveInstanceState
+                            // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
+                            .commitAllowingStateLoss();
                 }
-
-                Utils.log(TAG, "handleIntent() - NowPlayingFragment: adding to MainActivity's layout");
-                fragment = NowPlayingFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .add(fragment, DIALOG_MEDIA_PLAYER)
-                        // Was getting exception:
-                        // java.lang.IllegalStateException: Can not perform this action after
-                        // onSaveInstanceState
-                        // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
-                        .commitAllowingStateLoss();
             }
         }
     }

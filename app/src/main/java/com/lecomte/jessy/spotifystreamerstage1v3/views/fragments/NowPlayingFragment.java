@@ -168,8 +168,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onPause() {
         super.onPause();
         Utils.log(TAG, "onPause()");
-        if (mAudioService != null) {
 
+        // IMPORTANT: This removes fragment from layout and from back stack
+        // Without it, I was getting weird bugs where after a device rotation, the
+        // NowPlayingFragment would not be visible (although it was before the rotation)
+        dismiss();
+
+        if (mAudioService != null) {
             Utils.log(TAG, "onPause() - Stopping seek bar updates...");
             stopSeekBarUpdates();
 
