@@ -141,7 +141,14 @@ public class TopTracksFragment extends ListFragment {
     }
 
     @Override
+    public void onPause() {
+        Utils.log(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
+        Utils.log(TAG, "onResume()");
         super.onResume();
 
         // TODO: Determine if it's the best place to put this
@@ -165,6 +172,12 @@ public class TopTracksFragment extends ListFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        Utils.log(TAG, "onDestroy()");
+        super.onDestroy();
     }
 
     /*

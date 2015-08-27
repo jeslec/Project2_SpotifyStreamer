@@ -36,17 +36,6 @@ public class ArtistSearchFragment extends ListFragment {
 
     private final String TAG = getClass().getSimpleName();
     SearchResultAdapter mSearchResultAdapter;
-
-   /* // Data required by this fragment upon creation
-    private static final String ARG_ARTIST_ID =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistId";
-    private static final String ARG_ARTIST_NAME =
-            "com.lecomte.jessy.spotifystreamerstage1v3.arg.ArtistName";
-*/
-    // TODO: Rename and change types of parameters
-    /*private String mArtistId;
-    private String mArtistName;
-*/
     private OnFragmentInteractionListener mListener;
     private boolean mIsTrackPlaying = false;
 
@@ -70,6 +59,7 @@ public class ArtistSearchFragment extends ListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
@@ -116,6 +106,12 @@ public class ArtistSearchFragment extends ListFragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        Utils.log(TAG, "onDestroy()");
+        super.onDestroy();
+    }
+
     public void updateSearchResult(String query){
         new SearchArtistTask(mSearchResultAdapter, this).execute(query);
     }
@@ -150,13 +146,22 @@ public class ArtistSearchFragment extends ListFragment {
     }
 
     @Override
+    public void onPause() {
+        Utils.log(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
+        Utils.log(TAG, "onResume()");
         super.onResume();
 
         // TODO: Determine if it's the best place to put this
         // Force update of the menu when coming from NowPlaying view
         // Required so the NowPlaying button gets displayed in the ActionBar
+        Utils.log(TAG, "onResume() - Invalidating options menu: BEGIN");
         getActivity().invalidateOptionsMenu();
+        Utils.log(TAG, "onResume() - Invalidating options menu: END");
     }
 }
 

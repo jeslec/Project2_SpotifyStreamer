@@ -98,7 +98,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
+
+        // Maintain states between configuration changes (phone rotations, etc.)
+        setRetainInstance(true);
 
         // Required to get action bar back button to do something useful (go back to previous view)
         setHasOptionsMenu(true);
@@ -123,7 +127,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Utils.log(TAG, "onCreateView()");
-        getActivity().startService(new Intent(getActivity(), AudioPlayerService.class));
+
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            Utils.log(TAG, "onCreateView() - Audio service: already started");
+        } else {
+            ComponentName name = getActivity()
+                    .startService(new Intent(getActivity(), AudioPlayerService.class));
+            Utils.log(TAG, "onCreateView() - Audio service started: " + (name==null?"false":"true"));
+        }
 
         getFragmentData();
 
@@ -158,16 +169,21 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         super.onPause();
         Utils.log(TAG, "onPause()");
         if (mAudioService != null) {
-            getActivity().unbindService(this);
 
-            // Make sure service cannot send us anything once we are disconnected
+            Utils.log(TAG, "onPause() - Stopping seek bar updates...");
+            stopSeekBarUpdates();
 
-            // Don't receive play/pause state
+            // Don't receive play/pause state updates
+            Utils.log(TAG, "onPause() - Removing play/pause state observer...");
             mAudioService.getPlayer().removePlayPauseStateObserver(this);
 
+            // Don't receive onTrackCompleted events
+            Utils.log(TAG, "onPause() - Removing track completed listener...");
             mAudioService.removeListener(this);
+
+            Utils.log(TAG, "onPause() - Unbinding audio service...");
+            getActivity().unbindService(this);
             mAudioService = null;
-            Utils.log(TAG, "onPause() - AudioPlayerService: UNBINDED");
         }
     }
 
@@ -192,8 +208,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             // http://developer.android.com/reference/android/util/DisplayMetrics.html
             DisplayMetrics metrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            getDialog().getWindow().setLayout((int)(widthMultiplier.getFloat() * metrics.widthPixels),
-                    (int)(heightMultiplier.getFloat() * metrics.heightPixels));
+            getDialog().getWindow().setLayout((int) (widthMultiplier.getFloat() * metrics.widthPixels),
+                    (int) (heightMultiplier.getFloat() * metrics.heightPixels));
         }
     }
 
@@ -204,15 +220,15 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Connect to audio service so we can send it requests (play, pause, etc.)
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
-        getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
-        Utils.log(TAG, "onResume() - AudioPlayerService: BINDED");
+        boolean binded = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
+        Utils.log(TAG, "onResume() - AudioPlayerService binded: " + binded);
     }
 
+    // IMPORTANT: Don't waste your time with this method as it is not garanteed to be called
     @Override
     public void onDestroy() {
         Utils.log(TAG, "onDestroy()");
         super.onDestroy();
-        stopSeekBarUpdates();
     }
 
     // Based on book Big Nerd Ranch Android: p.274-275
@@ -238,6 +254,18 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Utils.log(TAG, "onAttach() - Fragment attached to activity: " + activity.getLocalClassName());
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Utils.log(TAG, "onDetach() - Fragment detached from activity");
     }
 
     //**********************************************************************************************
@@ -550,7 +578,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
             Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PAUSE");
         }
-        
+
         else {
             // Optimization: stop updating seek bar and related text values
             stopSeekBarUpdates();
@@ -583,6 +611,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private boolean isNewPlaylist() {
         Intent intent = getActivity().getIntent();
 
+        if (intent == null) {
+            Utils.log(TAG, "isNewPlaylist() - Intent is null!");
+            return false;
+        }
+
         if (intent.getAction() == ACTION_LOAD_PLAYLIST_PLAY_TRACK) {
             return true;
         }
@@ -591,6 +624,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     private boolean isNewTrack() {
         Intent intent = getActivity().getIntent();
+
+        if (intent == null) {
+            Utils.log(TAG, "isNewTrack() - Intent is null!");
+            return false;
+        }
 
         if (intent.getAction() == ACTION_PLAY_TRACK) {
             return true;

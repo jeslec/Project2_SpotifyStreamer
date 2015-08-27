@@ -28,6 +28,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
+import com.squareup.okhttp.internal.Util;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         // Fragments will use this to modify (color, textsize, etc.) the action bar
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
         addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
 
         if (App.isTwoPaneLayout()) {
-            Utils.log(TAG, "Layout configuration: 2-pane");
+            Utils.log(TAG, "onCreate() - Layout configuration: 2-pane");
 
             // This fragment is present only in 2-pan layouts
             addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
@@ -129,6 +131,18 @@ public class MainActivity extends AppCompatActivity implements
                     .add(fragmentContainerId, fragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        Utils.log(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Utils.log(TAG, "onResume()");
+        super.onResume();
     }
 
     // Got idea of how to manage first-time creation of activity vs re-calling same activity that's
@@ -194,16 +208,22 @@ public class MainActivity extends AppCompatActivity implements
                 NowPlayingFragment fragment = (NowPlayingFragment)fragmentManager
                         .findFragmentByTag(DIALOG_MEDIA_PLAYER);
 
-                if (fragment == null) {
-                    fragment = NowPlayingFragment.newInstance();
-                    fragmentManager.beginTransaction()
-                            .add(fragment, DIALOG_MEDIA_PLAYER)
-                            // Was getting exception:
-                            // java.lang.IllegalStateException: Can not perform this action after
-                            // onSaveInstanceState
-                            // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
-                            .commitAllowingStateLoss();
+                // When a configuration change occurs, like a device rotation, the only way I have
+                // found to see the NowPlayingFragment is to delete it and recreate a new one
+                if (fragment != null) {
+                    fragment.dismiss();
+                    fragment = null;
                 }
+
+                Utils.log(TAG, "handleIntent() - NowPlayingFragment: adding to MainActivity's layout");
+                fragment = NowPlayingFragment.newInstance();
+                fragmentManager.beginTransaction()
+                        .add(fragment, DIALOG_MEDIA_PLAYER)
+                        // Was getting exception:
+                        // java.lang.IllegalStateException: Can not perform this action after
+                        // onSaveInstanceState
+                        // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
+                        .commitAllowingStateLoss();
             }
         }
     }
@@ -265,14 +285,19 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(App.getContext());
 
+        Utils.log(TAG, "onDestroy() - Audio service running: "
+                + Utils.isServiceRunning(AudioPlayerService.class));
+
         // Stop service if notifications are OFF (no way of controlling player is app not running)
-        if (!prefs.getBoolean("preferences_notificationsEnabled", true)) {
-            stopService(new Intent(this, AudioPlayerService.class));
-            Utils.log(TAG, "onDestroy() - Service stopped");
-        }
+        // TODO: Find a solution to stop the service (be careful with configuration changes)
+        /*if (!prefs.getBoolean("preferences_notificationsEnabled", true)) {
+            boolean stopped = stopService(new Intent(this, AudioPlayerService.class));
+            if (stopped) {
+                Utils.log(TAG, "onDestroy() - Audio service stopped");
+            }
+        }*/
 
-        prefs.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
-
+        prefs.unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
         super.onDestroy();
     }
 
