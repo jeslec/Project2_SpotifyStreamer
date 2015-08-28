@@ -5,12 +5,12 @@
 
     <item android:id="@+id/menu_item_now_playing"
         android:title="@string/menu_item_now_playing"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_player"
         app:showAsAction="always"/>
 
     <item android:id="@+id/menu_item_preferences"
         android:title="@string/action_open_preferences"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_action_settings"
         app:showAsAction="always"/>
 
 </menu>

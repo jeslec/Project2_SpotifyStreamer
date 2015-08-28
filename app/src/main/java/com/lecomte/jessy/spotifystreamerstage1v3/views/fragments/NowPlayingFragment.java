@@ -361,9 +361,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Update seek bar progression
         mUpdateSeekBarRunnable = new Runnable() {
             @Override public void run() {
-                if (mAudioService != null && mAudioService.getPlayer() != null && mSeekBar != null) {
-                    mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
-                }
+                updateSeekBarProgress();
 
                 if (mSeekBarHandler != null) {
                     mSeekBarHandler.postDelayed(this, SEEK_BAR_UPDATE_INTERVAL);
@@ -573,6 +571,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         }
     }
 
+    void updateSeekBarProgress() {
+        if (mAudioService != null && mAudioService.getPlayer() != null && mSeekBar != null) {
+            mSeekBar.setProgress(mAudioService.getPlayer().getCurrentPosition());
+        }
+    }
+
     private void updateWidgets(TrackInfo track) {
         Utils.log(TAG, "updateWidgets() - Track duration: " + track.getTrackDuration());
         displayTrackInfo(track);
@@ -591,6 +595,10 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         if (track.getTrackDuration() > 0) {
             onReceiveTrackDuration(track.getTrackDuration());
         }
+
+        // This fixes issue where player is in paused state and NowPlaying is closed and reloaded
+        // When paused, seek bar does not get continously updated so we need to update it once
+        updateSeekBarProgress();
     }
 
     private void setPlayPauseButtonImage(boolean trackIsPlaying) {
