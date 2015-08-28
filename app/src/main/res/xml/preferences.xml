@@ -5,15 +5,14 @@
         android:key="preferences_country"
         android:title="@string/preferences_countryTitle"
         android:dialogTitle="@string/preferences_countryDialogTitle"
-        android:summary="@string/preferences_countrySummary"
+        android:summary="%s"
         android:entries="@array/preferences_countryEntries"
         android:entryValues="@array/preferences_countryValues"
         android:defaultValue="@string/preferences_countryDefaultValue" />
 
     <CheckBoxPreference
         android:key="preferences_notificationsEnabled"
-        android:title="Notifications"
-        android:summary="Notification drawer and lock screen"
+        android:title="@string/preferences_notificationsTitle"
         android:defaultValue="true"/>
 
 </PreferenceScreen>

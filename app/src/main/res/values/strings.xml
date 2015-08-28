@@ -39,8 +39,8 @@
 
     <!-- Preferences menu default values -->
     <string name="preferences_countryDefaultValue">US</string>
-    <string name="preferences_countryDialogTitle">Market Selection</string>
-    <string name="preferences_countryTitle">Market</string>
-    <string name="preferences_countrySummary">Country where to search for top tracks</string>
+    <string name="preferences_countryDialogTitle">Country Selection</string>
+    <string name="preferences_countryTitle">Country</string>
+    <string name="preferences_notificationsTitle">Show Notifications</string>
 
 </resources>
