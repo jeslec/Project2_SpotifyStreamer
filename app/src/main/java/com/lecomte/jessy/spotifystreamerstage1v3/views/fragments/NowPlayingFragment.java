@@ -37,6 +37,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePla
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
+import com.squareup.okhttp.internal.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.Observable;
@@ -63,6 +64,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER";
     public static final String ACTION_PLAY_TRACK =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_PLAY_TRACK";
+    public static final String ACTION_SHOW_PLAYER_NOTIFICATION =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_NOTIFICATION";
 
     //**********************************************************************************************
     // MEMBER VARIABLES
@@ -181,7 +184,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // remove the dialog title, but you must call the superclass to get the Dialog.
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         return dialog;
     }
 
@@ -193,7 +195,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // IMPORTANT: This removes fragment from layout and from back stack
         // Without it, I was getting weird bugs where after a device rotation, the
         // NowPlayingFragment would not be visible (although it was before the rotation)
-        dismiss();
+        //dismiss();
 
         if (mAudioService != null) {
             Utils.log(TAG, "onPause() - Stopping seek bar updates...");
@@ -714,10 +716,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     // This prevents us from having multiple instances of the dialog running
     //http://www.jorgecoca.com/android-quick-tip-avoid-opening-multiple-dialogs-when-tapping-an-element/
-    @Override
+    /*@Override
     public void show(FragmentManager manager, String tag) {
+        Utils.log(TAG, "show()");
         if (manager.findFragmentByTag(tag) == null) {
+            Utils.log(TAG, "show() - Fragment not found, adding it to layout now");
             super.show(manager, tag);
         }
-    }
+    }*/
 }

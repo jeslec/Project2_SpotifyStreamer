@@ -159,9 +159,7 @@ public class ArtistSearchFragment extends ListFragment {
         // TODO: Determine if it's the best place to put this
         // Force update of the menu when coming from NowPlaying view
         // Required so the NowPlaying button gets displayed in the ActionBar
-        Utils.log(TAG, "onResume() - Invalidating options menu: BEGIN");
         getActivity().invalidateOptionsMenu();
-        Utils.log(TAG, "onResume() - Invalidating options menu: END");
     }
 }
 

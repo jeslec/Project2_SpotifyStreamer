@@ -3,6 +3,9 @@ package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;

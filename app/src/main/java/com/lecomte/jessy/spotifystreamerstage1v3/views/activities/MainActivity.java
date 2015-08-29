@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
@@ -195,30 +196,63 @@ public class MainActivity extends AppCompatActivity implements
             // New playlist so therefore a new track also
             if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) ||
                     intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
+
                 NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
                 fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
                 Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
 
-                NowPlayingFragment fragment = NowPlayingFragment.newInstance(fragmentData);
-                fragment.show(fragmentManager, DIALOG_MEDIA_PLAYER);
-            }
-
-            // Same track from the same playlist (no need to send any data, use existing data)
-           else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
-                NowPlayingFragment fragment = (NowPlayingFragment)fragmentManager
+                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
                         .findFragmentByTag(DIALOG_MEDIA_PLAYER);
 
-                if (fragment == null) {
-                    Utils.log(TAG, "handleIntent() - NowPlayingFragment: adding to MainActivity's layout");
-                    fragment = NowPlayingFragment.newInstance();
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
+
+                if (oldFragment == null) {
+                    Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
                     fragmentManager.beginTransaction()
-                            .add(fragment, DIALOG_MEDIA_PLAYER)
-                            // Was getting exception:
-                            // java.lang.IllegalStateException: Can not perform this action after
-                            // onSaveInstanceState
-                            // Found solution here: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
-                            .commitAllowingStateLoss();
+                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commit();
                 }
+
+                // Remove old oldFragment then add the new one
+                else {
+                    Utils.log(TAG, "handleIntent() - Fragment found in layout: deleting old one and adding new one...");
+                    fragmentManager.beginTransaction()
+                            .remove(oldFragment)
+                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commit();
+                }
+            }
+
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
+
+                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
+                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
+
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
+
+                if (oldFragment == null) {
+                    /*Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
+                    fragmentManager.beginTransaction()
+                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commit();*/
+                }
+
+                // Remove old oldFragment then add the new one
+                else {
+                    Utils.log(TAG, "handleIntent() - Fragment found in layout: deleting old one and adding new one...");
+                    fragmentManager.beginTransaction()
+                            .remove(oldFragment)
+                                    //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commit();
+                }
+            }
+
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION)) {
+                // Do nothing for now...
             }
         }
     }
@@ -332,10 +366,10 @@ public class MainActivity extends AppCompatActivity implements
         // Show the NowPlaying icon only if the audio service is running
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
             nowPlayingItem.setVisible(true);
-            Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: VISIBLE");
+            //Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: VISIBLE");
         } else {
             nowPlayingItem.setVisible(false);
-            Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: HIDDEN");
+            //Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: HIDDEN");
         }
         return true;
     }

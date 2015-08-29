@@ -195,7 +195,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {
             intent.setClass(this, MainActivity.class);
-            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION);
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
