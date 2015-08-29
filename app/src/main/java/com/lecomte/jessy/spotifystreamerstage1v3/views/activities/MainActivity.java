@@ -251,6 +251,22 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
 
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE)) {
+
+                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
+                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
+
+                NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
+
+                if (oldFragment == null) {
+                    Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
+                    fragmentManager.beginTransaction()
+                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commit();
+                }
+            }
+
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION)) {
                 // Do nothing for now...
             }
@@ -389,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements
                 Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
                 Intent intent = new Intent(this,
                         App.isTwoPaneLayout()? MainActivity.class: NowPlayingActivity.class);
-                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE);
                 startActivity(intent);
                 return true;
 
