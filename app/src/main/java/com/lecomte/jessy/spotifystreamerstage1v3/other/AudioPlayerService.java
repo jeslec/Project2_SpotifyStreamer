@@ -353,7 +353,6 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 Utils.log(TAG, "onStartCommand() - ACTION_STOP_SERVICE: starting timer...");
                 mStopServiceHandler.postDelayed(mStopServiceRunnable, STOP_SERVICE_DELAY);
             }
-            //mStopServiceHandler.removeCallbacks(mStopServiceRunnable);
         }
 
         else if (action.equals(ACTION_CANCEL_TIMER)) {
@@ -402,5 +401,20 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         mAudioPlayer.stop();
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Utils.log(TAG, "onTaskRemoved()");
+        super.onTaskRemoved(rootIntent);
+
+        // Remove notification: must remove service as foreground to delete the notification
+        stopForeground(true);
+        mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
+        Utils.log(TAG, "onTaskRemoved() - Removed service from foreground state and deleted notification");
+
+        // Stop service
+        Utils.log(TAG, "onTaskRemoved() - Stopping service...");
+        stopSelf();
     }
 }
