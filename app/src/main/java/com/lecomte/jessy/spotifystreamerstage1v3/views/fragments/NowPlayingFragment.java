@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.util.DisplayMetrics;
 import android.util.Pair;
@@ -24,7 +23,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -37,7 +35,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.observables.ObservablePla
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
-import com.squareup.okhttp.internal.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.Observable;
@@ -64,7 +61,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER";
     public static final String ACTION_PLAY_TRACK =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_PLAY_TRACK";
-    public static final String ACTION_SHOW_PLAYER_NOTIFICATION =
+    public static final String ACTION_SHOW_PLAYER_NOTIFICATION_CASE =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_NOTIFICATION_CASE";
     public static final String ACTION_SHOW_PLAYER_ICON_CASE =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_ICON_CASE";
@@ -192,11 +189,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onPause() {
         super.onPause();
         Utils.log(TAG, "onPause()");
-
-        // IMPORTANT: This removes fragment from layout and from back stack
-        // Without it, I was getting weird bugs where after a device rotation, the
-        // NowPlayingFragment would not be visible (although it was before the rotation)
-        //dismiss();
 
         if (mAudioService != null) {
             Utils.log(TAG, "onPause() - Stopping seek bar updates...");
@@ -714,15 +706,4 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         NowPlayingFragment fragment = new NowPlayingFragment();
         return fragment;
     }
-
-    // This prevents us from having multiple instances of the dialog running
-    //http://www.jorgecoca.com/android-quick-tip-avoid-opening-multiple-dialogs-when-tapping-an-element/
-    /*@Override
-    public void show(FragmentManager manager, String tag) {
-        Utils.log(TAG, "show()");
-        if (manager.findFragmentByTag(tag) == null) {
-            Utils.log(TAG, "show() - Fragment not found, adding it to layout now");
-            super.show(manager, tag);
-        }
-    }*/
 }
