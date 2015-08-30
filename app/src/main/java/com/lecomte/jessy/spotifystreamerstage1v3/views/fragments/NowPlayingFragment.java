@@ -65,6 +65,9 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_NOTIFICATION_CASE";
     public static final String ACTION_SHOW_PLAYER_ICON_CASE =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_ICON_CASE";
+    public static final String ACTION_SHOW_PLAYER_RECENT_APPS_CASE =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_RECENT_APPS_CASE";
+
     //**********************************************************************************************
     // MEMBER VARIABLES
     //**********************************************************************************************

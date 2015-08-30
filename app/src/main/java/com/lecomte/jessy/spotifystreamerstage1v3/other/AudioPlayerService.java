@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
@@ -33,9 +34,12 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         Observer {
 
     private static final String TAG = "AudioPlayerService";
+    private static final long STOP_SERVICE_DELAY = 1000; // milliseconds
     private RemoteViews mNotificationRemoteView;
     private PendingIntent mPausePendingIntent;
     private PendingIntent mResumePendingIntent;
+    private static Handler mStopServiceHandler = new Handler();
+    private static Runnable mStopServiceRunnable;
 
     // Responses this service will send to the client
     public static final String RESPONSE_TRACK_PREPARED =
@@ -67,6 +71,12 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
     public static final String ACTION_HIDE_NOTIFICATION =
             "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.HIDE_NOTIFICATION";
+
+    public static final String ACTION_STOP_SERVICE =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.STOP_SERVICE";
+
+    public static final String ACTION_CANCEL_TIMER =
+            "com.lecomte.jessy.spotifystreamerstage1v3.audioPlayerService.action.CANCEL_TIMER";
 
     private static final int NOTIFICATION_ID_AUDIO_SERVICE = 1000;
 
@@ -338,6 +348,21 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
         }
 
+        else if (action.equals(ACTION_STOP_SERVICE)) {
+            if (mStopServiceHandler != null && mStopServiceRunnable != null) {
+                Utils.log(TAG, "onStartCommand() - ACTION_STOP_SERVICE: starting timer...");
+                mStopServiceHandler.postDelayed(mStopServiceRunnable, STOP_SERVICE_DELAY);
+            }
+            //mStopServiceHandler.removeCallbacks(mStopServiceRunnable);
+        }
+
+        else if (action.equals(ACTION_CANCEL_TIMER)) {
+            if (mStopServiceHandler != null && mStopServiceRunnable != null) {
+                Utils.log(TAG, "onStartCommand() - ACTION_CANCEL_TIMER: stopping timer...");
+                mStopServiceHandler.removeCallbacks(mStopServiceRunnable);
+            }
+        }
+
         // This should never happen
         else {
             Utils.log(TAG, "onStartCommand() - Action: UNKNOWN");
@@ -345,32 +370,21 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         return returnCode;
     }
 
-    public class ScreenReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Utils.log(TAG, "ScreenReceiver::onReceive()");
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                // do whatever you need to do here
-                //wasScreenOn = false;
-                Utils.log(TAG, "Screen is OFF");
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                // and do whatever you need to do here
-                //wasScreenOn = true;
-                Utils.log(TAG, "Screen is ON");
-                //addViewToLockScreen2();
-            }else if(intent.getAction().equals(Intent.ACTION_USER_PRESENT)){
-                Utils.log(TAG, "User present");
-                //removeViewFromLockScreen2();
-            }
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         Utils.log(TAG, "onCreate()");
         mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mStopServiceRunnable = new Runnable() {
+            @Override
+            public void run() {
+                stopSelf();
+                Utils.log(TAG, "Service stopped");
+            }
+        };
+
+
     }
 
     public void removeListener(AudioPlayer.Callback listener) {

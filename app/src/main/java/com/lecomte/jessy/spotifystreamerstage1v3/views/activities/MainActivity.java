@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -106,6 +107,15 @@ public class MainActivity extends AppCompatActivity implements
 
         // Load default values into the dialog only if user has not chosen any values yet
         PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
+
+        // If there's a stopService timer running, it means we just had a configuration change
+        // So kill the timer so the service does not get stopped
+        // Only call this when service is already running or else it will start the service!
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            Intent cancelTimerIntent = new Intent(this, AudioPlayerService.class);
+            cancelTimerIntent.setAction(AudioPlayerService.ACTION_CANCEL_TIMER);
+            startService(cancelTimerIntent);
+        }
     }
 
     private void addFragmentToLayout(int fragmentContainerId, String className) {
@@ -155,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void handleIntent(Intent intent) {
+
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
@@ -183,6 +194,14 @@ public class MainActivity extends AppCompatActivity implements
         // Pass data received as intent extras to new fragment as fragment arguments
         // TODO: Optimize this
         else if (App.isTwoPaneLayout()) {
+
+            // Special case: app was launched from recent apps drawer
+            // Overwrite intent action
+            if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
+                    Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
+                Utils.log(TAG, "handleIntent() - ******** LAUNCHED FROM HISTORY *******");
+                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE);
+            }
 
             String intentAction = intent.getAction();
             Utils.log(TAG, "handleIntent() - Intent action: "
@@ -267,6 +286,17 @@ public class MainActivity extends AppCompatActivity implements
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE)) {
                 // Do nothing for now...
             }
+
+            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE)) {
+                if (Utils.isServiceRunning(AudioPlayerService.class)) {
+                    // Load player only if
+                }
+
+                // Service not running means not track is playing
+                else {
+                    // Nothing to do, just let Android load the MainActivity
+                }
+            }
         }
     }
 
@@ -320,24 +350,28 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        //Utils.log(TAG, "onDestroy() - MainActivity intent: " + getIntent().
+
         // TODO: Find a way to kill the service... Perhaps use an timer? (e.g. unused for 1 min)
         //boolean bStopped = stopService(new Intent(this, AudioPlayerService.class));
         //Utils.log(TAG, "onDestroy() - Audio player service stopped: " + bStopped);
 
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(App.getContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
 
         Utils.log(TAG, "onDestroy() - Audio service running: "
                 + Utils.isServiceRunning(AudioPlayerService.class));
 
         // Stop service if notifications are OFF (no way of controlling player is app not running)
         // TODO: Find a solution to stop the service (be careful with configuration changes)
-        /*if (!prefs.getBoolean("preferences_notificationsEnabled", true)) {
-            boolean stopped = stopService(new Intent(this, AudioPlayerService.class));
+        if (Utils.isServiceRunning(AudioPlayerService.class) && !prefs.getBoolean("preferences_notificationsEnabled", true)) {
+           /* boolean stopped = stopService(new Intent(this, AudioPlayerService.class));
             if (stopped) {
                 Utils.log(TAG, "onDestroy() - Audio service stopped");
-            }
-        }*/
+            }*/
+            Intent stopServiceIntent = new Intent(this, AudioPlayerService.class);
+            stopServiceIntent.setAction(AudioPlayerService.ACTION_STOP_SERVICE);
+            startService(stopServiceIntent);
+        }
 
         prefs.unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
         super.onDestroy();
