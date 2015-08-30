@@ -269,7 +269,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
                 .setPriority(Notification.PRIORITY_MAX)
-                .setOngoing(false); // user cannot remove notification from the notification drawer
+                .setOngoing(true); // user cannot remove notification from the notification drawer
 
         Notification notification = builder.build();
 
@@ -403,12 +403,14 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         super.onDestroy();
     }
 
+    //http://stackoverflow.com/questions/19568315/how-to-handle-code-when-app-is-killed-by-swiping-in-android#26882533
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Utils.log(TAG, "onTaskRemoved()");
         super.onTaskRemoved(rootIntent);
 
         // Remove notification: must remove service as foreground to delete the notification
+        // http://stackoverflow.com/questions/15022990/how-to-cancel-notification-flag-foreground-service#15033994
         stopForeground(true);
         mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
         Utils.log(TAG, "onTaskRemoved() - Removed service from foreground state and deleted notification");

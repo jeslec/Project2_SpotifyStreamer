@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements
 
             // Special case: app was launched from recent apps drawer
             // Overwrite intent action
+            // http://stackoverflow.com/questions/13135545/android-activity-is-using-old-intent-if-launching-app-from-recent-task#29489276
             if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
                     Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
                 Utils.log(TAG, "handleIntent() - ******** LAUNCHED FROM HISTORY *******");
