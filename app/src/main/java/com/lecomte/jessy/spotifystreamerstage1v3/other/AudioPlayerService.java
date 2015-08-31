@@ -187,6 +187,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         // NowPlaying: Either start it as a fullscreen activity or as dialog
         // 2-pane layout: dialog; 1-pane layout: fullscreen activity
         Intent intent = new Intent(this, NowPlayingActivity.class);
+        intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         // Tell the MainActivity to load the NowPlaying fragment in its layout
         if (App.isTwoPaneLayout()) {

@@ -28,6 +28,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
+import com.squareup.okhttp.internal.Util;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements
     private final String TAG = getClass().getSimpleName();
     private String mPreviousQuery;
     private ActionBar mActionBar;
+    private boolean mConfigurationChanged = false;
     private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
 
@@ -67,6 +69,17 @@ public class MainActivity extends AppCompatActivity implements
         // Restore last query string
         if (savedInstanceState != null) {
             mPreviousQuery = savedInstanceState.getString("PreviousQueryString");
+        }
+
+        // IMPORTANT: THIS MUST BE DONE BEFORE handleIntent()
+        // If there's a stopService timer running, it means we just had a configuration change
+        // So kill the timer so the service does not get stopped
+        // Only call this when service is already running or else it will start the service!
+        if (Utils.isServiceRunning(AudioPlayerService.class)) {
+            Intent cancelTimerIntent = new Intent(this, AudioPlayerService.class);
+            cancelTimerIntent.setAction(AudioPlayerService.ACTION_CANCEL_TIMER);
+            startService(cancelTimerIntent);
+            mConfigurationChanged = true;
         }
 
         handleIntent(getIntent());
@@ -107,15 +120,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Load default values into the dialog only if user has not chosen any values yet
         PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
-
-        // If there's a stopService timer running, it means we just had a configuration change
-        // So kill the timer so the service does not get stopped
-        // Only call this when service is already running or else it will start the service!
-        if (Utils.isServiceRunning(AudioPlayerService.class)) {
-            Intent cancelTimerIntent = new Intent(this, AudioPlayerService.class);
-            cancelTimerIntent.setAction(AudioPlayerService.ACTION_CANCEL_TIMER);
-            startService(cancelTimerIntent);
-        }
     }
 
     private void addFragmentToLayout(int fragmentContainerId, String className) {
@@ -153,6 +157,45 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
     }
 
+    void addNowPlayingFragment(boolean bWithExtras, boolean bAllowStateLoss) {
+        NowPlayingFragment newFragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Intent intent = getIntent();
+
+        if (bWithExtras) {
+            NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
+            fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
+            newFragment = NowPlayingFragment.newInstance(fragmentData);
+        } else {
+            newFragment = NowPlayingFragment.newInstance();
+        }
+
+        NowPlayingFragment oldFragment = (NowPlayingFragment)fragmentManager
+                .findFragmentByTag(DIALOG_MEDIA_PLAYER);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (oldFragment != null) {
+            fragmentTransaction.remove(oldFragment);
+        }
+
+        fragmentTransaction.add(newFragment, DIALOG_MEDIA_PLAYER);
+
+        if (bAllowStateLoss) {
+            fragmentTransaction.commitAllowingStateLoss();
+        } else {
+            fragmentTransaction.commit();
+        }
+    }
+
+    /*void addNowPlayingFragmentNoExtra() {
+
+        getSupportFragmentManager().beginTransaction()
+                .addToBackStack(DIALOG_MEDIA_PLAYER)
+                .add(NowPlayingFragment.newInstance(), DIALOG_MEDIA_PLAYER)
+                .commit();
+    }*/
+
     // Got idea of how to manage first-time creation of activity vs re-calling same activity that's
     // currently displayed. This happens when a search is performed in the SearchableActivity
     // http://stackoverflow.com/questions/5094222/android-return-search-query-to-current-activity#7170471
@@ -165,6 +208,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void handleIntent(Intent intent) {
+
+        String intentAction = intent.getAction();
+
+        if (intentAction == null) {
+            Utils.log(TAG, "handleIntent() - Intent action is null!");
+            return;
+        }
+
+        Utils.log(TAG, "handleIntent() - Intent action: "
+                + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -189,11 +242,53 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
+        else if (App.isTwoPaneLayout()) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            if (mConfigurationChanged) {
+                Utils.log(TAG, "onHandleIntent() - Configuration changed");
+                mConfigurationChanged = false;
+
+                // Only load NowPlaying if it was visible before going to background
+                if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
+                    addNowPlayingFragment(false, false);
+                }
+            }
+
+            else {
+
+                if (intentAction.equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) ||
+                        intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
+
+                    addNowPlayingFragment(true, false);
+                }
+
+                else if (intentAction.equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
+
+                    addNowPlayingFragment(false, false);
+                }
+
+                else if (intentAction.equals(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE)) {
+
+                    addNowPlayingFragment(false, false);
+                }
+
+                else if (intentAction.equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE)) {
+
+                    // Only load NowPlaying if it was visible before going to background
+                    if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
+                        addNowPlayingFragment(false, true);
+                    }
+                }
+            }
+        }
+
         // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
         // Large layout: load NowPlaying fragment and show as a dialog
         // Pass data received as intent extras to new fragment as fragment arguments
         // TODO: Optimize this
-        else if (App.isTwoPaneLayout()) {
+        /*else if (App.isTwoPaneLayout()) {
 
             // Special case: app was launched from recent apps drawer
             // Overwrite intent action
@@ -216,92 +311,6 @@ public class MainActivity extends AppCompatActivity implements
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
-            // New playlist so therefore a new track also
-            if (intent.getAction().equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) ||
-                    intent.getAction().equals(NowPlayingFragment.ACTION_PLAY_TRACK)) {
-
-                NowPlayingFragmentData fragmentData = new NowPlayingFragmentData();
-                fragmentData = intent.getParcelableExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA);
-                Utils.log(TAG, "handleIntent() - Fragment data received: " + fragmentData.toString());
-
-                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
-                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
-
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance(fragmentData);
-
-                if (oldFragment == null) {
-                    Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
-                    fragmentManager.beginTransaction()
-                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commit();
-                }
-
-                // Remove old oldFragment then add the new one
-                else {
-                    Utils.log(TAG, "handleIntent() - Fragment found in layout: deleting old one and adding new one...");
-                    fragmentManager.beginTransaction()
-                            .remove(oldFragment)
-                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commit();
-                }
-            }
-
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER)) {
-
-                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
-                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
-
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
-
-                if (oldFragment == null) {
-                    /*Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
-                    fragmentManager.beginTransaction()
-                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commit();*/
-                }
-
-                // Remove old oldFragment then add the new one
-                else {
-                    Utils.log(TAG, "handleIntent() - Fragment found in layout: deleting old one and adding new one...");
-                    fragmentManager.beginTransaction()
-                            .remove(oldFragment)
-                                    //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commit();
-                }
-            }
-
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE)) {
-
-                NowPlayingFragment oldFragment = (NowPlayingFragment) fragmentManager
-                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
-
-                NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
-
-                if (oldFragment == null) {
-                    Utils.log(TAG, "handleIntent() - Fragment not found in layout: adding it...");
-                    fragmentManager.beginTransaction()
-                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commit();
-                }
-            }
-
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE)) {
-                NowPlayingFragment fragment = (NowPlayingFragment) fragmentManager
-                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
-                if (fragment == null) {
-                    NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
-                    fragmentManager.beginTransaction()
-                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
-                            .add(newFragment, DIALOG_MEDIA_PLAYER)
-                            .commitAllowingStateLoss();
-                }
-            }
-
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE)) {
                 if (Utils.isServiceRunning(AudioPlayerService.class)) {
                     // Load player only if
@@ -312,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements
                     // Nothing to do, just let Android load the MainActivity
                 }
             }
-        }
+        }*/
     }
 
     @Override
