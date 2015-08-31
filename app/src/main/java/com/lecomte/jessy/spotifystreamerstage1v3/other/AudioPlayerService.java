@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.AudioPlayer;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
+import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.TopTracksActivity;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.squareup.picasso.Picasso;
 
@@ -83,6 +85,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     private LocalBinder mLocalBinder = null;
     private AudioPlayer mAudioPlayer = null;
     private NotificationManager mNotificationManager;
+    private boolean mIsForeground = false;
 
     public AudioPlayerService() {
         mAudioPlayer = new AudioPlayer();
@@ -170,11 +173,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     }
 
     private Notification buildCustomNotification() {
-        //Utils.log(TAG, "buildCustomNotification()");
 
         // Don't build a notification if notifications are disabled in the app settings
-        if (!App.isNotificationEnabled())
-        {
+        if (!App.isNotificationEnabled()) {
             return null;
         }
 
@@ -191,37 +192,26 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         if (App.isTwoPaneLayout()) {
             intent.setClass(this, MainActivity.class);
             intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE);
+            //intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
         }
 
+        /*Intent topTracksIntent = new Intent(this, TopTracksActivity.class);
+        topTracksIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);*/
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        // Since topTracks results are not saved to a DB, there is no point returning to empty view
+        // after back button is pressed from NowPlaying so we load the MainActivity instead
+        /*TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this)
+            //.addNextIntent(new Intent(this, MainActivity.class))
+            //.addNextIntent(topTracksIntent)
+            .addNextIntent(intent);
+
+        PendingIntent pendingIntent = taskStackBuilder
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+
         Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
-                + (App.isTwoPaneLayout()?"MainActivity":"NowPlayingActivity"));
-
-        /***************************************
-
-        //Intent notificationIntent = new Intent(this, NowPlayingActivity.class);
-        //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        //--------------------------------------------------------------------------
-        // Intent for the activity to open when user selects the notification
-        *//*Intent nowPlayingIntent = new Intent(this, NowPlayingActivity.class);
-        nowPlayingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        // Use TaskStackBuilder to build the back stack and get the PendingIntent
-        PendingIntent pendingIntent =
-                TaskStackBuilder.create(this)
-                        // add all of DetailsActivity's parents to the stack,
-                        // followed by DetailsActivity itself
-                        .addParentStack(NowPlayingActivity.class)
-                        .addNextIntent(nowPlayingIntent)
-                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*//*
-
-        *//*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentIntent(pendingIntent);*//*
-
-        //-----------------------------------------------------------------
-        */
+                + (App.isTwoPaneLayout() ? "MainActivity" : "NowPlayingActivity"));
 
         // Load app when user clicks on album image
         mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_imageAlbum,
@@ -297,17 +287,19 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         String action = intent.getAction();
 
         if (action.equals(ACTION_START_FOREGROUND)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_START_FOREGROUND");
-
-            if (App.isNotificationEnabled()) {
+            if (App.isNotificationEnabled() && !mIsForeground) {
                 startForeground(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
+                mIsForeground = true;
+                Utils.log(TAG, "onStartCommand() - Service set to: FOREGROUND");
             }
         }
 
         else if (action.equals(ACTION_STOP_FOREGROUND)) {
-            Utils.log(TAG, "onStartCommand() - Action: ACTION_STOP_FOREGROUND");
-            // TODO: Should the notification be removed or not?
-            stopForeground(true);
+            if (mIsForeground) {
+                stopForeground(true);
+                mIsForeground = false;
+                Utils.log(TAG, "onStartCommand() - Service set to: BACKGROUND");
+            }
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {

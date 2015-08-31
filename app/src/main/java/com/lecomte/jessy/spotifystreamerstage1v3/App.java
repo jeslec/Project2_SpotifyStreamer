@@ -68,15 +68,14 @@ public class App extends Application {
                     Intent intent = new Intent(getContext(), AudioPlayerService.class);
 
                     // App is in background: set the audio player service as a foreground service
-                    // to prevent OS from shutting down the service
                     if (mActivitiesRunning == 0) {
                         intentAction = AudioPlayerService.ACTION_START_FOREGROUND;
                     }
 
                     intent.setAction(intentAction);
                     startService(intent);
-                    Utils.log(TAG, "Runnable.run() - Service set as: "
-                            + intentAction.substring(intentAction.lastIndexOf(".") + 1));
+                    /*Utils.log(TAG, "Runnable.run() - Service set as: "
+                            + intentAction.substring(intentAction.lastIndexOf(".") + 1));*/
                 }
             }
         };

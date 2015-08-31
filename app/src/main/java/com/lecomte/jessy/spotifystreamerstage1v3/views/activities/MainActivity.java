@@ -205,6 +205,12 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             String intentAction = intent.getAction();
+
+            if (intentAction == null) {
+                Utils.log(TAG, "handleIntent() - Intent action: null");
+                return;
+            }
+
             Utils.log(TAG, "handleIntent() - Intent action: "
                     + intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
@@ -285,7 +291,15 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE)) {
-                // Do nothing for now...
+                NowPlayingFragment fragment = (NowPlayingFragment) fragmentManager
+                        .findFragmentByTag(DIALOG_MEDIA_PLAYER);
+                if (fragment == null) {
+                    NowPlayingFragment newFragment = NowPlayingFragment.newInstance();
+                    fragmentManager.beginTransaction()
+                            //.addToBackStack(DIALOG_MEDIA_PLAYER)
+                            .add(newFragment, DIALOG_MEDIA_PLAYER)
+                            .commitAllowingStateLoss();
+                }
             }
 
             else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE)) {
