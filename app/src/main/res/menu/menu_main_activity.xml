@@ -4,7 +4,7 @@
       tools:context="com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity">
 
     <item android:id="@+id/menu_item_search"
-        android:title="@string/action_search"
+        android:title="@string/menu_item_search"
         android:icon="@drawable/ic_menu_item_search"
         app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
@@ -15,7 +15,7 @@
           app:showAsAction="always"/>
 
     <item android:id="@+id/menu_item_preferences"
-        android:title="@string/action_open_preferences"
+        android:title="@string/menu_item_preferences"
         android:icon="@drawable/ic_action_settings"
         app:showAsAction="always"/>
 </menu>
