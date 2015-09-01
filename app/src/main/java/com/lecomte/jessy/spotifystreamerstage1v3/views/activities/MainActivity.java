@@ -188,14 +188,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /*void addNowPlayingFragmentNoExtra() {
-
-        getSupportFragmentManager().beginTransaction()
-                .addToBackStack(DIALOG_MEDIA_PLAYER)
-                .add(NowPlayingFragment.newInstance(), DIALOG_MEDIA_PLAYER)
-                .commit();
-    }*/
-
     // Got idea of how to manage first-time creation of activity vs re-calling same activity that's
     // currently displayed. This happens when a search is performed in the SearchableActivity
     // http://stackoverflow.com/questions/5094222/android-return-search-query-to-current-activity#7170471
@@ -283,45 +275,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
-
-        // 2-Pane layout: Load NowPlaying fragment in the MainActivity's layout
-        // Large layout: load NowPlaying fragment and show as a dialog
-        // Pass data received as intent extras to new fragment as fragment arguments
-        // TODO: Optimize this
-        /*else if (App.isTwoPaneLayout()) {
-
-            // Special case: app was launched from recent apps drawer
-            // Overwrite intent action
-            // http://stackoverflow.com/questions/13135545/android-activity-is-using-old-intent-if-launching-app-from-recent-task#29489276
-            if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
-                    Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
-                Utils.log(TAG, "handleIntent() - ******** LAUNCHED FROM HISTORY *******");
-                intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE);
-            }
-
-            String intentAction = intent.getAction();
-
-            if (intentAction == null) {
-                Utils.log(TAG, "handleIntent() - Intent action: null");
-                return;
-            }
-
-            Utils.log(TAG, "handleIntent() - Intent action: "
-                    + intentAction.substring(intentAction.lastIndexOf(".") + 1));
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-
-            else if (intent.getAction().equals(NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE)) {
-                if (Utils.isServiceRunning(AudioPlayerService.class)) {
-                    // Load player only if
-                }
-
-                // Service not running means not track is playing
-                else {
-                    // Nothing to do, just let Android load the MainActivity
-                }
-            }
-        }*/
     }
 
     @Override

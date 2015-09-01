@@ -194,23 +194,9 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         if (App.isTwoPaneLayout()) {
             intent.setClass(this, MainActivity.class);
             intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE);
-            //intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
         }
 
-        /*Intent topTracksIntent = new Intent(this, TopTracksActivity.class);
-        topTracksIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);*/
-
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        // Since topTracks results are not saved to a DB, there is no point returning to empty view
-        // after back button is pressed from NowPlaying so we load the MainActivity instead
-        /*TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this)
-            //.addNextIntent(new Intent(this, MainActivity.class))
-            //.addNextIntent(topTracksIntent)
-            .addNextIntent(intent);
-
-        PendingIntent pendingIntent = taskStackBuilder
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
 
         Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
                 + (App.isTwoPaneLayout() ? "MainActivity" : "NowPlayingActivity"));
@@ -256,8 +242,6 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 .setContent(mNotificationRemoteView)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_audio_player)
-                //.setLargeIcon() // TODO: set large icon
-                //.setDeleteIntent() // TODO: determine what needs to be done when the notification is cleared
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
                 .setPriority(Notification.PRIORITY_MAX)

@@ -11,6 +11,6 @@
     <item android:id="@+id/menu_item_preferences"
         android:title="@string/menu_item_preferences"
         android:icon="@drawable/ic_action_settings"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
