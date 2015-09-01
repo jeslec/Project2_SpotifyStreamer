@@ -1,127 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="100"
-              android:background="#0000ff">
+              style="@style/NowPlayingViewContainer">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/NowPlaying_artistName"
-        android:text="Artist Name"
-        android:gravity="center"
-        android:ellipsize="end"
-        android:singleLine="true"/>
+        style="@style/NowPlayingTitle.Large"/>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Track Name"
         android:id="@+id/NowPlaying_trackName"
-        android:gravity="center"
-        android:ellipsize="end"
-        android:singleLine="true"/>
+        style="@style/NowPlayingTitle.Medium"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="100"
-        android:orientation="horizontal"
-        android:weightSum="100">
+        style="@style/LeftContainer">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="50"
-            android:layout_margin="10dp"
-            android:background="#000000">
+            style="@style/AlbumImageContainer">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/NowPlaying_albumImage"/>
+                android:id="@+id/NowPlaying_albumImage"
+                style="@style/AlbumImage"/>
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="50"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:background="#000000">
+            style="@style/RightContainer">
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/ic_menu_share"
-                android:layout_gravity="right"
-                android:id="@+id/NowPlaying_shareButton"/>
+                android:id="@+id/NowPlaying_shareButton"
+                style="@style/MyButton.Share"/>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/NowPlaying_seekBarContainer">
+                android:id="@+id/NowPlaying_seekBarContainer"
+                style="@style/SeekBarContainer">
 
                 <SeekBar
                     android:id="@+id/NowPlaying_seekBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_centerInParent="true"
-                    android:background="#ffffff"/>
+                    style="@style/MySeekBar"/>
 
                 <TextView
                     android:id="@+id/NowPlaying_elapsedTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/NowPlaying_seekBar"
-                    android:layout_marginTop="12dp"
-                    android:text="00:00"
-                    android:textColor="#ffffff"/>
+                    style="@style/SeekBarValue.Start"/>
 
                 <TextView
                     android:id="@+id/NowPlaying_totalTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/NowPlaying_seekBar"
-                    android:layout_marginTop="12dp"
-                    android:text="00:30"
-                    android:textColor="#ffffff"/>
+                    style="@style/SeekBarValue.End"/>
 
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
+                style="@style/MediaButtonsContainer">
 
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/NowPlaying_buttonPrevious"/>
+                    android:id="@+id/NowPlaying_buttonPrevious"
+                    style="@style/MyButton"/>
 
                 <!-- The image will be set in code because it has to toggle between (play/pause) -->
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/NowPlaying_buttonPlay"/>
+                    android:id="@+id/NowPlaying_buttonPlay"
+                    style="@style/MyButton"/>
 
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/NowPlaying_buttonNext"/>
+                    android:id="@+id/NowPlaying_buttonNext"
+                    style="@style/MyButton"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -129,13 +69,7 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/NowPlaying_albumName"
-        android:gravity="center"
-        android:text="Best album ever"
-        android:ellipsize="end"
-        android:singleLine="true"/>
+        style="@style/NowPlayingTitle.Medium"/>
 
 </LinearLayout>
