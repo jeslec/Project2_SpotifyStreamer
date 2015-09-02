@@ -37,7 +37,7 @@
         <item name="android:textColor">@color/action_bar_subtitle</item>
         <item name="android:textSize">@dimen/action_bar_subtitle_size</item>
     </style>
-    
+
     <style name="EmptyListViewMessage">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -158,8 +158,6 @@
         <item name="android:layout_gravity">right</item>
     </style>
 
-<<<<<<< HEAD
-=======
     <style name="MyButton.PrevTrack" parent="MyButton">
         <item name="android:background">@android:drawable/ic_media_previous</item>
     </style>
@@ -174,7 +172,6 @@
         <item name="android:background">@android:drawable/ic_media_next</item>
     </style>
 
->>>>>>> a4dd3ee... Revert to previous version, fix bug and commit
     <style name="MediaButtonsContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -200,8 +197,6 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-<<<<<<< HEAD
-=======
     <!-- Notification styles -->
 
     <!--<style name="NotificationContainer">
@@ -257,5 +252,4 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
->>>>>>> a4dd3ee... Revert to previous version, fix bug and commit
 </resources>

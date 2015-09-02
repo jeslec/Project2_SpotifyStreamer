@@ -6,69 +6,40 @@
     android:weightSum="100">
 
     <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:id="@+id/notification_imageAlbum"
-        android:layout_weight="20"/>
+        style="@style/NotificationImage"/>
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_weight="40">
+        style="@style/NotificationLimitTextContainerWidth">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingLeft="@dimen/notification_texviews_layout_paddingLeft">
+            style="@style/NotificationTextContainer">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:id="@+id/notification_textTrack"
-                android:ellipsize="end"
-                android:singleLine="true"/>
+                style="@style/NotificationText.Medium"/>
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/notification_textArtist"
-                android:ellipsize="end"
-                android:singleLine="true"/>
+                style="@style/NotificationText.Small"/>
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="90dp"
-        android:orientation="horizontal"
-        android:layout_weight="40"
-        android:gravity="center"
-        android:layout_gravity="center">
+        style="@style/NotificationButtonsContainer">
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/notification_buttonPrev"
-            android:background="@android:drawable/ic_media_previous"/>
+            style="@style/MyButton.PrevTrack"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/notification_buttonPlay"
-            android:layout_marginLeft="@dimen/notification_play_button_left_right_margin"
-            android:layout_marginRight="@dimen/notification_play_button_left_right_margin"/>
+            style="@style/MyButton.Play"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/notification_buttonNext"
-            android:background="@android:drawable/ic_media_next"/>
+            style="@style/MyButton.NextTrack"/>
 
     </LinearLayout>
 
