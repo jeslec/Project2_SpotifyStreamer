@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -28,7 +27,6 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
-import com.squareup.okhttp.internal.Util;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements
     private final String TAG = getClass().getSimpleName();
     private String mPreviousQuery;
     private ActionBar mActionBar;
-    private boolean mConfigurationChanged = false;
+    private boolean mCouldBeConfigurationChanged = false;
     private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
 
@@ -75,11 +73,13 @@ public class MainActivity extends AppCompatActivity implements
         // If there's a stopService timer running, it means we just had a configuration change
         // So kill the timer so the service does not get stopped
         // Only call this when service is already running or else it will start the service!
+        // Service could be running for 2 reasons: 1) configuration change or
+        // 2) app was loaded from recent tasks
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
             Intent cancelTimerIntent = new Intent(this, AudioPlayerService.class);
             cancelTimerIntent.setAction(AudioPlayerService.ACTION_CANCEL_TIMER);
             startService(cancelTimerIntent);
-            mConfigurationChanged = true;
+            mCouldBeConfigurationChanged = true;
         }
 
         handleIntent(getIntent());
@@ -194,11 +194,10 @@ public class MainActivity extends AppCompatActivity implements
     // Flag android:launchMode="singleTop" must be specified for the searchable activity in manifest
     @Override
     protected void onNewIntent(Intent intent) {
-        // TEST: added 2015-09-02
-        // Potential fix to illegalStateException which forces me to use commitWithStateLoss()
-        // See docs for onNewIntent which mentions this problem
+
+        // Fixes illegalStateException which was forceing me to use commitWithStateLoss()
+        // See docs for onNewIntent() to get more info about this problem
         super.onNewIntent(intent);
-        //------------------------
 
         setIntent(intent);
         handleIntent(intent);
@@ -258,16 +257,17 @@ public class MainActivity extends AppCompatActivity implements
                         + intentAction.substring(intentAction.lastIndexOf(".") + 1));
             }
 
-            else if (mConfigurationChanged) {
+            // If app wasn't loaded from recent apps drawer then the only other way
+            // mCouldBeConfigurationChanged can be true is if a configuration change occurred
+            else if (mCouldBeConfigurationChanged) {
                 Utils.log(TAG, "onHandleIntent() - Configuration changed");
-                //mConfigurationChanged = false;
-
                 // Only load NowPlaying if it was visible before going to background (or exiting)
                 if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
                     addNowPlayingFragment(false, false);
                 }
             }
 
+            // App not loaded from recent apps drawer or after a configuration change
             else {
 
                 if (intentAction.equals(NowPlayingFragment.ACTION_LOAD_PLAYLIST_PLAY_TRACK) ||
@@ -290,12 +290,12 @@ public class MainActivity extends AppCompatActivity implements
 
                     // Only load NowPlaying if it was visible before going to background
                     if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
-                        addNowPlayingFragment(false, true);
+                        addNowPlayingFragment(false, false);
                     }
                 }
             }
 
-            mConfigurationChanged = false;
+            mCouldBeConfigurationChanged = false;
         }
     }
 
