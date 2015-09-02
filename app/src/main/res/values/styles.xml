@@ -158,6 +158,23 @@
         <item name="android:layout_gravity">right</item>
     </style>
 
+<<<<<<< HEAD
+=======
+    <style name="MyButton.PrevTrack" parent="MyButton">
+        <item name="android:background">@android:drawable/ic_media_previous</item>
+    </style>
+
+    <style name="MyButton.Play" parent="MyButton">
+        <item name="android:background">@android:drawable/ic_media_play</item>
+        <item name="android:layout_marginLeft">@dimen/notification_play_button_left_right_margin</item>
+        <item name="android:layout_marginRight">@dimen/notification_play_button_left_right_margin</item>
+    </style>
+
+    <style name="MyButton.NextTrack" parent="MyButton">
+        <item name="android:background">@android:drawable/ic_media_next</item>
+    </style>
+
+>>>>>>> a4dd3ee... Revert to previous version, fix bug and commit
     <style name="MediaButtonsContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -183,4 +200,62 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+<<<<<<< HEAD
+=======
+    <!-- Notification styles -->
+
+    <!--<style name="NotificationContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:weightSum">100</item>
+    </style>-->
+
+    <style name="NotificationImage">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">20</item>
+    </style>
+
+    <style name="NotificationLimitTextContainerWidth">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">40</item>
+    </style>
+
+    <style name="NotificationTextContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">@dimen/notification_texviews_layout_paddingLeft</item>
+    </style>
+
+    <style name="NotificationText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="NotificationText.Medium" parent="NotificationText">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+
+    <style name="NotificationText.Small" parent="NotificationText">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+
+    <style name="NotificationButtonsContainer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_weight">40</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+>>>>>>> a4dd3ee... Revert to previous version, fix bug and commit
 </resources>
