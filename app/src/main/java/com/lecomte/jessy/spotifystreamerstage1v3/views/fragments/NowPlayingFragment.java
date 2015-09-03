@@ -67,6 +67,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_ICON_CASE";
     public static final String ACTION_SHOW_PLAYER_RECENT_APPS_CASE =
             "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_SHOW_PLAYER_RECENT_APPS_CASE";
+    public static final String ACTION_NONE =
+            "com.lecomte.jessy.spotifystreamerstage1v3.action.ACTION_NONE";
 
     //**********************************************************************************************
     // MEMBER VARIABLES
@@ -705,4 +707,30 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         NowPlayingFragment fragment = new NowPlayingFragment();
         return fragment;
     }
+
+    /*@Override
+    public void onBackPressed()
+    {
+        Bundle extras = getActivity().getIntent().getExtras();
+
+        boolean launchedFromNotif = false;
+
+        if (extras.containsKey("EXTRA_LAUNCHED_BY_NOTIFICATION"))
+        {
+            launchedFromNotif = extras.getBoolean("EXTRA_LAUNCHED_BY_NOTIFICATION");
+        }
+
+        if (launchedFromNotif)
+        {
+            // Launched from notification, handle as special case
+            Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            getActivity().startActivity(intent);
+            getActivity().finish();
+        }
+        else
+        {
+            getActivity().onBackPressed();
+        }
+    }*/
 }

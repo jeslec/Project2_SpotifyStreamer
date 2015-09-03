@@ -184,17 +184,10 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         mNotificationRemoteView = new RemoteViews(getPackageName(), R.layout.notification_player);
 
-        // NowPlaying: Either start it as a fullscreen activity or as dialog
-        // 2-pane layout: dialog; 1-pane layout: fullscreen activity
-        Intent intent = new Intent(this, NowPlayingActivity.class);
-        intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        // Tell the MainActivity to load the NowPlaying fragment in its layout
-        if (App.isTwoPaneLayout()) {
-            intent.setClass(this, MainActivity.class);
-            intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_NOTIFICATION_CASE);
-        }
+        // Intent used when user clicks on notification
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(NowPlayingFragment.ACTION_NONE);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
