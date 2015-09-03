@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         // Fragments will use this to modify (color, textsize, etc.) the action bar
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements
         addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[0], CLASS_NAME_ARRAY[0]);
 
         if (App.isTwoPaneLayout()) {
-            Utils.log(TAG, "onCreate() - Layout configuration: 2-pane");
+            //Utils.log(TAG, "onCreate() - Layout configuration: 2-pane");
 
             // This fragment is present only in 2-pan layouts
             addFragmentToLayout(FRAGMENT_CONTAINER_ARRAY[1], CLASS_NAME_ARRAY[1]);
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (key.equals("preferences_notificationsEnabled") &&
                         Utils.isServiceRunning(AudioPlayerService.class)) {
                     boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
-                    Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
+                    //Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
                     Intent intent = new Intent(App.getContext(), AudioPlayerService.class);
                     String intentAction = AudioPlayerService.ACTION_HIDE_NOTIFICATION;
 
@@ -148,13 +148,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        Utils.log(TAG, "onPause()");
+        //Utils.log(TAG, "onPause()");
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        Utils.log(TAG, "onResume()");
+        //Utils.log(TAG, "onResume()");
         super.onResume();
     }
 
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements
 
         setIntent(intent);
         handleIntent(intent);
-        //Utils.log(TAG, "onNewIntent()");
+        ////Utils.log(TAG, "onNewIntent()");
     }
 
     private void handleIntent(Intent intent) {
@@ -210,16 +210,16 @@ public class MainActivity extends AppCompatActivity implements
         String intentAction = intent.getAction();
 
         if (intentAction == null) {
-            Utils.log(TAG, "handleIntent() - Intent action is null!");
+            //Utils.log(TAG, "handleIntent() - Intent action is null!");
             return;
         }
 
-        Utils.log(TAG, "handleIntent() - Intent action: "
-                + intentAction.substring(intentAction.lastIndexOf(".") + 1));
+        //Utils.log(TAG, "handleIntent() - Intent action: "
+                //+ intentAction.substring(intentAction.lastIndexOf(".") + 1));
 
         if (!App.isTwoPaneLayout() && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
                 Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
-            Utils.log(TAG, "handleIntent() - Single pane & launched from recent tasks, just load main activity");
+            //Utils.log(TAG, "handleIntent() - Single pane & launched from recent tasks, just load main activity");
             return;
         }
 
@@ -260,14 +260,14 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     intentAction = NowPlayingFragment.ACTION_SHOW_PLAYER_RECENT_APPS_CASE;
                 }
-                Utils.log(TAG, "handleIntent() - App was launched from recent tasks, overwriting intent action to: "
-                        + intentAction.substring(intentAction.lastIndexOf(".") + 1));
+                //Utils.log(TAG, "handleIntent() - App was launched from recent tasks, overwriting intent action to: "
+                        //+ intentAction.substring(intentAction.lastIndexOf(".") + 1));
             }
 
             // If app wasn't loaded from recent apps drawer then the only other way
             // mCouldBeConfigurationChanged can be true is if a configuration change occurred
             else if (mCouldBeConfigurationChanged) {
-                Utils.log(TAG, "onHandleIntent() - Configuration changed");
+                //Utils.log(TAG, "onHandleIntent() - Configuration changed");
                 // Only load NowPlaying if it was visible before going to background (or exiting)
                 if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
                     addNowPlayingFragment(false, false);
@@ -358,10 +358,10 @@ public class MainActivity extends AppCompatActivity implements
     protected void onDestroy() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
 
-        Utils.log(TAG, "onDestroy() - [Audio service running: "
-                + Utils.isServiceRunning(AudioPlayerService.class) + "]"
+        //Utils.log(TAG, "onDestroy() - [Audio service running: "
+               /* + Utils.isServiceRunning(AudioPlayerService.class) + "]"
                 + " [Notifications enabled: "
-                + prefs.getBoolean("preferences_notificationsEnabled", true) + "]");
+                + prefs.getBoolean("preferences_notificationsEnabled", true) + "]");*/
 
         // Stop service if notifications are OFF (no way of controlling player is app not running)
         if (Utils.isServiceRunning(AudioPlayerService.class) &&
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements
             Intent stopServiceIntent = new Intent(this, AudioPlayerService.class);
             stopServiceIntent.setAction(AudioPlayerService.ACTION_STOP_SERVICE);
             startService(stopServiceIntent);
-            Utils.log(TAG, "onDestroy() - Sent action to service: ACTION_STOP_SERVICE");
+            //Utils.log(TAG, "onDestroy() - Sent action to service: ACTION_STOP_SERVICE");
         }
 
         prefs.unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
     }
 
     @Override
@@ -405,34 +405,34 @@ public class MainActivity extends AppCompatActivity implements
         MenuItem nowPlayingItem = menu.findItem(R.id.menu_item_now_playing);
 
         if (nowPlayingItem == null) {
-            Utils.log(TAG, "onPrepareOptionsMenu() - nowPlayingItem is null!");
+            //Utils.log(TAG, "onPrepareOptionsMenu() - nowPlayingItem is null!");
             return true;
         }
 
         // Show the NowPlaying icon only if the audio service is running
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
             nowPlayingItem.setVisible(true);
-            //Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: VISIBLE");
+            ////Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: VISIBLE");
         } else {
             nowPlayingItem.setVisible(false);
-            //Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: HIDDEN");
+            ////Utils.log(TAG, "onPrepareOptionsMenu() - NowPlaying menu item set to: HIDDEN");
         }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
+        //Utils.log(TAG, "onOptionsItemSelected() - Item: " + item.getTitle());
 
         switch (item.getItemId()) {
             case R.id.menu_item_preferences:
-                Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
+                //Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
 
             case R.id.menu_item_now_playing:
-                Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
+                //Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
                 Intent intent = new Intent(this,
                         App.isTwoPaneLayout()? MainActivity.class: NowPlayingActivity.class);
                 intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE);

@@ -74,7 +74,7 @@ public class App extends Application {
 
                     intent.setAction(intentAction);
                     startService(intent);
-                    /*Utils.log(TAG, "Runnable.run() - Service set as: "
+                    /*////Utils.log(TAG, "Runnable.run() - Service set as: "
                             + intentAction.substring(intentAction.lastIndexOf(".") + 1));*/
                 }
             }
@@ -104,22 +104,22 @@ public class App extends Application {
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            //Utils.log(TAG, "onActivityCreated() - Activity: " + activity);
+            ////Utils.log(TAG, "onActivityCreated() - Activity: " + activity);
         }
 
         @Override
         public void onActivityStarted(Activity activity) {
-            //Utils.log(TAG, "onActivityStarted() - Activity: " + activity);
+            ////Utils.log(TAG, "onActivityStarted() - Activity: " + activity);
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
             mActivitiesRunning++;
-            Utils.log(TAG, "onActivityResumed() - [Activity: "
-                    + activity.getClass().getSimpleName() + "] "
+            //Utils.log(TAG, "onActivityResumed() - [Activity: "
+                    /*+ activity.getClass().getSimpleName() + "] "
                     + "[Activities running: " + mActivitiesRunning + "] "
                     + "[Service running: "
-                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");*/
 
             // App is in foreground: set the audio player service as a background service
             SharedPreferences prefs = PreferenceManager
@@ -135,11 +135,11 @@ public class App extends Application {
         @Override
         public void onActivityPaused(Activity activity) {
             mActivitiesRunning--;
-            Utils.log(TAG, "onActivityPaused() - [Activity: "
-                    + activity.getClass().getSimpleName() + "] "
+            //Utils.log(TAG, "onActivityPaused() - [Activity: "
+                    /*+ activity.getClass().getSimpleName() + "] "
                     + "[Activities running: " + mActivitiesRunning + "] "
                     + "[Service running: "
-                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");
+                    + Utils.isServiceRunning(AudioPlayerService.class) + "]");*/
 
             // App is in background: set the audio player service as a foreground service
             // to prevent OS from shutting down the service
@@ -155,7 +155,7 @@ public class App extends Application {
 
         @Override
         public void onActivityStopped(Activity activity) {
-            //Utils.log(TAG, "onActivityStopped() - Activity: " + activity);
+            ////Utils.log(TAG, "onActivityStopped() - Activity: " + activity);
         }
 
         @Override

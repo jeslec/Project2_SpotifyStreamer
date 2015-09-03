@@ -54,13 +54,13 @@ public class SearchArtistTask extends AsyncTask<String, Void, ArtistsPager> {
             return;
         }
 
-        Utils.log(TAG, "OnPostExecute() - [Searched term: " + mSearchTerm + "]" +
-                " [Artists found count: " + artistsPager.artists.items.size() + "]");
+        //Utils.log(TAG, "OnPostExecute() - [Searched term: " + mSearchTerm + "]" +
+                //" [Artists found count: " + artistsPager.artists.items.size() + "]");
 
         // If there is no search result, we can't display anything
         if (artistsPager.artists.items.isEmpty()) {
             Utils.showToast(R.string.ArtistSearch_noArtistFound);
-            Utils.log(TAG, "OnPostExecute() - no artist found");
+            //Utils.log(TAG, "OnPostExecute() - no artist found");
         }
 
         // Extract only the data we need so we don't use extra memory to store useless data

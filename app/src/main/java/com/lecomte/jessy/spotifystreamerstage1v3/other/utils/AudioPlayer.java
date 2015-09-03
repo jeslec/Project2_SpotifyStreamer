@@ -21,7 +21,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Utils.log(TAG, "MediaPlayer error: " + what);
+        //Utils.log(TAG, "MediaPlayer error: " + what);
         return false;
     }
 
@@ -91,14 +91,14 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mTrackDuration = mp.getDuration();
-                Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
+                //Utils.log(TAG, "onPrepared() - Track duration: " + mTrackDuration);
                 mp.start();
                 mTrackPlayingState.setState(TrackPlayingState.TRACK_PLAYING);
                 notifyOnReceiveTrackDuration(mTrackDuration);
             }
         });
 
-        Utils.log(TAG, "initializePlayer() - Play/pause observables count: " + mTrackPlayingState.countObservers());
+        //Utils.log(TAG, "initializePlayer() - Play/pause observables count: " + mTrackPlayingState.countObservers());
     }
 
     private void play(String audioFileUrl) {
@@ -119,8 +119,8 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
         while (iterator.hasNext()) {
             Callback listener = (Callback)iterator.next();
             if (listener != null) {
-                Utils.log(TAG, "notifyOnTrackCompleted() - Notifying listener: "
-                        + listener.getClass().getSimpleName());
+                //Utils.log(TAG, "notifyOnTrackCompleted() - Notifying listener: "
+                        //+ listener.getClass().getSimpleName());
                 listener.onTrackCompleted();
             }
         }
@@ -132,8 +132,8 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
         while (iterator.hasNext()) {
             Callback listener = (Callback)iterator.next();
             if (listener != null) {
-                Utils.log(TAG, "notifyOnReceiveTrackDuration() - Notifying listener: "
-                        + listener.getClass().getSimpleName());
+                //Utils.log(TAG, "notifyOnReceiveTrackDuration() - Notifying listener: "
+                /*        + listener.getClass().getSimpleName());*/
                 listener.onReceiveTrackDuration(duration);
             }
         }
@@ -145,16 +145,16 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
 
     public void addPlayPauseStateObserver(Observer observer) {
         mTrackPlayingState.addObserver(observer);
-        Utils.log(TAG, "addPlayPauseStateObserver() - Added: "
-                + observer.getClass().getSimpleName()
-                + " [Size: " + mTrackPlayingState.countObservers() + "]");
+        //Utils.log(TAG, "addPlayPauseStateObserver() - Added: "
+                /*+ observer.getClass().getSimpleName()
+                + " [Size: " + mTrackPlayingState.countObservers() + "]");*/
     }
 
     public void removePlayPauseStateObserver(Observer observer) {
         mTrackPlayingState.deleteObserver(observer);
-        Utils.log(TAG, "removePlayPauseStateObserver() - Removed: "
-                + observer.getClass().getSimpleName()
-                + " [Size: " + mTrackPlayingState.countObservers() + "]");
+        //Utils.log(TAG, "removePlayPauseStateObserver() - Removed: "
+                /*+ observer.getClass().getSimpleName()
+                + " [Size: " + mTrackPlayingState.countObservers() + "]");*/
     }
 
     public boolean isPlayState() {
@@ -162,7 +162,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     }
 
     public int getCurrentPosition() {
-        //Utils.log(TAG, "Track position: " + mPlayer.getCurrentPosition());
+        ////Utils.log(TAG, "Track position: " + mPlayer.getCurrentPosition());
         return mPlayer.getCurrentPosition();
     }
 
@@ -181,13 +181,13 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
 
             mPlayer.release();
             mPlayer = null;
-            Utils.log(TAG, R.string.AudioPlayer_debug_playerStopped);
+            //Utils.log(TAG, R.string.AudioPlayer_debug_playerStopped);
         }
     }
 
     // This should only be called when player is in "Paused" state
     public void resume() {
-        Utils.log(TAG, "resume()");
+        //Utils.log(TAG, "resume()");
         if (mPlayer != null) {
             // Important: player must be started before player state is sent to listeners
             // so make sure to keep order of method calling as it currently is
@@ -200,7 +200,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     // After this, player will be in "Paused" state
     // Only valid actions after are: start() or stop()
     public void pause() {
-        Utils.log(TAG, "pause()");
+        //Utils.log(TAG, "pause()");
         if (mPlayer != null) {
             mPlayer.pause();
 
@@ -213,7 +213,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
         if (mPlayer != null) {
             return mPlayer.isPlaying();
         }
-        Utils.log(TAG, "isPlaying() - mPlayer is null!");
+        //Utils.log(TAG, "isPlaying() - mPlayer is null!");
         return false;
     }
 
@@ -226,7 +226,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     // For now, we use the name of the artist of the first track in the playlist as an Id
     public String getPlaylistId() {
         if (mPlaylist == null || mPlaylist.isEmpty()) {
-            Utils.log(TAG, "getArtist() - Playlist is null or empty!");
+            //Utils.log(TAG, "getArtist() - Playlist is null or empty!");
             return "";
         }
         return mPlaylist.get(0).getArtistName();
@@ -261,16 +261,16 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     public void addListener(Callback listener) {
         if (listener != null) {
             mOnTrackCompletedListeners.add(listener);
-            Utils.log(TAG, "addListener() - Added listener to onTrackCompleted event: "
-                    + listener.getClass().getSimpleName());
+            //Utils.log(TAG, "addListener() - Added listener to onTrackCompleted event: "
+                    //+ listener.getClass().getSimpleName());
         }
     }
 
     public void removeListener(Callback listener) {
         if (listener != null) {
             mOnTrackCompletedListeners.remove(listener);
-            Utils.log(TAG, "removeListener() - Removed listener to onTrackCompleted event: "
-                    + listener.getClass().getSimpleName());
+            //Utils.log(TAG, "removeListener() - Removed listener to onTrackCompleted event: "
+                    //+ listener.getClass().getSimpleName());
         }
     }
 
@@ -290,20 +290,20 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     // because the playList index is initialized in play() and the index is used by these 2 methods
     public void play(int trackIndex) {
         if (mPlaylist.isEmpty()) {
-            Utils.log(TAG, "play(): playlist is empty! - Call setPlaylist() before play()");
+            //Utils.log(TAG, "play(): playlist is empty! - Call setPlaylist() before play()");
         }
         mPlaylistIndex = new SafeIndex(trackIndex, mPlaylist.size() - 1);
         TrackInfo track = mPlaylist.get(mPlaylistIndex.get());
         play(track.getTrackPreviewUrl());
 
-        //Utils.log(TAG, "play() - STARTED playing track: " + track.getTrackPreviewUrl());
+        ////Utils.log(TAG, "play() - STARTED playing track: " + track.getTrackPreviewUrl());
     }
 
     // Playlist index initialized in play()
     // A call to play() must have been made before calling playNext()
     public void playNext() {
         if (mPlaylistIndex == null) {
-            Utils.log(TAG, "playNext(): playlist index not initialized! - Call play()");
+            //Utils.log(TAG, "playNext(): playlist index not initialized! - Call play()");
             return;
         }
         mTrack = mPlaylist.get(mPlaylistIndex.getNext());
@@ -314,7 +314,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
     // A call to play() must have been made before calling playPrevious()
     public void playPrevious() {
         if (mPlaylistIndex == null) {
-            Utils.log(TAG, "playPrevious(): playlist index not initialized! - Call play()");
+            //Utils.log(TAG, "playPrevious(): playlist index not initialized! - Call play()");
             return;
         }
         mTrack = mPlaylist.get(mPlaylistIndex.getPrevious());
@@ -323,7 +323,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
 
     public TrackInfo getTrackInfo() {
         if (mPlaylistIndex == null) {
-            Utils.log(TAG, "getTrackInfo(): playlist index not initialized! - Call play()");
+            //Utils.log(TAG, "getTrackInfo(): playlist index not initialized! - Call play()");
             return null;
         }
 
@@ -335,7 +335,7 @@ public class AudioPlayer implements MediaPlayer.OnErrorListener {
 
     public int getPlaylistIndex() {
         if (mPlaylistIndex == null) {
-            Utils.log(TAG, "getPlaylistIndex() - mPlaylistIndex is null! Index value returned: 0");
+            //Utils.log(TAG, "getPlaylistIndex() - mPlaylistIndex is null! Index value returned: 0");
             return 0;
         }
         return mPlaylistIndex.get();

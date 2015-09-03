@@ -109,7 +109,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         // Maintain states between configuration changes (phone rotations, etc.)
@@ -153,14 +153,14 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreateView()");
+        //Utils.log(TAG, "onCreateView()");
 
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
-            Utils.log(TAG, "onCreateView() - Audio service: already started");
+            //Utils.log(TAG, "onCreateView() - Audio service: already started");
         } else {
             ComponentName name = getActivity()
                     .startService(new Intent(getActivity(), AudioPlayerService.class));
-            Utils.log(TAG, "onCreateView() - Audio service started: " + (name==null?"false":"true"));
+            //Utils.log(TAG, "onCreateView() - Audio service started: " + (name==null?"false":"true"));
         }
 
         getFragmentData();
@@ -179,7 +179,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreateDialog()");
+        //Utils.log(TAG, "onCreateDialog()");
 
         // The only reason you might override this method when using onCreateView() is
         // to modify any dialog characteristics. For example, the dialog includes a
@@ -193,21 +193,21 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onPause() {
         super.onPause();
-        Utils.log(TAG, "onPause()");
+        //Utils.log(TAG, "onPause()");
 
         if (mAudioService != null) {
-            Utils.log(TAG, "onPause() - Stopping seek bar updates...");
+            //Utils.log(TAG, "onPause() - Stopping seek bar updates...");
             stopSeekBarUpdates();
 
             // Don't receive play/pause state updates
-            Utils.log(TAG, "onPause() - Removing play/pause state observer...");
+            //Utils.log(TAG, "onPause() - Removing play/pause state observer...");
             mAudioService.getPlayer().removePlayPauseStateObserver(this);
 
             // Don't receive onTrackCompleted events
-            Utils.log(TAG, "onPause() - Removing track completed listener...");
+            //Utils.log(TAG, "onPause() - Removing track completed listener...");
             mAudioService.removeListener(this);
 
-            Utils.log(TAG, "onPause() - Unbinding audio service...");
+            //Utils.log(TAG, "onPause() - Unbinding audio service...");
             getActivity().unbindService(this);
             mAudioService = null;
         }
@@ -243,18 +243,18 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onResume() {
         super.onResume();
-        Utils.log(TAG, "onResume()");
+        //Utils.log(TAG, "onResume()");
 
         // Connect to audio service so we can send it requests (play, pause, etc.)
         Intent bindIntent = new Intent(getActivity(), AudioPlayerService.class);
         boolean binded = getActivity().bindService(bindIntent, this, Activity.BIND_AUTO_CREATE);
-        Utils.log(TAG, "onResume() - AudioPlayerService binded: " + binded);
+        //Utils.log(TAG, "onResume() - AudioPlayerService binded: " + binded);
     }
 
     // IMPORTANT: Don't waste your time with this method as it is not garanteed to be called
     @Override
     public void onDestroy() {
-        Utils.log(TAG, "onDestroy()");
+        //Utils.log(TAG, "onDestroy()");
         super.onDestroy();
     }
 
@@ -286,13 +286,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Utils.log(TAG, "onAttach() - Fragment attached to activity: " + activity.getLocalClassName());
+        //Utils.log(TAG, "onAttach() - Fragment attached to activity: " + activity.getLocalClassName());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Utils.log(TAG, "onDetach() - Fragment detached from activity");
+        //Utils.log(TAG, "onDetach() - Fragment detached from activity");
     }
 
     //**********************************************************************************************
@@ -303,7 +303,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
+        //Utils.log(TAG, "onServiceConnected() - AudioPlayerService: CONNECTED");
 
         // Get notified when play/pause state of media player changes
         // Get notified when track is done playing (reached the end)
@@ -313,7 +313,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // New playlist so therefore a new track as well
         if (isNewPlaylist()) {
-            Utils.log(TAG, "onServiceConnected() - New playlist");
+            //Utils.log(TAG, "onServiceConnected() - New playlist");
             if (mFragmentData != null) {
                 mAudioService.getPlayer().setPlaylist(mFragmentData.getTrackList());
                 mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
@@ -322,7 +322,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
         // Another track selection from the same playlist
         else if (isNewTrack()) {
-            Utils.log(TAG, "onServiceConnected() - New track");
+            //Utils.log(TAG, "onServiceConnected() - New track");
             mAudioService.getPlayer().play(mFragmentData.getTrackIndex());
         }
 
@@ -337,7 +337,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
+        //Utils.log(TAG, "onServiceConnected() - AudioPlayerService: DISCONNECTED");
         // Make sure service cannot send us anything once we are disconnected
         mAudioService.removeListener(this);
         mAudioService.getPlayer().removePlayPauseStateObserver(this);
@@ -371,7 +371,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         // Update seek bar elapsed time in textView
         mUpdateSeekBarTextRunnable = new Runnable() {
             @Override public void run() {
-                //Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
+                ////Utils.log(TAG, "Runnable.run() - Current position: " + mAudioService.getPlayer().getCurrentPosition());
                 if (mAudioService != null && mAudioService.getPlayer() != null
                         && mElapsedTimeTextView != null) {
                     Pair<Long, Long> minSecPair = Utils.msecToMinSec(mAudioService.getPlayer().getCurrentPosition());
@@ -412,7 +412,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
 
     // This is called when the track is done playing
     public void onTrackCompleted() {
-        Utils.log(TAG, "onTrackCompleted()");
+        //Utils.log(TAG, "onTrackCompleted()");
 
         // Reset seek bar & seek bar text values and our media controller buttons
         stopSeekBarUpdates();
@@ -429,8 +429,8 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     @Override
     public void update(Observable observable, Object data) {
         ObservablePlayPauseState trackPlayingState = (ObservablePlayPauseState) observable;
-        Utils.log(TAG, "PlayPauseStateObserver.update() - isTrackPlaying: " +
-                trackPlayingState.isTrackPlaying());
+        //Utils.log(TAG, "PlayPauseStateObserver.update() - isTrackPlaying: " +
+                //trackPlayingState.isTrackPlaying());
 
         setPlayPauseButtonImage(trackPlayingState.isTrackPlaying());
     }
@@ -472,7 +472,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.log(TAG, "Clicked on: play/pause button");
+                    //Utils.log(TAG, "Clicked on: play/pause button");
                     mAudioService.getPlayer().togglePlayPauseState();
                 }
             });
@@ -482,7 +482,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mPrevTrackButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.log(TAG, "Clicked on: PREVIOUS");
+                    //Utils.log(TAG, "Clicked on: PREVIOUS");
                     mAudioService.getPlayer().playPrevious();
                     displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
                 }
@@ -493,7 +493,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             mNextTrackButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.log(TAG, "Clicked on: NEXT");
+                    //Utils.log(TAG, "Clicked on: NEXT");
                     mAudioService.getPlayer().playNext();
                     displayTrackInfo(mAudioService.getPlayer().getTrackInfo());
                 }
@@ -574,7 +574,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     }
 
     private void updateWidgets(TrackInfo track) {
-        Utils.log(TAG, "updateWidgets() - Track duration: " + track.getTrackDuration());
+        //Utils.log(TAG, "updateWidgets() - Track duration: " + track.getTrackDuration());
         displayTrackInfo(track);
 
         // Special case: track ended when app not visible and player is started from notification
@@ -608,7 +608,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             onReceiveTrackDuration(mAudioService.getPlayer().getTrackDuration());
 
             mPlayButton.setImageResource(android.R.drawable.ic_media_pause);
-            Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PAUSE");
+            //Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PAUSE");
         }
 
         else {
@@ -616,13 +616,13 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
             stopSeekBarUpdates();
 
             mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-            Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PLAY");
+            //Utils.log(TAG, "setPlayPauseButtonImage() - Button set to: PLAY");
         }
     }
 
     // Stop updating seek bar and text values
     public void stopSeekBarUpdates() {
-        Utils.log(TAG, "stopSeekBarUpdates()");
+        //Utils.log(TAG, "stopSeekBarUpdates()");
         if (mSeekBarHandler != null) {
             mSeekBarHandler.removeCallbacks(mUpdateSeekBarRunnable);
         }
@@ -644,7 +644,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent intent = getActivity().getIntent();
 
         if (intent == null) {
-            Utils.log(TAG, "isNewPlaylist() - Intent is null!");
+            //Utils.log(TAG, "isNewPlaylist() - Intent is null!");
             return false;
         }
 
@@ -658,7 +658,7 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent intent = getActivity().getIntent();
 
         if (intent == null) {
-            Utils.log(TAG, "isNewTrack() - Intent is null!");
+            //Utils.log(TAG, "isNewTrack() - Intent is null!");
             return false;
         }
 
@@ -673,11 +673,11 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
         Intent intent = getActivity().getIntent();
         mFragmentData = intent.getParcelableExtra(EXTRA_FRAGMENT_DATA);
 
-        if (mFragmentData != null) {
-            Utils.log(TAG, "getFragmentData() - [TrackList size: "
+        /*if (mFragmentData != null) {
+            //Utils.log(TAG, "getFragmentData() - [TrackList size: "
                     + (mFragmentData.getTrackList() == null ? "null" : mFragmentData.getTrackList().size() + "] ")
                     + "[Track index: " + mFragmentData.getTrackIndex() + "]");
-        }
+        }*/
     }
 
     // Update UI with track info

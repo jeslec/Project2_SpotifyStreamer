@@ -55,7 +55,7 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         String countryCode = prefs.getString("preferences_country", "US");
         queryOptions.put("country", countryCode);
-        Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId + " [Country: " + countryCode + "]");
+        //Utils.log(TAG, "FetchTopTracksTask.doInBackground() - Getting top tracks from Spotify for artistId: " + artistId + " [Country: " + countryCode + "]");
         tracks = Spotify.getArtistTopTrack(artistId, queryOptions);
 
         return tracks;
@@ -73,17 +73,17 @@ public class GetTopTracksTask extends AsyncTask<String, Void, Tracks> {
 
         // It can happen if the country selected is not one that Spotify offers
         if (top10Tracks.tracks == null) {
-            Utils.log(TAG, "OnPostExecute() - tracks is null!");
+            //Utils.log(TAG, "OnPostExecute() - tracks is null!");
             return;
         }
 
-        Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - Tracks returned from Spotify: " +
-                top10Tracks.tracks.size());
+        //Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - Tracks returned from Spotify: " +
+                //top10Tracks.tracks.size());
 
         // No tracks found for this artist
         if (top10Tracks.tracks.isEmpty()) {
             Utils.showToast(R.string.TopTracks_noTrackFound);
-            Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - no tracks found");
+            //Utils.log(TAG, "FetchTopTracksTask.OnPostExecute() - no tracks found");
         }
 
         // Extract only the data we need so we don't use extra memory to store useless data

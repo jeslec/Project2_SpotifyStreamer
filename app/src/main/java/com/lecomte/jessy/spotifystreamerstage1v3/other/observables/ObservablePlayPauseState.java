@@ -26,7 +26,7 @@ public class ObservablePlayPauseState extends Observable
 
     public void setState(AudioPlayer.TrackPlayingState state)
     {
-        Utils.log(TAG, "State set to: " + state.toString());
+        //Utils.log(TAG, "State set to: " + state.toString());
         mState = state;
         setChanged();
         notifyObservers();

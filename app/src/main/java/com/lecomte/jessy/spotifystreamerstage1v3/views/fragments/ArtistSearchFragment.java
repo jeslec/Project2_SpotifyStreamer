@@ -45,7 +45,7 @@ public class ArtistSearchFragment extends ListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
@@ -94,7 +94,7 @@ public class ArtistSearchFragment extends ListFragment {
 
     @Override
     public void onDestroy() {
-        Utils.log(TAG, "onDestroy()");
+        //Utils.log(TAG, "onDestroy()");
         super.onDestroy();
     }
 
@@ -133,13 +133,13 @@ public class ArtistSearchFragment extends ListFragment {
 
     @Override
     public void onPause() {
-        Utils.log(TAG, "onPause()");
+        //Utils.log(TAG, "onPause()");
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        Utils.log(TAG, "onResume()");
+        //Utils.log(TAG, "onResume()");
         super.onResume();
 
         // TODO: Determine if it's the best place to put this

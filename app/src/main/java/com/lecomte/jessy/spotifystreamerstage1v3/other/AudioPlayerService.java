@@ -108,33 +108,33 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
     @Override
     public void onTrackCompleted() {
-        Utils.log(TAG, "onTrackCompleted()");
+        //Utils.log(TAG, "onTrackCompleted()");
         buildCustomNotification();
     }
 
     @Override
     public void onReceiveTrackDuration(long duration) {
-        Utils.log(TAG, "onReceiveTrackDuration()");
+        //Utils.log(TAG, "onReceiveTrackDuration()");
         buildCustomNotification();
     }
 
     private void updateNotificationPlayPauseButton() {
 
         if (mNotificationRemoteView == null) {
-            Utils.log(TAG, "updateNotificationPlayPauseButton() - mNotificationRemoteView is null!");
+            //Utils.log(TAG, "updateNotificationPlayPauseButton() - mNotificationRemoteView is null!");
             return;
         }
 
         // Put "pause" button icon and set pending intent to call when button is pressed
         if (getPlayer().isPlaying()) {
-            Utils.log(TAG, "updateNotificationPlayPauseButton() - Track playing, setting play/pause button to: PAUSE");
+            //Utils.log(TAG, "updateNotificationPlayPauseButton() - Track playing, setting play/pause button to: PAUSE");
             mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
                     android.R.drawable.ic_media_pause);
             mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_buttonPlay,
                     mPausePendingIntent);
 
         } else {
-            Utils.log(TAG, "updateNotificationPlayPauseButton() - Track NOT playing, setting play/pause button to: PLAY");
+            //Utils.log(TAG, "updateNotificationPlayPauseButton() - Track NOT playing, setting play/pause button to: PLAY");
             // Set RemoteView widget background
             // http://stackoverflow.com/questions/6201410/how-to-change-widget-layout-background-programatically#14669011
             mNotificationRemoteView.setInt(R.id.notification_buttonPlay, "setBackgroundResource",
@@ -149,8 +149,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     @Override
     public void update(Observable observable, Object data) {
         ObservablePlayPauseState observablePlayPauseState = (ObservablePlayPauseState) observable;
-        Utils.log(TAG, "PlayPauseStateObserver.update() - Track is playing: " +
-                observablePlayPauseState.isTrackPlaying());
+        //Utils.log(TAG, "PlayPauseStateObserver.update() - Track is playing: " +
+                //observablePlayPauseState.isTrackPlaying());
 
         buildCustomNotification();
     }
@@ -191,8 +191,8 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
-                + (App.isTwoPaneLayout() ? "MainActivity" : "NowPlayingActivity"));
+        //Utils.log(TAG, "buildCustomNotification() - PendingIntent class set to: "
+                //+ (App.isTwoPaneLayout() ? "MainActivity" : "NowPlayingActivity"));
 
         // Load app when user clicks on album image
         mNotificationRemoteView.setOnClickPendingIntent(R.id.notification_imageAlbum,
@@ -259,7 +259,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
         int returnCode = START_STICKY;
 
         if (intent == null || intent.getAction() == null) {
-            Utils.log(TAG, "onStartCommand() - intent or action is null!");
+            //Utils.log(TAG, "onStartCommand() - intent or action is null!");
             return returnCode;
         }
 
@@ -269,7 +269,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             if (App.isNotificationEnabled() && !mIsForeground) {
                 startForeground(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
                 mIsForeground = true;
-                Utils.log(TAG, "onStartCommand() - Service set to: FOREGROUND");
+                //Utils.log(TAG, "onStartCommand() - Service set to: FOREGROUND");
             }
         }
 
@@ -277,65 +277,65 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
             if (mIsForeground) {
                 stopForeground(true);
                 mIsForeground = false;
-                Utils.log(TAG, "onStartCommand() - Service set to: BACKGROUND");
+                //Utils.log(TAG, "onStartCommand() - Service set to: BACKGROUND");
             }
         }
 
         else if (action.equals(ACTION_PLAY_NEXT_TRACK)) {
-            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
-            Utils.log(TAG, "Notification - Clicked on: NEXT");
+            ////Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_NEXT_TRACK");
+            //Utils.log(TAG, "Notification - Clicked on: NEXT");
             mAudioPlayer.playNext();
             mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PLAY_PREVIOUS_TRACK)) {
-            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
-            Utils.log(TAG, "Notification - Clicked on: PREVIOUS");
+            ////Utils.log(TAG, "onStartCommand() - Action: ACTION_PLAY_PREVIOUS_TRACK");
+            //Utils.log(TAG, "Notification - Clicked on: PREVIOUS");
             mAudioPlayer.playPrevious();
             mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_PAUSE)) {
-            //Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
-            Utils.log(TAG, "Notification - Clicked on: PAUSE");
+            ////Utils.log(TAG, "onStartCommand() - Action: ACTION_PAUSE");
+            //Utils.log(TAG, "Notification - Clicked on: PAUSE");
             mAudioPlayer.pause();
             mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_RESUME)) {
-            //Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
-            Utils.log(TAG, "Notification - Clicked on: PLAY");
+            ////Utils.log(TAG, "onStartCommand() - Action: ACTION_RESUME");
+            //Utils.log(TAG, "Notification - Clicked on: PLAY");
             mAudioPlayer.resume();
             mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_SHOW_NOTIFICATION)) {
-            Utils.log(TAG, "onStartCommand() - ACTION_SHOW_NOTIFICATION");
+            //Utils.log(TAG, "onStartCommand() - ACTION_SHOW_NOTIFICATION");
             mNotificationManager.notify(NOTIFICATION_ID_AUDIO_SERVICE, buildCustomNotification());
         }
 
         else if (action.equals(ACTION_HIDE_NOTIFICATION)) {
-            Utils.log(TAG, "onStartCommand() - ACTION_HIDE_NOTIFICATION");
+            //Utils.log(TAG, "onStartCommand() - ACTION_HIDE_NOTIFICATION");
             mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
         }
 
         else if (action.equals(ACTION_STOP_SERVICE)) {
             if (mStopServiceHandler != null && mStopServiceRunnable != null) {
-                Utils.log(TAG, "onStartCommand() - ACTION_STOP_SERVICE: starting timer...");
+                //Utils.log(TAG, "onStartCommand() - ACTION_STOP_SERVICE: starting timer...");
                 mStopServiceHandler.postDelayed(mStopServiceRunnable, STOP_SERVICE_DELAY);
             }
         }
 
         else if (action.equals(ACTION_CANCEL_TIMER)) {
             if (mStopServiceHandler != null && mStopServiceRunnable != null) {
-                Utils.log(TAG, "onStartCommand() - ACTION_CANCEL_TIMER: stopping timer...");
+                //Utils.log(TAG, "onStartCommand() - ACTION_CANCEL_TIMER: stopping timer...");
                 mStopServiceHandler.removeCallbacks(mStopServiceRunnable);
             }
         }
 
         // This should never happen
         else {
-            Utils.log(TAG, "onStartCommand() - Action: UNKNOWN");
+            //Utils.log(TAG, "onStartCommand() - Action: UNKNOWN");
         }
         return returnCode;
     }
@@ -343,14 +343,14 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     @Override
     public void onCreate() {
         super.onCreate();
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
         mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         mStopServiceRunnable = new Runnable() {
             @Override
             public void run() {
                 stopSelf();
-                Utils.log(TAG, "Service stopped");
+                //Utils.log(TAG, "Service stopped");
             }
         };
 
@@ -363,7 +363,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
 
     @Override
     public void onDestroy() {
-        Utils.log(TAG, "onDestroy()");
+        //Utils.log(TAG, "onDestroy()");
 
         mAudioPlayer.removeListener(this);
         mAudioPlayer.deletePlayPauseStateObservers();
@@ -377,17 +377,17 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
     //http://stackoverflow.com/questions/19568315/how-to-handle-code-when-app-is-killed-by-swiping-in-android#26882533
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Utils.log(TAG, "onTaskRemoved()");
+        //Utils.log(TAG, "onTaskRemoved()");
         super.onTaskRemoved(rootIntent);
 
         // Remove notification: must remove service as foreground to delete the notification
         // http://stackoverflow.com/questions/15022990/how-to-cancel-notification-flag-foreground-service#15033994
         stopForeground(true);
         mNotificationManager.cancel(NOTIFICATION_ID_AUDIO_SERVICE);
-        Utils.log(TAG, "onTaskRemoved() - Removed service from foreground state and deleted notification");
+        //Utils.log(TAG, "onTaskRemoved() - Removed service from foreground state and deleted notification");
 
         // Stop service
-        Utils.log(TAG, "onTaskRemoved() - Stopping service...");
+        //Utils.log(TAG, "onTaskRemoved() - Stopping service...");
         stopSelf();
     }
 }

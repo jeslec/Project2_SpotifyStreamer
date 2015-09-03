@@ -79,7 +79,7 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.log(TAG, "onCreate()");
+        //Utils.log(TAG, "onCreate()");
         setRetainInstance(true);
 
         // Required to get action bar back button to do something useful (go back to previous view)
@@ -94,8 +94,8 @@ public class TopTracksFragment extends ListFragment {
         else {
              mArtistId = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_ID);
              mArtistName = getActivity().getIntent().getStringExtra(TopTracksActivity.EXTRA_ARTIST_NAME);
-             Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
-                     + mArtistId + "] " + "[artistName: " + mArtistName + "]");
+             //Utils.log(TAG, "onCreate() - Intent extras received: [artistId: "
+                     //+ mArtistId + "] " + "[artistName: " + mArtistName + "]");
          }
 
         // Set up the adapter to display the top tracks for an artist
@@ -125,7 +125,7 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Utils.log(TAG, "onViewCreated()");
+        //Utils.log(TAG, "onViewCreated()");
 
         if (mArtistId != null && !mArtistId.equals(mPreviousArtistId)) {
             // Get top tracks of this artist
@@ -142,13 +142,13 @@ public class TopTracksFragment extends ListFragment {
 
     @Override
     public void onPause() {
-        Utils.log(TAG, "onPause()");
+        //Utils.log(TAG, "onPause()");
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        Utils.log(TAG, "onResume()");
+        //Utils.log(TAG, "onResume()");
         super.onResume();
 
         // TODO: Determine if it's the best place to put this
@@ -176,7 +176,7 @@ public class TopTracksFragment extends ListFragment {
 
     @Override
     public void onDestroy() {
-        Utils.log(TAG, "onDestroy()");
+        //Utils.log(TAG, "onDestroy()");
         super.onDestroy();
     }
 
@@ -220,8 +220,8 @@ public class TopTracksFragment extends ListFragment {
             intent.setAction(NowPlayingFragment.ACTION_PLAY_TRACK);
         }
 
-        Utils.log(TAG, "onListItemClick() - Intent action set to: "
-                + intent.getAction().substring(intent.getAction().lastIndexOf(".") + 1));
+        //Utils.log(TAG, "onListItemClick() - Intent action set to: "
+                //+ intent.getAction().substring(intent.getAction().lastIndexOf(".") + 1));
 
         intent.putExtra(NowPlayingFragment.EXTRA_FRAGMENT_DATA, fragmentData);
         startActivity(intent);
