@@ -7,6 +7,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">#ffffff</item>
     </style>
 
     <style name="NowPlayingTitle.Large" parent="NowPlayingTitle">
