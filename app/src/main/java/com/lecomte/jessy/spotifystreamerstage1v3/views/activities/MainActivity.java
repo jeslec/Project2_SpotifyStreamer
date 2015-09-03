@@ -27,6 +27,7 @@ import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
+import com.squareup.okhttp.internal.Util;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -215,6 +216,12 @@ public class MainActivity extends AppCompatActivity implements
 
         Utils.log(TAG, "handleIntent() - Intent action: "
                 + intentAction.substring(intentAction.lastIndexOf(".") + 1));
+
+        if (!App.isTwoPaneLayout() && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
+                Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
+            Utils.log(TAG, "handleIntent() - Single pane & launched from recent tasks, just load main activity");
+            return;
+        }
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
