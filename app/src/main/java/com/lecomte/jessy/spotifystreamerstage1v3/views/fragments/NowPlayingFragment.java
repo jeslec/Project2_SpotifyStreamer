@@ -215,7 +215,6 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     public void onStart() {
         super.onStart();
 
-        // TODO: Consider optimizing but be careful of configuration changes (phone rotations)
         // Resize dialog window (a dialog window is only used in a 2-pane configuration,
         // in a 1-pane configuration we use a fullscreen activity)
         // Resizing of window must be done in onStart() or onResume() as explained here:
@@ -504,20 +503,17 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if (fromUser) {
-                        Utils.log(TAG, "seekBar.onProgressChanged()");
                         mSeekBarProgress = progress;
                     }
                 }
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
-                    Utils.log(TAG, "seekBar.onStartTrackingTouch()");
                     pausePlayer();
                 }
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    Utils.log(TAG, "seekBar.onStopTrackingTouch()");
                     mAudioService.getPlayer().seekTo(mSeekBarProgress);
                     resumePlayer();
                 }

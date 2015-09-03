@@ -357,7 +357,6 @@ public class MainActivity extends AppCompatActivity implements
                 + prefs.getBoolean("preferences_notificationsEnabled", true) + "]");
 
         // Stop service if notifications are OFF (no way of controlling player is app not running)
-        // TODO: Find a solution to stop the service (be careful with configuration changes)
         if (Utils.isServiceRunning(AudioPlayerService.class) &&
                 !prefs.getBoolean("preferences_notificationsEnabled", true)) {
             Intent stopServiceIntent = new Intent(this, AudioPlayerService.class);
