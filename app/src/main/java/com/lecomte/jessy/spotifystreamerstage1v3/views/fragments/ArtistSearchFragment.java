@@ -1,33 +1,20 @@
 package com.lecomte.jessy.spotifystreamerstage1v3.views.fragments;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.lecomte.jessy.spotifystreamerstage1v3.App;
 import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.controlers.SearchResultAdapter;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
-import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.tasks.SearchArtistTask;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.MainActivity;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.NowPlayingActivity;
-import com.lecomte.jessy.spotifystreamerstage1v3.views.activities.SettingsActivity;
 
 /**
  * Created by Jessy on 2015-06-23.
@@ -37,11 +24,6 @@ public class ArtistSearchFragment extends ListFragment {
     private final String TAG = getClass().getSimpleName();
     SearchResultAdapter mSearchResultAdapter;
     private OnFragmentInteractionListener mListener;
-    private boolean mIsTrackPlaying = false;
-
-    public ArtistSearchFragment() {
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,12 +74,6 @@ public class ArtistSearchFragment extends ListFragment {
         mListener = null;
     }
 
-    @Override
-    public void onDestroy() {
-        //Utils.log(TAG, "onDestroy()");
-        super.onDestroy();
-    }
-
     public void updateSearchResult(String query){
         new SearchArtistTask(mSearchResultAdapter, this).execute(query);
     }
@@ -113,8 +89,6 @@ public class ArtistSearchFragment extends ListFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(Uri uri);
-
         public void onArtistSelected(ArtistInfo artist);
     }
 
@@ -129,12 +103,6 @@ public class ArtistSearchFragment extends ListFragment {
         ProgressBar progress = (ProgressBar)getActivity()
                 .findViewById(R.id.SearchResult_progressBar);
         progress.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onPause() {
-        //Utils.log(TAG, "onPause()");
-        super.onPause();
     }
 
     @Override

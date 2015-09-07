@@ -95,10 +95,12 @@ public class NowPlayingFragment extends DialogFragment implements ServiceConnect
     private ImageButton mNextTrackButton;
 
     //**** [Other] ****
-    private Handler mSeekBarHandler = new Handler();
-    private Handler mSeekBarTextHandler = new Handler();
-    private Runnable mUpdateSeekBarRunnable;
-    private Runnable mUpdateSeekBarTextRunnable;
+    // To avoid memory leaks, handlers and runnables should always be static
+    //http://www.androiddesignpatterns.com/2013/01/inner-class-handler-memory-leak.html
+    private static Handler mSeekBarHandler = new Handler();
+    private static Handler mSeekBarTextHandler = new Handler();
+    private static Runnable mUpdateSeekBarRunnable;
+    private static Runnable mUpdateSeekBarTextRunnable;
     private String mTrackUrl = "";
     private AudioPlayerService mAudioService;
     NowPlayingFragmentData mFragmentData = new NowPlayingFragmentData();

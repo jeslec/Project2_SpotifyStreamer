@@ -5,9 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,11 +21,11 @@ import com.lecomte.jessy.spotifystreamerstage1v3.R;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.ArtistInfo;
 import com.lecomte.jessy.spotifystreamerstage1v3.models.NowPlayingFragmentData;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.AudioPlayerService;
+import com.lecomte.jessy.spotifystreamerstage1v3.other.PreferenceChangeListener;
 import com.lecomte.jessy.spotifystreamerstage1v3.other.utils.Utils;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.ArtistSearchFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.NowPlayingFragment;
 import com.lecomte.jessy.spotifystreamerstage1v3.views.fragments.TopTracksFragment;
-import com.squareup.okhttp.internal.Util;
 
 public class MainActivity extends AppCompatActivity implements
         ArtistSearchFragment.OnFragmentInteractionListener,
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements
     private final String TAG = getClass().getSimpleName();
     private String mPreviousQuery;
     private ActionBar mActionBar;
-    private boolean mCouldBeConfigurationChanged = false;
+    private boolean mCouldBeConfigurationChange = false;
     private static final String DIALOG_MEDIA_PLAYER = "mediaPlayer";
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
 
@@ -77,10 +75,10 @@ public class MainActivity extends AppCompatActivity implements
         // Service could be running for 2 reasons: 1) configuration change or
         // 2) app was loaded from recent tasks
         if (Utils.isServiceRunning(AudioPlayerService.class)) {
-            Intent cancelTimerIntent = new Intent(this, AudioPlayerService.class);
+            Intent cancelTimerIntent = new Intent(getApplicationContext(), AudioPlayerService.class);
             cancelTimerIntent.setAction(AudioPlayerService.ACTION_CANCEL_TIMER);
             startService(cancelTimerIntent);
-            mCouldBeConfigurationChanged = true;
+            mCouldBeConfigurationChange = true;
         }
 
         handleIntent(getIntent());
@@ -96,31 +94,13 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // React to changes made to the app settings
-        mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        mPreferenceChangeListener = new PreferenceChangeListener(getApplicationContext());
 
-                if (key.equals("preferences_notificationsEnabled") &&
-                        Utils.isServiceRunning(AudioPlayerService.class)) {
-                    boolean notificationsEnabled = prefs.getBoolean("preferences_notificationsEnabled", true);
-                    //Utils.log(TAG, "OnSharedPreferenceChangeListener() - Notifications enabled: " + notificationsEnabled);
-                    Intent intent = new Intent(App.getContext(), AudioPlayerService.class);
-                    String intentAction = AudioPlayerService.ACTION_HIDE_NOTIFICATION;
-
-                    if (notificationsEnabled) {
-                        intentAction = AudioPlayerService.ACTION_SHOW_NOTIFICATION;
-                    }
-
-                    intent.setAction(intentAction);
-                    startService(intent);
-                }
-            }
-        };
-
-        PreferenceManager.getDefaultSharedPreferences(App.getContext())
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
 
         // Load default values into the dialog only if user has not chosen any values yet
-        PreferenceManager.setDefaultValues(App.getContext(), R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     }
 
     private void addFragmentToLayout(int fragmentContainerId, String className) {
@@ -254,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
             // else we will get last intent action used before exiting the app
             if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) ==
                     Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
-                if (PreferenceManager.getDefaultSharedPreferences(App.getContext())
+                if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                         .getBoolean("preferences_notificationsEnabled", true)) {
                     intentAction = NowPlayingFragment.ACTION_SHOW_PLAYER;
                 } else {
@@ -265,8 +245,8 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             // If app wasn't loaded from recent apps drawer then the only other way
-            // mCouldBeConfigurationChanged can be true is if a configuration change occurred
-            else if (mCouldBeConfigurationChanged) {
+            // mCouldBeConfigurationChange can be true is if a configuration change occurred
+            else if (mCouldBeConfigurationChange) {
                 //Utils.log(TAG, "onHandleIntent() - Configuration changed");
                 // Only load NowPlaying if it was visible before going to background (or exiting)
                 if (fragmentManager.findFragmentByTag(DIALOG_MEDIA_PLAYER) != null) {
@@ -302,13 +282,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
 
-            mCouldBeConfigurationChanged = false;
+            mCouldBeConfigurationChange = false;
         }
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
@@ -347,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // 1-pane layout: start an activity containing the TopTracks fragment
         else {
-            Intent tracksIntent = new Intent(this, TopTracksActivity.class);
+            Intent tracksIntent = new Intent(getApplicationContext(), TopTracksActivity.class);
             tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artist.getId());
             tracksIntent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artist.getName());
             startActivity(tracksIntent);
@@ -356,7 +331,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
 
         //Utils.log(TAG, "onDestroy() - [Audio service running: "
                /* + Utils.isServiceRunning(AudioPlayerService.class) + "]"
@@ -366,20 +342,15 @@ public class MainActivity extends AppCompatActivity implements
         // Stop service if notifications are OFF (no way of controlling player is app not running)
         if (Utils.isServiceRunning(AudioPlayerService.class) &&
                 !prefs.getBoolean("preferences_notificationsEnabled", true)) {
-            Intent stopServiceIntent = new Intent(this, AudioPlayerService.class);
+            Intent stopServiceIntent = new Intent(getApplicationContext(), AudioPlayerService.class);
             stopServiceIntent.setAction(AudioPlayerService.ACTION_STOP_SERVICE);
             startService(stopServiceIntent);
             //Utils.log(TAG, "onDestroy() - Sent action to service: ACTION_STOP_SERVICE");
         }
 
         prefs.unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+        mPreferenceChangeListener = null;
         super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        //Utils.log(TAG, "onCreate()");
     }
 
     @Override
@@ -427,13 +398,13 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.menu_item_preferences:
                 //Utils.log(TAG, "onOptionsItemSelected() - Display preferences dialog...");
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
 
             case R.id.menu_item_now_playing:
                 //Utils.log(TAG, "onOptionsItemSelected() - Show Now Playing view...");
-                Intent intent = new Intent(this,
+                Intent intent = new Intent(getApplicationContext(),
                         App.isTwoPaneLayout()? MainActivity.class: NowPlayingActivity.class);
                 intent.setAction(NowPlayingFragment.ACTION_SHOW_PLAYER_ICON_CASE);
                 startActivity(intent);
