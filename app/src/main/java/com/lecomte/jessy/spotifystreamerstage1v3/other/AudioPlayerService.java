@@ -234,7 +234,7 @@ public class AudioPlayerService extends Service implements AudioPlayer.Callback,
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContent(mNotificationRemoteView)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_audio_player)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(track.getTrackName())
                 .setContentText(track.getArtistName())
                 .setPriority(Notification.PRIORITY_MAX)
