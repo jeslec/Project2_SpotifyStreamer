@@ -1,6 +1,6 @@
 # Spotify Streamer
 
-![](../../../Screenshots/blob/master/spotify-streamer-anim2.gif)
+![](../../../Screenshots/blob/master/spotify-streamer-anim3.gif)
 
 
 
