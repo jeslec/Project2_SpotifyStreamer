@@ -1,9 +1,9 @@
 # Spotify Streamer
 
-## Tablet Layout (landscape)
+## Tablet Layout
 ![](../../../Screenshots/blob/master/spotify-streamer-anim1.gif)
 
-## Phone Layout (portrait)
+## Phone Layout
 ![](../../../Screenshots/blob/master/spotify-streamer-anim2.gif)
 
 
