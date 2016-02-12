@@ -1,3 +1,5 @@
+[TOC]
+
 # Spotify Streamer
 
 ## App Demo
