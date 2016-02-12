@@ -2,10 +2,10 @@
 
 ## App Demo
 
-### Tablet Demo
+### On a tablet
 ![](../../../Screenshots/blob/master/spotify-streamer-anim1.gif)
 
-### Phone Demo
+### On a phone
 ![](../../../Screenshots/blob/master/spotify-streamer-anim2.gif)
 
 
