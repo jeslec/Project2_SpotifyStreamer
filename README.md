@@ -1,9 +1,11 @@
 # Spotify Streamer
 
-## Tablet Layout
+## App Demo
+
+### Tablet Demo
 ![](../../../Screenshots/blob/master/spotify-streamer-anim1.gif)
 
-## Phone Layout
+### Phone Demo
 ![](../../../Screenshots/blob/master/spotify-streamer-anim2.gif)
 
 
