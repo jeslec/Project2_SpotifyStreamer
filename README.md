@@ -1,3 +1,5 @@
+<p><font size="15">Spotify Streamer</font></p>
+
 # TABLE OF CONTENT
 
 [APP DEMO](#app-demo)<br>
