@@ -9,6 +9,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[On a phone](#phone-demo)<br>
 [DESCRIPTION](#description)<br>
 [WORK DONE](#work-done)<br>
+[KEY CONSIDERATIONS](#key-considerations)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Libraries Used](#key-considerations-1)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
@@ -34,6 +36,10 @@ This project is based on the highly popular music streaming app Spotify and was 
 
 ## WORK DONE <a name="work-done"></a>
 I have built this app from the ground up and successfully implemented all required features and met all criteria. 
+
+## KEY CONSIDERATIONS <a name="key-considerations"></a>
+
+### Libraries Used <a name="key-considerations-1"></a>
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
