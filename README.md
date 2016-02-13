@@ -61,3 +61,17 @@ I have built this app from the ground up and successfully implemented all requir
 * App stores the most recent top tracks query results and their respective metadata (track name , artist name, album name) locally in list. The queried results are retained on rotation.
 
 ## Media Playback <a name="evaluation-criteria-4"></a>
+
+* App implements streaming playback of tracks.
+
+* User is able to advance to the previous track.
+
+* User is able to advance to the next track.
+
+* Play button starts/resumes playback of currently selected track.
+
+* Pause button pauses playback of currently selected track.
+
+* If a user taps on another track while one is currently playing, playback is stopped on the currently playing track and the newly selected track (in other words, the tracks should not mix).
+
+* Scrub bar displays the current playback position in time and is scrubbable. Scrubbing changes the track position appropriately.
