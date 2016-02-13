@@ -11,6 +11,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Network API Implementation](#evaluation-criteria-3)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Media Playback](#evaluation-criteria-4)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Notifications](#evaluation-criteria-5)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Sharing Functionality](#evaluation-criteria-6)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
