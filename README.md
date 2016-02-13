@@ -40,7 +40,8 @@ I have built this app from the ground up and successfully implemented all requir
 ## KEY CONSIDERATIONS <a name="key-considerations"></a>
 
 ### Libraries Used <a name="key-considerations-1"></a>
-* Picasso
+* Picasso: A powerful library that will handle image loading and caching on your behalf. 
+Add compile 'com.squareup.picasso:picasso:2.5.2' to the dependencies block of your build.gradle (Module: app) file.
 
 * Spotify Wrapper
 
