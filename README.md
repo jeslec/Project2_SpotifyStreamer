@@ -18,6 +18,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Sharing Functionality](#evaluation-criteria-6)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Settings Menu](#evaluation-criteria-7)<br>
 [SUPPORTING MATERIAL](#supporting-material)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Spotify API Guide](#doc-1)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
