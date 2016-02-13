@@ -1,8 +1,8 @@
 # Spotify Streamer
 
 [App Demo](#app-demo)<br>
-[On a tablet](#tablet-demo)<br>
-[On a phone](#phone-demo)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[On a tablet](#tablet-demo)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[On a phone](#phone-demo)<br>
 
 ## App Demo <a name="app-demo"></a>
 
