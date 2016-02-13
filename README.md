@@ -1,4 +1,4 @@
-<p><font size="15">Spotify Streamer</font></p>
+# SPOTIFY STREAMER
 
 # TABLE OF CONTENT
 
