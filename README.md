@@ -8,6 +8,7 @@
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Network API Implementation](#evaluation-criteria-3)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -51,3 +52,9 @@ I have built this app from the ground up and successfully implemented all requir
 * App displays a list of top tracks.
 
 * When a track is selected, the app displays the Now Playing screen and starts playing the track.
+
+## Network API Implementation <a name="evaluation-criteria-3"></a>
+
+* App implements Artist Search + GetTopTracks API Requests (Using the Spotify wrapper or by making a HTTP request and deserializing the JSON data).
+
+* App stores the most recent top tracks query results and their respective metadata (track name , artist name, album name) locally in list. The queried results are retained on rotation.
