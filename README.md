@@ -26,15 +26,15 @@
 ### On a phone <a name="phone-demo"></a>
 ![](../../../Screenshots/blob/master/spotify-streamer-anim2.gif)
 
-# DESCRIPTION <a name="description"></a>
+## DESCRIPTION <a name="description"></a>
 This project is based on the highly popular music streaming app Spotify and was one of the assignments as part of the Android Nanodegree certification. Users can search for artists, see their top tracks, listen to streamed music samples and share the currently playing track. The fragments-based layout adapts to the device (phone, tablet) the app is running on to offer the best UI experience.
 
-# WORK DONE <a name="work-done"></a>
+## WORK DONE <a name="work-done"></a>
 I have built this app from the ground up and successfully implemented all required features and met all criteria. 
 
-# EVALUATION CRITERIA <a name="evaluation-criteria"></a>
+## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
-## User Interface - Layout <a name="evaluation-criteria-1"></a>
+### User Interface - Layout <a name="evaluation-criteria-1"></a>
 * [Phone] UI contains a screen for searching for an artist and displaying a list of artist results.
 
 * Individual artist result layout contains - Artist Thumbnail , Artist name.
@@ -47,7 +47,7 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Tablet UI uses a Master-Detail layout implemented using fragments. The left fragment is for searching artists and the right fragment is for displaying top tracks of a selected artist. The Now Playing controls are displayed in a DialogFragment.
 
-## User Interface - Function <a name="evaluation-criteria-2"></a>
+### User Interface - Function <a name="evaluation-criteria-2"></a>
 
 * App contains a search field that allows the user to enter in the name of an artist to search for.
 
@@ -63,13 +63,13 @@ I have built this app from the ground up and successfully implemented all requir
 
 * App displays a “Now Playing” Button in the ActionBar that serves to reopen the player UI should the user navigate back to browse content and then want to resume control over playback.
 
-## Network API Implementation <a name="evaluation-criteria-3"></a>
+### Network API Implementation <a name="evaluation-criteria-3"></a>
 
 * App implements Artist Search + GetTopTracks API Requests (Using the Spotify wrapper or by making a HTTP request and deserializing the JSON data).
 
 * App stores the most recent top tracks query results and their respective metadata (track name , artist name, album name) locally in list. The queried results are retained on rotation.
 
-## Media Playback <a name="evaluation-criteria-4"></a>
+### Media Playback <a name="evaluation-criteria-4"></a>
 
 * App implements streaming playback of tracks.
 
@@ -85,7 +85,7 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Scrub bar displays the current playback position in time and is scrubbable. Scrubbing changes the track position appropriately.
 
-## Notifications <a name="evaluation-criteria-5"></a>
+### Notifications <a name="evaluation-criteria-5"></a>
 
 * App implements a notification with playback controls (Play, pause , next & previous track).
 
@@ -93,13 +93,13 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Notification displays track name and album art thumbnail.
 
-## Sharing Functionality <a name="evaluation-criteria-6"></a>
+### Sharing Functionality <a name="evaluation-criteria-6"></a>
 
 * App adds a menu for sharing the currently playing track.
 
 * App uses a shareIntent to expose the external Spotify URL for the current track.
 
-## Settings Menu <a name="evaluation-criteria-7"></a>
+### Settings Menu <a name="evaluation-criteria-7"></a>
 
 * App has a menu item to select the country code (which is automatically passed into the get Top Tracks query).
 
