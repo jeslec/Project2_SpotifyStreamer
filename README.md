@@ -110,7 +110,7 @@ I have built this app from the ground up and successfully implemented all requir
 ## SUPPORTING MATERIAL <a name="supporting-material"></a>
 
 ### Documentation <a name="supporting-material-1"></a>
-<a href="https://docs.google.com/presentation/d/1Q8LwzD5ODqirWG7K_e4sklE3fEFY_dr4kH4hfoRa0BQ/pub?start=false&loop=false&delayms=15000&slide=id.ga25585343_0_106">Spotify API Guide</a>
+* <a href="https://docs.google.com/presentation/d/1Q8LwzD5ODqirWG7K_e4sklE3fEFY_dr4kH4hfoRa0BQ/pub?start=false&loop=false&delayms=15000&slide=id.ga25585343_0_106">Spotify API Guide</a>
 
-<a href="https://developer.spotify.com/web-api/endpoint-reference/
+* <a href="https://developer.spotify.com/web-api/endpoint-reference/
 ">Spotify API Endpoint Reference</a>
