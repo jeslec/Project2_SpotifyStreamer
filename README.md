@@ -6,8 +6,8 @@
 [DESCRIPTION](#description)<br>
 [MY ROLE](#my-role)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#user-interface-layout-criteria)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#user-interface-layout-function)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -25,7 +25,7 @@ I have built this app from the ground up and successfully implemented all requir
 
 # EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
-## User Interface - Layout <a name="user-interface-layout-criteria"></a>
+## User Interface - Layout <a name="evaluation-criteria-1"></a>
 * [Phone] UI contains a screen for searching for an artist and displaying a list of artist results.
 
 * Individual artist result layout contains - Artist Thumbnail , Artist name.
@@ -38,7 +38,7 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Tablet UI uses a Master-Detail layout implemented using fragments. The left fragment is for searching artists and the right fragment is for displaying top tracks of a selected artist. The Now Playing controls are displayed in a DialogFragment.
 
-## User Interface - Function <a name="user-interface-function-criteria"></a>
+## User Interface - Function <a name="evaluation-criteria-2"></a>
 
 * App contains a search field that allows the user to enter in the name of an artist to search for.
 
