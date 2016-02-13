@@ -1,3 +1,5 @@
+![](../../../Screenshots/blob/master/spotify.jpg)
+
 # SPOTIFY STREAMER
 
 # TABLE OF CONTENT
