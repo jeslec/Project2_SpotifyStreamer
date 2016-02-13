@@ -116,7 +116,7 @@ I have built this app from the ground up and successfully implemented all requir
 * <a href="https://developer.spotify.com/web-api/endpoint-reference/
 ">Spotify API Endpoint Reference</a>
 
-### Udacity Courses <a name="courses"></a>
+### Udacity Courses <a name="supporting-material-2"></a>
 
 * <a href="https://www.udacity.com/course/developing-android-apps--ud853
 ">Developing Android Apps (ud853)</a>
