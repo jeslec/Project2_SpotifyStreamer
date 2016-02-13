@@ -5,6 +5,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[On a phone](#phone-demo)<br>
 [DESCRIPTION](#description)<br>
 [MY ROLE](#my-role)<br>
+[EVALUATION CRITERIA](#evaluation-criteria)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -20,4 +21,5 @@ This project is based on the highly popular music streaming app Spotify and was 
 # MY ROLE <a name="my-role"></a>
 I have built this app from the ground up and successfully implemented all required features and met all criteria. 
 
+# EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
