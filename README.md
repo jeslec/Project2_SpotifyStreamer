@@ -87,3 +87,8 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Notification displays track name and album art thumbnail.
 
+## Sharing Functionality <a name="evaluation-criteria-6"></a>
+
+* App adds a menu for sharing the currently playing track.
+
+* App uses a shareIntent to expose the external Spotify URL for the current track.
