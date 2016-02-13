@@ -2,7 +2,7 @@
 
 # SPOTIFY STREAMER
 
-# TABLE OF CONTENT
+## TABLE OF CONTENT
 
 [APP DEMO](#app-demo)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[On a tablet](#tablet-demo)<br>
