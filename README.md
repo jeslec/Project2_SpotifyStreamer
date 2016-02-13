@@ -40,6 +40,9 @@ I have built this app from the ground up and successfully implemented all requir
 ## KEY CONSIDERATIONS <a name="key-considerations"></a>
 
 ### Libraries Used <a name="key-considerations-1"></a>
+* Picasso
+
+* Spotify Wrapper
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
