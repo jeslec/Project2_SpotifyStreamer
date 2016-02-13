@@ -10,6 +10,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Network API Implementation](#evaluation-criteria-3)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Media Playback](#evaluation-criteria-4)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Notifications](#evaluation-criteria-5)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -54,6 +55,8 @@ I have built this app from the ground up and successfully implemented all requir
 
 * When a track is selected, the app displays the Now Playing screen and starts playing the track.
 
+* App displays a “Now Playing” Button in the ActionBar that serves to reopen the player UI should the user navigate back to browse content and then want to resume control over playback.
+
 ## Network API Implementation <a name="evaluation-criteria-3"></a>
 
 * App implements Artist Search + GetTopTracks API Requests (Using the Spotify wrapper or by making a HTTP request and deserializing the JSON data).
@@ -75,3 +78,12 @@ I have built this app from the ground up and successfully implemented all requir
 * If a user taps on another track while one is currently playing, playback is stopped on the currently playing track and the newly selected track (in other words, the tracks should not mix).
 
 * Scrub bar displays the current playback position in time and is scrubbable. Scrubbing changes the track position appropriately.
+
+## Notifications <a name="evaluation-criteria-5"></a>
+
+* App implements a notification with playback controls (Play, pause , next & previous track).
+
+* Notification media controls are usable on the lockscreen and drawer.
+
+* Notification displays track name and album art thumbnail.
+
