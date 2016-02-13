@@ -17,6 +17,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Notifications](#evaluation-criteria-5)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Sharing Functionality](#evaluation-criteria-6)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Settings Menu](#evaluation-criteria-7)<br>
+[SUPPORTING MATERIAL](#supporting-material)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -104,3 +105,6 @@ I have built this app from the ground up and successfully implemented all requir
 * App has a menu item to select the country code (which is automatically passed into the get Top Tracks query).
 
 * App has menu item to toggle showing notification controls on the drawer and lock screen.
+
+## SUPPORTING MATERIAL <a name="supporting-material"></a>
+
