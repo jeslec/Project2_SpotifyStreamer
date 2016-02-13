@@ -6,6 +6,7 @@
 [DESCRIPTION](#description)<br>
 [MY ROLE](#my-role)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#user-interface-layout-criteria)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -22,6 +23,8 @@ This project is based on the highly popular music streaming app Spotify and was 
 I have built this app from the ground up and successfully implemented all required features and met all criteria. 
 
 # EVALUATION CRITERIA <a name="evaluation-criteria"></a>
+
+## User Interface - Layout <a name="user-interface-layout-criteria"></a>
 * [Phone] UI contains a screen for searching for an artist and displaying a list of artist results.
 Individual artist result layout contains - Artist Thumbnail , Artist name.
 * [Phone] UI contains a screen for displaying the top tracks for a selected artist.
