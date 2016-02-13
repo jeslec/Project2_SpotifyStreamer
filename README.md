@@ -19,6 +19,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Settings Menu](#evaluation-criteria-7)<br>
 [SUPPORTING MATERIAL](#supporting-material)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Documentation](#supporting-material-1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Udacity Courses](#supporting-material-2)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
@@ -115,7 +116,7 @@ I have built this app from the ground up and successfully implemented all requir
 * <a href="https://developer.spotify.com/web-api/endpoint-reference/
 ">Spotify API Endpoint Reference</a>
 
-### Udacity courses <a name="courses"></a>
+### Udacity Courses <a name="courses"></a>
 
 * <a href="https://www.udacity.com/course/developing-android-apps--ud853
 ">Developing Android Apps (ud853)</a>
