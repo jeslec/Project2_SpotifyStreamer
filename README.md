@@ -108,4 +108,6 @@ I have built this app from the ground up and successfully implemented all requir
 * App has menu item to toggle showing notification controls on the drawer and lock screen.
 
 ## SUPPORTING MATERIAL <a name="supporting-material"></a>
+
+### Documentation <a name="supporting-material-1"></a>
 <a href="https://docs.google.com/presentation/d/1Q8LwzD5ODqirWG7K_e4sklE3fEFY_dr4kH4hfoRa0BQ/pub?start=false&loop=false&delayms=15000&slide=id.ga25585343_0_106">Spotify API Guide</a>
