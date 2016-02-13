@@ -1,8 +1,8 @@
-[TOC]
-
 # Spotify Streamer
 
-## App Demo
+[App Demo](#app-demo)
+
+## App Demo <a name="app-demo"></a>
 
 ### On a tablet
 ![](../../../Screenshots/blob/master/spotify-streamer-anim1.gif)
