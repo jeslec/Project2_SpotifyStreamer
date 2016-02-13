@@ -27,8 +27,11 @@ I have built this app from the ground up and successfully implemented all requir
 ## User Interface - Layout <a name="user-interface-layout-criteria"></a>
 * [Phone] UI contains a screen for searching for an artist and displaying a list of artist results.
 Individual artist result layout contains - Artist Thumbnail , Artist name.
+
 * [Phone] UI contains a screen for displaying the top tracks for a selected artist.
 Individual track layout contains - Album art thumbnail, track name , album name.
+
 * [Phone] UI contains a screen that represents the player. It contains track info (e.g., track duration, elapsed time, artist name, album name, album artwork, and track name). It also contains playback controls (e.g., play/pause/previous track/next track buttons and scrub bar) for the currently selected track.
+
 * Tablet UI uses a Master-Detail layout implemented using fragments. The left fragment is for searching artists and the right fragment is for displaying top tracks of a selected artist. The Now Playing controls are displayed in a DialogFragment.
 
