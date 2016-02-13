@@ -37,3 +37,16 @@ I have built this app from the ground up and successfully implemented all requir
 
 * Tablet UI uses a Master-Detail layout implemented using fragments. The left fragment is for searching artists and the right fragment is for displaying top tracks of a selected artist. The Now Playing controls are displayed in a DialogFragment.
 
+## User Interface - Function <a name="user-interface-function-criteria"></a>
+
+* App contains a search field that allows the user to enter in the name of an artist to search for.
+
+* When an artist name is entered, app displays list of artist results in a ListView.
+
+* App displays a message (for example, a toast) if the artist name/top tracks list for an artist is not found (asks to refine search).
+
+* When an artist is selected, app launches the “Top Tracks” View.
+
+* App displays a list of top tracks.
+
+* When a track is selected, the app displays the Now Playing screen and starts playing the track.
