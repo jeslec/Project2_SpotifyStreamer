@@ -1,6 +1,6 @@
 # TABLE OF CONTENT
 
-[App Demo](#app-demo)<br>
+[APP DEMO](#app-demo)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[On a tablet](#tablet-demo)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[On a phone](#phone-demo)<br>
 
