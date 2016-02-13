@@ -7,6 +7,7 @@
 [MY ROLE](#my-role)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#user-interface-layout-criteria)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#user-interface-layout-function)<br>
 
 ## APP DEMO <a name="app-demo"></a>
 
