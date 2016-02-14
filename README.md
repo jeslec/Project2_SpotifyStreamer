@@ -79,7 +79,32 @@ public class Spotify {
         return tracks;
     }
 }
-```
+```java
+
+Since these methods are making network calls, they must be called in a background thread. Therefore, we create two AsyncTasks - One to retrieve the list of artists and the other get an artist's top tracks.
+
+```java
+public class SearchArtistTask extends AsyncTask<...> {
+    @Override
+    protected void onPostExecute(ArtistsPager artistsPager) {
+        ...
+        // Extract the data we need, sort it and store it in myArtistInfoList 
+        //myArtistInfoList = ...
+        
+        // Update the UI (ListView) with the list of artists
+        mAdapter.clear();
+        mAdapter.addAll(myArtistInfoList);
+        mAdapter.notifyDataSetChanged();
+    }
+    
+    // Get the  list of artists from the Spotify API
+    @Override
+    protected ArtistsPager doInBackground(String... params) {
+        mSearchTerm = params[0];
+        return Spotify.searchArtists(mSearchTerm);
+    }
+}
+```java
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
