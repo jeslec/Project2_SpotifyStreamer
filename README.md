@@ -134,6 +134,8 @@ public class GetTopTracksTask extends AsyncTask<...> {
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
+These are the criteria used by the Android Nanodegree code reviewers. In order for a project to be a success, and therefore for us to be able to move on to the next project, the Spotify Streamer app must meet all of them. 
+
 ### User Interface - Layout <a name="evaluation-criteria-1"></a>
 * [Phone] UI contains a screen for searching for an artist and displaying a list of artist results.
 
