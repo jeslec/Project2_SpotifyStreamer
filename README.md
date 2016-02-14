@@ -43,7 +43,7 @@ I have built this app from the ground up and successfully implemented all requir
 * Picasso: A powerful library that will handle image loading and caching on your behalf. 
 Add compile 'com.squareup.picasso:picasso:2.5.2' to the dependencies block of your build.gradle (Module: app) file.
 
-* Spotify Wrapper
+* <a href="https://github.com/kaaes/spotify-web-api-android">Spotify Wrapper</a>
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
