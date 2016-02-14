@@ -11,6 +11,7 @@
 [WORK DONE](#work-done)<br>
 [KEY CONSIDERATIONS](#key-considerations)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Libraries Used](#key-considerations-1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[How is data (artists, tracks, etc.) obtained from the Spotify API?](#key-considerations-2)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
@@ -43,6 +44,9 @@ I have built this app from the ground up and successfully implemented all requir
 * <a href="http://square.github.io/picasso/">Picasso</a>: A powerful library that will handle image loading and caching on your behalf. Add compile 'com.squareup.picasso:picasso:2.5.2' to the dependencies block of your build.gradle (Module: app) file.
 
 * <a href="https://github.com/kaaes/spotify-web-api-android">Spotify Wrapper</a>: A wrapper for Spotify Web API. It uses Retrofit to create Java interfaces from the Spotify API endpoints.
+
+### How is the data (artists, tracks, etc.) obtained from the Spotify API? <a name="key-considerations-2"></a>
+
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
