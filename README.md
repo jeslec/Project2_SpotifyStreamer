@@ -45,8 +45,8 @@ I have built this app from the ground up and successfully implemented all requir
 
 * <a href="https://github.com/kaaes/spotify-web-api-android">Spotify Wrapper</a>: A wrapper for Spotify Web API. It uses Retrofit to create Java interfaces from the Spotify API endpoints.
 
-### How is the data (artists, tracks, etc.) obtained from the Spotify API? <a name="key-considerations-2"></a>
-I created a class, named Spotify, to handle all API requests. The searchArtist method returns a list of artists based on the supplied search term. The getArtistTopTrack method returns a list of top tracks for the given artist as specifed by its id. Both of these methods are using the Spotify API wrapper, and this wrapper is internally using Retrofit.
+### How is data (artists/tracks) obtained from the Spotify API? <a name="key-considerations-2"></a>
+I created a class, named Spotify, to handle all API requests. The searchArtist method returns a list of artists based on the supplied search term. The getArtistTopTrack method returns a list of top tracks for the given artist as specifed by its id. Both of these methods are using the Spotify API wrapper, which itself uses Retrofit.
 ```java
 public class Spotify {
 
