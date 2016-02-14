@@ -81,13 +81,21 @@ public class Spotify {
 }
 ```
 
-Since these methods are making network calls, they must be called in a background thread. Therefore, we create two AsyncTasks - One to retrieve the list of artists and the other get an artist's top tracks.
+Since these methods are making network calls, they must be called in a background thread. Therefore, we create two AsyncTasks: one to retrieve a list of artists (SearchArtistTask) and the other to get an artist's top tracks (GetTopTracksTask).
 
 ```java
 public class SearchArtistTask extends AsyncTask<...> {
+    // Get the  list of artists from the Spotify API
+    @Override
+    protected ArtistsPager doInBackground(String... params) {
+        mSearchTerm = params[0];
+        return Spotify.searchArtists(mSearchTerm);
+    }
+    
     @Override
     protected void onPostExecute(ArtistsPager artistsPager) {
-        ...
+        List<ArtistInfo> myArtistInfoList = new ArrayList<ArtistInfo>();
+        
         // Extract the data we need, sort it and store it in myArtistInfoList 
         //myArtistInfoList = ...
         
@@ -96,12 +104,30 @@ public class SearchArtistTask extends AsyncTask<...> {
         mAdapter.addAll(myArtistInfoList);
         mAdapter.notifyDataSetChanged();
     }
-    
-    // Get the  list of artists from the Spotify API
+}
+```
+
+```java
+public class GetTopTracksTask extends AsyncTask<...> {
+    // Get the top tracks for an artist from the Spotify API
     @Override
-    protected ArtistsPager doInBackground(String... params) {
-        mSearchTerm = params[0];
-        return Spotify.searchArtists(mSearchTerm);
+    protected Tracks doInBackground(String... artistIdList) {
+        Tracks tracks = new Tracks();
+        tracks = Spotify.getArtistTopTrack(artistId, queryOptions);
+        return tracks;
+    }
+
+    @Override
+    protected void onPostExecute(Tracks top10Tracks) {
+        List<TrackInfo> myTrackList = new ArrayList<TrackInfo>();
+
+        // Extract the data we need and sort it
+        // myTrackList = ...
+        
+        // Update the UI (ListView) with the top tracks
+        mAdapter.clear();
+        mAdapter.addAll(myTrackList);
+        mAdapter.notifyDataSetChanged();
     }
 }
 ```
