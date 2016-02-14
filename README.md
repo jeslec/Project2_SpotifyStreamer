@@ -81,7 +81,7 @@ public class Spotify {
 }
 ```
 
-Since these methods are making network calls, they must be called in a background thread. Therefore, we create two AsyncTasks: one to retrieve a list of artists (SearchArtistTask) and the other to get an artist's top tracks (GetTopTracksTask).
+Since these methods are making network calls, they must be called in a background thread. Therefore, I created two AsyncTasks: one to retrieve a list of artists (SearchArtistTask) and the other to get an artist's top tracks (GetTopTracksTask).
 
 ```java
 public class SearchArtistTask extends AsyncTask<...> {
