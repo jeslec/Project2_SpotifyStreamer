@@ -9,7 +9,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[On a phone](#phone-demo)<br>
 [DESCRIPTION](#description)<br>
 [WORK DONE](#work-done)<br>
-[KEY CONSIDERATIONS](#key-considerations)<br>
+[KEY CONSIDERATIONS](#key-considerations)
 * [Libraries Used](#key-considerations-1)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
