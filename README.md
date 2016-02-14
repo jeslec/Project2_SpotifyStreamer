@@ -79,7 +79,7 @@ public class Spotify {
         return tracks;
     }
 }
-```java
+```
 
 Since these methods are making network calls, they must be called in a background thread. Therefore, we create two AsyncTasks - One to retrieve the list of artists and the other get an artist's top tracks.
 
@@ -104,7 +104,7 @@ public class SearchArtistTask extends AsyncTask<...> {
         return Spotify.searchArtists(mSearchTerm);
     }
 }
-```java
+```
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
