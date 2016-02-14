@@ -11,7 +11,7 @@
 [WORK DONE](#work-done)<br>
 [KEY CONSIDERATIONS](#key-considerations)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Libraries Used](#key-considerations-1)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[How is data (artists, tracks, etc.) obtained from the Spotify API?](#key-considerations-2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[How is the data (artists, tracks, etc.) obtained from the Spotify API?](#key-considerations-2)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
@@ -46,7 +46,39 @@ I have built this app from the ground up and successfully implemented all requir
 * <a href="https://github.com/kaaes/spotify-web-api-android">Spotify Wrapper</a>: A wrapper for Spotify Web API. It uses Retrofit to create Java interfaces from the Spotify API endpoints.
 
 ### How is the data (artists, tracks, etc.) obtained from the Spotify API? <a name="key-considerations-2"></a>
+```java
+public class Spotify {
 
+    public static ArtistsPager searchArtists(String searchTerm) {
+        ArtistsPager artistsPager = new ArtistsPager();
+
+        SpotifyApi spotifyApi = new SpotifyApi();
+        SpotifyService spotifyService = spotifyApi.getService();
+
+        try {
+            artistsPager = spotifyService.searchArtists(searchTerm);
+        } catch (RetrofitError e) {
+            Log.e("Spotify", "searchArtists() - Error: " + e.getCause());
+        }
+
+        return artistsPager;
+    }
+
+    public static Tracks getArtistTopTrack(String artistId, Map<String, Object> queryOptions) {
+        Tracks tracks = new Tracks();
+
+        SpotifyApi spotifyApi = new SpotifyApi();
+        SpotifyService spotifyService = spotifyApi.getService();
+
+        try {
+            tracks = spotifyService.getArtistTopTrack(artistId, queryOptions);
+        } catch (RetrofitError e) {
+            Log.e("Spotify", "getArtistTopTrack() - Error: " + e.getCause());
+        }
+        return tracks;
+    }
+}
+```
 
 ## EVALUATION CRITERIA <a name="evaluation-criteria"></a>
 
