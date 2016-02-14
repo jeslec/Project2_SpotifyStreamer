@@ -11,7 +11,7 @@
 [WORK DONE](#work-done)<br>
 [KEY CONSIDERATIONS](#key-considerations)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[Libraries Used](#key-considerations-1)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[How data (artists/top tracks) is obtained from the Spotify API?](#key-considerations-2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[How data (artists/top tracks) is obtained from the Spotify API](#key-considerations-2)<br>
 [EVALUATION CRITERIA](#evaluation-criteria)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Layout](#evaluation-criteria-1)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[User Interface - Function](#evaluation-criteria-2)<br>
